@@ -1,0 +1,3 @@
+FNAME	TRIMMER	QC_REPORTER	ALIGNER	DEDUPER	RECALIBRATE	COUNTER	STATS
+abc	fastp	falco	bismark_bowtie2	bismark	True	bismark	True
+def		falco	bismark_bowtie2	bismark	True	bismark	True
