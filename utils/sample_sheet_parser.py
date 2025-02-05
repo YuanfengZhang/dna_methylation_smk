@@ -1,6 +1,6 @@
 from pathlib import Path
 from typing import List, Set
-import warnings
+import numpy as np
 import pandas as pd
 # ? We have to use pandas since it is the default choice in snakemake.
 # ? And the sample sheet is too tiny to use the polars library.
@@ -34,16 +34,16 @@ with same other columns but different ALIGNER values.
 because some tools are not compatible and all combinations once is a horrible choice.
 """
 
-REQUIRED_COLS: Set[str] = {'FNAME', 'TRIMMER', 'QC_REPORTER',
-                           'ALIGNER', 'DEDUPER', 'RECALIBRATE',
-                           'COUNTER', 'STATS'}
+REQUIRED_COLS: List[str] = ['FNAME', 'TRIMMER', 'QC_REPORTER',
+                            'ALIGNER', 'DEDUPER', 'RECALIBRATE',
+                            'COUNTER', 'STATS']
 
 # ! To get rid of spelling issues,
-# ! only lower case names and underlines are allowed.
-AVAILABLE_TRIMMERS: Set[str] = {'fastp', 'trim_galore'}
+# ! only lower case names and hyphen-minus (-) are allowed.
+AVAILABLE_TRIMMERS: Set[str] = {'fastp', 'trim-galore'}
 AVAILABLE_QC_REPORTERS: Set[str] = {'fastqc', 'falco'}  # no fastp here
-AVAILABLE_ALIGNERS: Set[str] = {'bismark_bowtie2', 'bismark_hisat2',
-                                'bwa_meth', 'bwa_meme', 'dnmtools',
+AVAILABLE_ALIGNERS: Set[str] = {'bismark-bowtie2', 'bismark_-hisat2',
+                                'bwa-meth', 'bwa-meme', 'dnmtools',
                                 'biscuit', 'bsmapz'}
 AVAILABLE_DEDUPERS: Set[str] = {'bismark', 'gatk', 'samtools', 'sambamba'}
 RECALIBRATE: Set[bool] = {True, False}
@@ -54,15 +54,15 @@ STATS: Set[bool] = {True, False}
 
 class OneRun:
     def __init__(self, row: pd.Series):
-        self.row = row
-        self.fname = row['FNAME']
-        self.trimmer = row['TRIMMER']
-        self.qc_reporter = row['QC_REPORTER']
-        self.aligner = row['ALIGNER']
-        self.deduper = row['DEDUPER']
-        self.recalibrate = row['RECALIBRATE']
-        self.counter = row['COUNTER']
-        self.stats = row['STATS']
+        self.row: pd.Series = row
+        self.fname: str = row['FNAME']
+        self.trimmer: str | None = row['TRIMMER']
+        self.qc_reporter: str | None = row['QC_REPORTER']
+        self.aligner: str | None = row['ALIGNER']
+        self.deduper: str | None = row['DEDUPER']
+        self.recalibrate: bool = row['RECALIBRATE']
+        self.counter: str | None = row['COUNTER']
+        self.stats: bool = row['STATS']
 
     def __repr__(self):
         return (f'{self.fname}: {self.trimmer}, {self.qc_reporter},'
@@ -74,93 +74,282 @@ class OneRun:
                 f'{self.aligner}, {self.deduper},'
                 f'{self.recalibrate}, {self.counter}, {self.stats}')
 
+    def _validate_tool(self,
+                       tool: str | None,
+                       available_tools: Set[str],
+                       tool_name: str) -> bool:
+        if tool in available_tools:
+            return True
+        else:
+            raise ValueError(f'Not implemented yet: {tool}.'
+                             f'Available {tool_name}: {available_tools}')
+    """
+    # TODO: The output file paths are absolutely wrong and need fix.
+    There should be a single output dir for each fname, e,g., result/{self.fname}
+    And the output files should be in nested dirs,
+    e.g., result/{self.fname}/fastp/bismark-bowtie2/bismark/bqsr/bismark/{self.fname}.bedgraph.gz
+                    ^        ^          ^          ^       ^     ^
+                    fname    trimmer    aligner    deduper recal counter
+    or result/{self.fname}/fastp/bismark-bowtie2/bismark/no_bqsr/bismark/{self.fname}.bedgraph.gz
+                    ^        ^          ^          ^       ^     ^
+                    fname    trimmer    aligner    deduper recal counter
+    """
     def _generate_trimmed_file_ls(self) -> List[str]:
+        trim_files: List[str]
         # check the trimmer first
-        if pd.isna(self.trimmer):
-            warnings.warn(message=('No trimmer specified!'
-                                   'Skipping this row.'),
-                          category=UserWarning)
-            return []
-        if self.trimmer not in AVAILABLE_TRIMMERS:
-            raise ValueError(f'Unknown trimmer: {self.trimmer}.'
-                             f'Available trimmers: {AVAILABLE_TRIMMERS}')
-        match self.trimmer:
-            case 'fastp':
-                return [f'result/trimmed/fastp/{self.fname}.R1.fq.gz',
-                        f'result/trimmed/fastp/{self.fname}.R2.fq.gz',
-                        f'result/trimmed/fastp/{self.fname}.fastp.json',
-                        f'result/trimmed/fastp/{self.fname}.fastp.html']
-            case 'trim_galore':
-                return [f'result/trimmed/trim_galore/{self.fname}.R1.fq.gz',
-                        f'result/trimmed/trim_galore/{self.fname}.R2.fq.gz',
-                        f'result/trimmed/trim_galore/{self.fname}_trimming_report.txt']
-            case _:
-                raise ValueError(f'Not implemented yet: {self.trimmer}')
+        if self._validate_tool(self.trimmer,
+                               available_tools=AVAILABLE_TRIMMERS,
+                               tool_name='trimmer'):
+            match self.trimmer:
+                case 'fastp':
+                    trim_files = [
+                        f'result/{self.fname}/{self.trimmer}/{self.fname}.R1.fq.gz',
+                        f'result/{self.fname}/{self.trimmer}/{self.fname}.R2.fq.gz',
+                        f'result/{self.fname}/{self.trimmer}/{self.fname}.fastp.json',
+                        f'result/{self.fname}/{self.trimmer}/{self.fname}.fastp.html'
+                    ]
+                case 'trim-galore':
+                    trim_files = [
+                        f'result/{self.fname}/{self.trimmer}/{self.fname}.R1.fq.gz',
+                        f'result/{self.fname}/{self.trimmer}/{self.fname}.R2.fq.gz'
+                    ]
+                case _:
+                    trim_files = []
+        else:
+            trim_files = []
+
+        return trim_files
 
     def _generate_qc_report_file_ls(self) -> List[str]:
-        if any(pd.isna(_t) for _t in (self.trimmer, self.qc_reporter)):
-            warnings.warn(message=('No trimmer or qc_reporter specified!'
-                                   'Skipping this row.'),
-                          category=UserWarning)
-            return []
-        if self.qc_reporter not in AVAILABLE_QC_REPORTERS:
-            raise ValueError(f'Unknown qc_reporter: {self.qc_reporter}.'
-                             f'Available qc_reporters: {AVAILABLE_QC_REPORTERS}')
-        match self.qc_reporter:
-            case 'fastqc':
-                return [f'result/qc/fastqc/{self.fname}.R1_fastqc.html',
-                        f'result/qc/fastqc/{self.fname}.R2_fastqc.html']
-            case 'falco':
-                return [f'result/qc/falco/{self.fname}.R1_falco.html',
-                        f'result/qc/falco/{self.fname}.R2_falco.html']
-            case _:
-                raise ValueError(f'Not implemented yet: {self.qc_reporter}')
+        qc_files: List[str]
+        if self._validate_tool(self.qc_reporter,
+                               available_tools=AVAILABLE_QC_REPORTERS,
+                               tool_name='qc_reporter'):
+            match self.qc_reporter:
+                case 'fastqc':
+                    qc_files = [
+                        f'result/{self.fname}/{self.trimmer}/{self.fname}.R1_fastqc.html',
+                        f'result/{self.fname}/{self.trimmer}/{self.fname}.R2_fastqc.html'
+                    ]
+                case 'falco':
+                    qc_files = [
+                        f'result/{self.fname}/{self.trimmer}/{self.fname}.R1_falco.html',
+                        f'result/{self.fname}/{self.trimmer}/{self.fname}.R2_falco.html'
+                    ]
+                case _:
+                    qc_files = []
+        else:
+            qc_files = []
+
+        return qc_files
 
     def _generate_aligned_bam(self) -> List[str]:
-        if any(pd.isna(_t) for _t in (self.trimmer,
-                                      self.qc_reporter,
-                                      self.aligner)):
-            warnings.warn(message=('No trimmer or qc_reporter or aligner specified!'
-                                   'Skipping this row.'),
-                          category=UserWarning)
-            return []
-        if self.aligner not in AVAILABLE_ALIGNERS:
-            raise ValueError(f'Unknown aligner: {self.aligner}.'
-                             f'Available aligners: {AVAILABLE_ALIGNERS}')
-        match self.aligner:
-            case 'bismark_bowtie2':
-                return [f'result/aligned/bismark_bowtie2/{self.fname}.bam']
-            case 'bismark_hisat2':
-                return [f'result/aligned/bismark_hisat2/{self.fname}.bam']
-            case 'bwa_meth':
-                return [f'result/aligned/bwa_meth/{self.fname}.bam']
-            case 'bwa_meme':
-                return [f'result/aligned/bwa_meme/{self.fname}.bam']
-            case 'biscuit':
-                return [f'result/aligned/biscuit/{self.fname}.bam']
-            case 'bsmapz':
-                return [f'result/aligned/bsmapz/{self.fname}.bam']
-            case 'dnmtools':
-                return [f'result/aligned/dnmtools/{self.fname}.bam']
+        aligned_files: List[str]
+        if self._validate_tool(self.aligner,
+                               available_tools=AVAILABLE_ALIGNERS,
+                               tool_name='aligner'):
+            aligned_files = [
+                (f'result/{self.fname}/{self.trimmer}/'
+                 f'{self.aligner}/{self.fname}.bam')
+            ]
+        else:
+            aligned_files = []
+
+        return aligned_files
+
+    def _generate_deduped_bam(self) -> List[str]:
+        dedup_files: List[str]
+        if self._validate_tool(self.deduper,
+                               available_tools=AVAILABLE_DEDUPERS,
+                               tool_name='deduper'):
+            dedup_files = [
+                (f'result/{self.fname}/{self.trimmer}/'
+                 f'{self.aligner}/{self.deduper}/'
+                 f'{self.fname}.bam')
+            ]
+        else:
+            dedup_files = []
+
+        return dedup_files
+
+    def _generate_recalibrated_bam(self) -> List[str]:
+        recalibrated_files: List[str]
+        if self.recalibrate:
+            recalibrated_files = [
+                (f'result/{self.fname}/{self.trimmer}/'
+                 f'{self.aligner}/{self.deduper}/'
+                 f'{self.fname}.bqsr.bam')
+            ]
+        else:
+            recalibrated_files = []
+
+        return recalibrated_files
+
+    def _generate_qualimap_files(self) -> List[str]:
+        qualimap_files: List[str]
+        if self.recalibrate:
+            qualimap_files = [
+                (f'result/{self.fname}/{self.trimmer}/'
+                 f'{self.aligner}/{self.deduper}/'
+                 f'{self.fname}.bqsr.qualimap.pdf')
+            ]
+        else:
+            qualimap_files = [
+                (f'result/{self.fname}/{self.trimmer}/'
+                 f'{self.aligner}/{self.deduper}/'
+                 f'{self.fname}.qualimap.pdf')
+            ]
+
+        return qualimap_files
+
+    def _generate_methylation(self) -> List[str]:
+        methylation_files: List[str]
+        if self._validate_tool(self.counter,
+                               available_tools=COUNTER,
+                               tool_name='counter'):
+            if self.recalibrate:
+                match self.counter:
+                    case 'bismark':
+                        methylation_files = [
+                            (f'result/{self.fname}/{self.trimmer}/'
+                             f'{self.aligner}/{self.deduper}/'
+                             f'{self.counter}/bqsr/'
+                             f'{self.fname}.bedgraph.gz'),
+                            (f'result/{self.fname}/{self.trimmer}'
+                             f'/{self.aligner}/{self.deduper}'
+                             f'/{self.counter}/bqsr/'
+                             f'{self.fname}.ucsc.bedgraph.gz')
+                        ]
+                    case _:
+                        methylation_files = []
+            else:
+                match self.counter:
+                    case 'bismark':
+                        methylation_files = [
+                            (f'result/{self.fname}/{self.trimmer}/'
+                             f'{self.aligner}/{self.deduper}/'
+                             f'{self.counter}/no_bqsr/'
+                             f'{self.fname}.bedgraph.gz'),
+                            (f'result/{self.fname}/{self.trimmer}'
+                             f'/{self.aligner}/{self.deduper}'
+                             f'/{self.counter}/no_bqsr/'
+                             f'{self.fname}.ucsc.bedgraph.gz')
+                        ]
+                    case _:
+                        methylation_files = []
+        else:
+            methylation_files = []
+
+        return methylation_files
+
+    def _generate_stats(self) -> List[str]:
+        stats_files: List[str]
+
+        match (self.recalibrate, self.stats):
+            case (_, False):
+                stats_files = []
+            case (False, True):
+                stats_files = [
+                    (f'result/{self.fname}/{self.trimmer}'
+                     f'/{self.aligner}/{self.deduper}'
+                     f'/{self.counter}/no_bqsr/'
+                     f'{self.fname}.ucsc.bedgraph.stats')
+                ]
+            case (True, True):
+                stats_files = [
+                    (f'result/{self.fname}/{self.trimmer}'
+                     f'/{self.aligner}/{self.deduper}'
+                     f'/{self.counter}/bqsr/'
+                     f'{self.fname}.ucsc.bedgraph.stats')
+                ]
             case _:
-                raise ValueError(f'Not implemented yet: {self.aligner}')
+                stats_files = []
 
-    def generate_output_files_ls(self):
-        return (self._generate_trimmed_file_ls() +
-                self._generate_qc_report_file_ls() +
-                self._generate_aligned_bam())
+        return stats_files
+
+    def generate_output_files_ls(self) -> List[str]:
+        output_ls = []
+
+        # add qualimap files for aligned files.
+        if any(x for x in (self.aligner, self.deduper,
+                           self.counter, self.stats)):
+            output_ls.extend(self._generate_qualimap_files())
+
+        # early return since the intermediate files can be solved automatically.
+        if self.counter:
+            output_ls.extend(self._generate_methylation())
+            if self.stats:
+                output_ls.extend(self._generate_stats())
+            return output_ls
+
+        # handle the situation when the bedgraph is not needed.
+        if self.recalibrate:
+            output_ls.extend(self._generate_recalibrated_bam())
+            return output_ls
+
+        if self.deduper:
+            output_ls.extend(self._generate_deduped_bam())
+            return output_ls
+
+        if self.aligner:
+            output_ls.extend(self._generate_aligned_bam())
+            return output_ls
+
+        # handle the situation when the bam is not needed.
+        if self.trimmer:
+            output_ls.extend(self._generate_trimmed_file_ls())
+            if self.qc_reporter:
+                output_ls.extend(self._generate_qc_report_file_ls())
+            return output_ls
+
+        raise ValueError('No valid tools found in the sample sheet.')
 
 
-def read_sample_sheet(tsv_path: Path) -> pd.DataFrame:
-    df = pd.read_table(tsv_path)
+def clear_row(row: pd.Series) -> pd.Series:
+    for col_idx in range(len(row)):
+        if pd.isna(row.iloc[col_idx]):
+            row.iloc[col_idx + 1:] = np.nan
+            break
+    return row
+
+
+def read_sample_sheet(tsv_path: Path) -> List[str]:
+    df: pd.DataFrame
+    # There should be no missing values in the FNAME col
+    df = (pd.read_table(tsv_path)
+            .apply(clear_row, axis=1)
+            .dropna(subset=['FNAME'])
+            .replace(to_replace=np.nan, value=None))
     # check if the sample sheet has the required columns
     if df.columns.tolist() != REQUIRED_COLS:
         raise ValueError('Wrong columns in sample sheet.'
                          f'Expected: {REQUIRED_COLS}'
                          f'Found: {df.columns.tolist()}')
-
-    # There should be no missing values in the FNAME col.
-    if df['FNAME'].isnull().any():
+    if df.empty:
         raise ValueError('Missing values in FNAME col is not allowed.')
 
-    return df
+    print(df)
+
+    all_files = []
+
+    for idx, row in df.iterrows():
+        try:
+            run = OneRun(row)
+            all_files.extend(run.generate_output_files_ls())
+        except ValueError as e:
+            print(f'at {idx} there is an error:\n{e}')
+            continue
+
+    if not all_files:
+        raise ValueError('No valid runs found in the sample sheet.')
+
+    return all_files
+
+
+def hook_test():
+    print('hook test succeed')
+
+
+if __name__ == '__main__':
+    for i in sorted(read_sample_sheet(Path('../test/example.tsv'))):
+        print(i)
