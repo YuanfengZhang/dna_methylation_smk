@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Set
+from typing import Dict, List, Set
 import numpy as np
 import pandas as pd
 # ? We have to use pandas since it is the default choice in snakemake.
@@ -24,7 +24,7 @@ or more than 2 files found, please debug yourself.
 # 5. DEDUPER is the tool to remove duplicated reads which are labeled by the aligner.
 # 6. RECALIBRATE is the choice to apply BQSR on the aligned bam file.
 # 7. COUNTER is the tool to get per-CpG methylation level.
-# 8. STAS is the choice to get the mapping quality and methylation level statistics.
+# 8. STATS is the choice to get the mapping quality and methylation level statistics.
 
 #! 9. The names of tools are in the restrict vocabulary below.
 # 10. It's possible to run multiple tools for a single sample. Let's say we want to compare
@@ -44,7 +44,7 @@ AVAILABLE_TRIMMERS: Set[str] = {'fastp', 'trim-galore'}
 AVAILABLE_QC_REPORTERS: Set[str] = {'fastqc', 'falco'}  # no fastp here
 AVAILABLE_ALIGNERS: Set[str] = {'bismark-bowtie2', 'bismark_-hisat2',
                                 'bwa-meth', 'bwa-meme', 'dnmtools',
-                                'biscuit', 'bsmapz'}
+                                'biscuit', 'bsmapz', 'astair'}
 AVAILABLE_DEDUPERS: Set[str] = {'bismark', 'gatk', 'samtools', 'sambamba'}
 RECALIBRATE: Set[bool] = {True, False}
 COUNTER: Set[str] = {'bismark', 'biscuit', 'methyldackel',
@@ -83,17 +83,7 @@ class OneRun:
         else:
             raise ValueError(f'Not implemented yet: {tool}.'
                              f'Available {tool_name}: {available_tools}')
-    """
-    # TODO: The output file paths are absolutely wrong and need fix.
-    There should be a single output dir for each fname, e,g., result/{self.fname}
-    And the output files should be in nested dirs,
-    e.g., result/{self.fname}/fastp/bismark-bowtie2/bismark/bqsr/bismark/{self.fname}.bedgraph.gz
-                    ^        ^          ^          ^       ^     ^
-                    fname    trimmer    aligner    deduper recal counter
-    or result/{self.fname}/fastp/bismark-bowtie2/bismark/no_bqsr/bismark/{self.fname}.bedgraph.gz
-                    ^        ^          ^          ^       ^     ^
-                    fname    trimmer    aligner    deduper recal counter
-    """
+
     def _generate_trimmed_file_ls(self) -> List[str]:
         trim_files: List[str]
         # check the trimmer first
@@ -103,16 +93,20 @@ class OneRun:
             match self.trimmer:
                 case 'fastp':
                     trim_files = [
-                        f'result/{self.fname}/{self.trimmer}/{self.fname}.R1.fq.gz',
-                        f'result/{self.fname}/{self.trimmer}/{self.fname}.R2.fq.gz',
-                        f'result/{self.fname}/{self.trimmer}/{self.fname}.fastp.json',
-                        f'result/{self.fname}/{self.trimmer}/{self.fname}.fastp.html'
-                    ]
+                        f'result/{self.fname}/fastp/'
+                        f'{self.fname}{ext}'
+                        for ext in ('.R1.fq.gz',
+                                    '.R2.fq.gz',
+                                    '.fastp.json',
+                                    '.fastp.html')]
                 case 'trim-galore':
                     trim_files = [
-                        f'result/{self.fname}/{self.trimmer}/{self.fname}.R1.fq.gz',
-                        f'result/{self.fname}/{self.trimmer}/{self.fname}.R2.fq.gz'
-                    ]
+                        f'result/{self.fname}/trim-galore/'
+                        f'{self.fname}{ext}'
+                        for ext in ('.R1.fq.gz',
+                                    '.R2.fq.gz',
+                                    '.R1.report',
+                                    '.R2.report')]
                 case _:
                     trim_files = []
         else:
@@ -128,14 +122,16 @@ class OneRun:
             match self.qc_reporter:
                 case 'fastqc':
                     qc_files = [
-                        f'result/{self.fname}/{self.trimmer}/{self.fname}.R1_fastqc.html',
-                        f'result/{self.fname}/{self.trimmer}/{self.fname}.R2_fastqc.html'
-                    ]
+                        f'result/{self.fname}/{self.trimmer}/'
+                        f'{self.fname}{ext}'
+                        for ext in ('.R1.fastqc.html',
+                                    '.R2.fastqc.html')]
                 case 'falco':
                     qc_files = [
-                        f'result/{self.fname}/{self.trimmer}/{self.fname}.R1_falco.html',
-                        f'result/{self.fname}/{self.trimmer}/{self.fname}.R2_falco.html'
-                    ]
+                        f'result/{self.fname}/{self.trimmer}/'
+                        f'{self.fname}{ext}'
+                        for ext in ('.R1.falco.html',
+                                    '.R2.falco.html')]
                 case _:
                     qc_files = []
         else:
@@ -162,11 +158,39 @@ class OneRun:
         if self._validate_tool(self.deduper,
                                available_tools=AVAILABLE_DEDUPERS,
                                tool_name='deduper'):
-            dedup_files = [
-                (f'result/{self.fname}/{self.trimmer}/'
-                 f'{self.aligner}/{self.deduper}/'
-                 f'{self.fname}.bam')
-            ]
+            match self.deduper:
+                case 'bismark':
+                    dedup_files = [
+                        f'result/{self.fname}/{self.trimmer}/'
+                        f'{self.aligner}/bismark/'
+                        f'{self.fname}{ext}'
+                        for ext in ('.bam', '.bam.bai')
+                    ]
+                case 'gatk':
+                    dedup_files = [
+                        f'result/{self.fname}/{self.trimmer}/'
+                        f'{self.aligner}/gatk/{self.fname}{ext}'
+                        for ext in ('.bam',
+                                    '.bam.bai',
+                                    '.dedup.metrics')
+                    ]
+                case 'samtools':
+                    dedup_files = [
+                        f'result/{self.fname}/{self.trimmer}/'
+                        f'{self.aligner}/samtools/{self.fname}{ext}'
+                        for ext in ('.bam',
+                                    '.bam.bai',
+                                    '.dup.stats')
+                    ]
+                case 'no_dedup':
+                    dedup_files = [
+                        f'result/{self.fname}/{self.trimmer}/'
+                        f'{self.aligner}/no_dedup/{self.fname}{ext}'
+                        for ext in ('.bam',
+                                    '.bam.bai')
+                    ]
+                case _:
+                    dedup_files = []
         else:
             dedup_files = []
 
@@ -176,9 +200,13 @@ class OneRun:
         recalibrated_files: List[str]
         if self.recalibrate:
             recalibrated_files = [
-                (f'result/{self.fname}/{self.trimmer}/'
-                 f'{self.aligner}/{self.deduper}/'
-                 f'{self.fname}.bqsr.bam')
+                f'result/{self.fname}/{self.trimmer}/'
+                f'{self.aligner}/{self.deduper}/{self.fname}{ext}'
+                for ext in ('.bqsr.bam',
+                            '.bqsr.bam.bai',
+                            '.before.table',
+                            '.after.table',
+                            '.AnalyzeCovariates.pdf')
             ]
         else:
             recalibrated_files = []
@@ -187,99 +215,120 @@ class OneRun:
 
     def _generate_qualimap_files(self) -> List[str]:
         qualimap_files: List[str]
+
         if self.recalibrate:
             qualimap_files = [
-                (f'result/{self.fname}/{self.trimmer}/'
-                 f'{self.aligner}/{self.deduper}/'
-                 f'{self.fname}.bqsr.qualimap.pdf')
+                f'result/{self.fname}/{self.trimmer}/'
+                f'{self.aligner}/{self.deduper}/qualimap_bqsr/{ext}'
+                for ext in (f'{self.fname}.bqsr.qualimap.pdf',
+                            'qualimapReport.html')
             ]
         else:
             qualimap_files = [
-                (f'result/{self.fname}/{self.trimmer}/'
-                 f'{self.aligner}/{self.deduper}/'
-                 f'{self.fname}.qualimap.pdf')
+                f'result/{self.fname}/{self.trimmer}/'
+                f'{self.aligner}/{self.deduper}/qualimap/{ext}'
+                for ext in (f'{self.fname}.qualimap.pdf',
+                            'qualimapReport.html')
             ]
 
         return qualimap_files
 
     def _generate_methylation(self) -> List[str]:
+        pattern: str
         methylation_files: List[str]
         if self._validate_tool(self.counter,
                                available_tools=COUNTER,
                                tool_name='counter'):
             if self.recalibrate:
-                match self.counter:
-                    case 'bismark':
-                        methylation_files = [
-                            (f'result/{self.fname}/{self.trimmer}/'
-                             f'{self.aligner}/{self.deduper}/'
-                             f'{self.counter}/bqsr/'
-                             f'{self.fname}.bedgraph.gz'),
-                            (f'result/{self.fname}/{self.trimmer}'
-                             f'/{self.aligner}/{self.deduper}'
-                             f'/{self.counter}/bqsr/'
-                             f'{self.fname}.ucsc.bedgraph.gz')
-                        ]
-                    case _:
-                        methylation_files = []
+                pattern = 'bqsr'
             else:
-                match self.counter:
-                    case 'bismark':
-                        methylation_files = [
-                            (f'result/{self.fname}/{self.trimmer}/'
-                             f'{self.aligner}/{self.deduper}/'
-                             f'{self.counter}/no_bqsr/'
-                             f'{self.fname}.bedgraph.gz'),
-                            (f'result/{self.fname}/{self.trimmer}'
-                             f'/{self.aligner}/{self.deduper}'
-                             f'/{self.counter}/no_bqsr/'
-                             f'{self.fname}.ucsc.bedgraph.gz')
-                        ]
-                    case _:
-                        methylation_files = []
+                pattern = ''
+
+            match self.counter:
+                case 'bismark':
+                    methylation_files = [
+                        f'result/{self.fname}/{self.trimmer}/'
+                        f'{self.aligner}/{self.deduper}/'
+                        f'bismark/{self.fname}{pattern}{ext}'
+                        for ext in ('.bedgraph.gz', '.ucsc_bedgraph.gz',
+                                    '.CHG_OB.txt.gz', '.CHG_OT.txt.gz',
+                                    '.CHH_OB.txt.gz', '.CHH_OT.txt.gz',
+                                    '.CpG_OB.txt.gz', '.CpG_OT.txt.gz',
+                                    '.bismark.cov.gz', '.splitting_report',
+                                    '.c2c.cov.gz', '.c2c.report.gz',
+                                    '.c2c.summary')]
+                case 'astair':
+                    methylation_files = [
+                        f'result/{self.fname}/{self.trimmer}/'
+                        f'{self.aligner}/{self.deduper}/'
+                        f'astair/{self.fname}{pattern}{ext}'
+                        for ext in ('.astair.mods.gz',
+                                    '.astair.stats')]
+                case _:
+                    methylation_files = []
+
         else:
             methylation_files = []
 
         return methylation_files
 
     def _generate_stats(self) -> List[str]:
+        pattern: str
         stats_files: List[str]
 
-        match (self.recalibrate, self.stats):
-            case (_, False):
-                stats_files = []
-            case (False, True):
+        if self.stats:
+            if self.recalibrate:
+                pattern = '.bqsr'
+            else:
+                pattern = ''
+
+            if self.aligner == 'bismark':
                 stats_files = [
-                    (f'result/{self.fname}/{self.trimmer}'
-                     f'/{self.aligner}/{self.deduper}'
-                     f'/{self.counter}/no_bqsr/'
-                     f'{self.fname}.ucsc.bedgraph.stats')
+                    f'result/{self.fname}/{self.trimmer}/'
+                    f'{self.aligner}/{self.deduper}/'
+                    f'{self.fname}{pattern}{ext}'
+                    for ext in ('.astair.IDbias_abundance_10bp_mod_site.pdf',
+                                '.astair.IDbias_abundance.pdf',
+                                '.astair.IDbias_indel_rate.pdf',
+                                '.astair.IDbias_mod_co-localize.pdf',
+                                '.astair.IDbias.stats',
+                                '.astair.Mbias.stats',
+                                '.astair.Mbias.pdf',
+                                '.samtools.stats.txt',
+                                '.samtools.flagstats.txt',
+                                '.bam2nuc.txt')
                 ]
-            case (True, True):
+            else:
                 stats_files = [
-                    (f'result/{self.fname}/{self.trimmer}'
-                     f'/{self.aligner}/{self.deduper}'
-                     f'/{self.counter}/bqsr/'
-                     f'{self.fname}.ucsc.bedgraph.stats')
-                ]
-            case _:
-                stats_files = []
+                    f'result/{self.fname}/{self.trimmer}/'
+                    f'{self.aligner}/{self.deduper}/'
+                    f'{self.fname}{pattern}{ext}'
+                    for ext in ('.astair.IDbias_abundance_10bp_mod_site.pdf',
+                                '.astair.IDbias_abundance.pdf',
+                                '.astair.IDbias_indel_rate.pdf',
+                                '.astair.IDbias_mod_co-localize.pdf',
+                                '.astair.IDbias.stats',
+                                '.astair.Mbias.stats',
+                                '.astair.Mbias.pdf',
+                                '.samtools.stats.txt',
+                                '.samtools.flagstats.txt')]
+                # well, it's because bam2nuc would recognize the bam file
+                # from other aligners as single-end and throw an error.
+
+        else:
+            stats_files = []
 
         return stats_files
 
     def generate_output_files_ls(self) -> List[str]:
         output_ls = []
 
-        # add qualimap files for aligned files.
-        if any(x for x in (self.aligner, self.deduper,
-                           self.counter, self.stats)):
-            output_ls.extend(self._generate_qualimap_files())
-
         # early return since the intermediate files can be solved automatically.
         if self.counter:
             output_ls.extend(self._generate_methylation())
             if self.stats:
                 output_ls.extend(self._generate_stats())
+                output_ls.extend(self._generate_qualimap_files())
             return output_ls
 
         # handle the situation when the bedgraph is not needed.
@@ -313,14 +362,24 @@ def clear_row(row: pd.Series) -> pd.Series:
     return row
 
 
-def read_sample_sheet(tsv_path: Path) -> List[str]:
+def read_sample_sheet(csv_path: Path) -> pd.DataFrame:
     df: pd.DataFrame
     # There should be no missing values in the FNAME col
-    df = (pd.read_table(tsv_path)
+    df = (pd.read_csv(csv_path, comment='#',
+                      dtype={'FNAME': 'str', 'TRIMMER': 'str',
+                             'QC_REPORTER': 'str', 'ALIGNER': 'str',
+                             'DEDUPER': 'str', 'RECALIBRATE': 'boolean',
+                             'COUNTER': 'str', 'STATS': 'boolean'})
             .apply(clear_row, axis=1)
             .dropna(subset=['FNAME'])
             .replace(to_replace=np.nan, value=None))
-    # check if the sample sheet has the required columns
+    # We have to skip the deduplication for RRBS
+    df['DEDUPER'] = (
+        df.apply(lambda row: 'no_dedup'
+                 if row['FNAME'].startswith('RR') and row['DEDUPER']
+                 else row['DEDUPER'],
+                 axis=1))
+    # Check if the sample sheet has the required columns
     if df.columns.tolist() != REQUIRED_COLS:
         raise ValueError('Wrong columns in sample sheet.'
                          f'Expected: {REQUIRED_COLS}'
@@ -328,7 +387,11 @@ def read_sample_sheet(tsv_path: Path) -> List[str]:
     if df.empty:
         raise ValueError('Missing values in FNAME col is not allowed.')
 
-    print(df)
+    return df
+
+
+def generate_file_ls(tsv_path: Path) -> List[str]:
+    df = read_sample_sheet(tsv_path)
 
     all_files = []
 
@@ -346,10 +409,26 @@ def read_sample_sheet(tsv_path: Path) -> List[str]:
     return all_files
 
 
+def generate_tool_ls(tsv_path: Path) -> Dict[str, List[str]]:
+    df = read_sample_sheet(tsv_path)
+    tool_dict = {
+        'TRIMMER': [i for i in df['TRIMMER'].unique() if i],
+        'QC_REPORTER': [i for i in df['QC_REPORTER'].unique() if i],
+        'ALIGNER': [i for i in df['ALIGNER'].unique() if i],
+        'DEDUPER': [i for i in df['DEDUPER'].unique() if i],
+        'COUNTER': [i for i in df['COUNTER'].unique() if i],
+        'RECALIBRATE': [i for i in df['RECALIBRATE'].unique() if i],
+        'STATS': [i for i in df['STATS'].unique() if i]}
+    return tool_dict
+
+
 def hook_test():
-    print('hook test succeed')
+    print('hook found')
 
 
 if __name__ == '__main__':
-    for i in sorted(read_sample_sheet(Path('../test/example.tsv'))):
+    for i in sorted(generate_file_ls(Path('../test/example.tsv'))):
         print(i)
+    print('\ntool list:')
+    for k, v in generate_tool_ls(Path('../test/example.tsv')).items():
+        print(f'{k}: {v}')

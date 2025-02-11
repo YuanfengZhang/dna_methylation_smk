@@ -1,0 +1,4 @@
+# bismark (aligner) 和 gatk (deduper) 不兼容
+# BS/EM 不能使用astair, 会报错
+FNAME,TRIMMER,QC_REPORTER,ALIGNER,DEDUPER,RECALIBRATE,COUNTER,STATS
+PS_HF_1_MX,fastp,falco,bwa-meme,samtools,False,astair,True

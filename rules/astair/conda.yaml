@@ -1,0 +1,13 @@
+channels:
+    - bioconda
+    - conda-forge
+    - defaults
+dependencies:
+    - python=3.7.12
+    - pip
+    - pip:
+        - ../../resources/astair
+    - bwa>=0.7.18
+    - bwameth>=0.2.7
+    - samtools>=1.21
+    - matplotlib
