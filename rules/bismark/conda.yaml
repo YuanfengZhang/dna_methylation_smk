@@ -1,0 +1,12 @@
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - bismark>=0.24.2
+  - samtools>=1.21
+  - hisat2
+  - bowtie2
+  - minimap2
+  - perl-gdgraph
+  - rename

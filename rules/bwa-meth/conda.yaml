@@ -1,0 +1,10 @@
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - bwameth>=0.2.7
+  - bwa-mem2>=2.2.1
+  - toolshed
+  - samtools
+  - mbuffer

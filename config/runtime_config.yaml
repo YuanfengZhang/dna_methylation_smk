@@ -1,0 +1,161 @@
+#! this part is used to specify the reference genome file to be used
+sample_sheet: /mnt/eqa/zhangyuanfeng/methylation/dna_methylation_smk/config/sample_sheet.csv
+ref:
+  astair:
+    D5:
+    D6:
+    F7:
+    M8:
+    BC:
+    BL:
+    HF: /hot_warm_data/ref/GRCh38/DNA/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa
+    T1:
+    T2:
+    T3:
+    T4:
+  bwa-mem:
+    D5:
+    D6:
+    F7:
+    M8:
+    BC:
+    BL:
+    HF: /hot_warm_data/ref/GRCh38/DNA/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa
+    T1:
+    T2:
+    T3:
+    T4:
+  bwa-meme:
+    D5:
+    D6:
+    F7:
+    M8:
+    BC:
+    BL:
+    HF: /hot_warm_data/ref/GRCh38/DNA/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa
+    T1:
+    T2:
+    T3:
+    T4:
+  bwa-meth:
+    D5:
+    D6:
+    F7:
+    M8:
+    BC:
+    BL:
+    HF: /hot_warm_data/ref/GRCh38/DNA/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa
+    T1:
+    T2:
+    T3:
+    T4:
+  bismark-bowtie2:
+    D5:
+    D6:
+    F7:
+    M8:
+    BC:
+    BL:
+    HF: /hot_warm_data/ref/GRCh38/DNA
+    T1:
+    T2:
+    T3:
+    T4:
+  bismark-hisat2:
+    D5:
+    D6:
+    F7:
+    M8:
+    BC:
+    BL:
+    HF: /hot_warm_data/ref/GRCh38/DNA
+    T1:
+    T2:
+    T3:
+    T4:
+
+
+astair:
+  method:
+    BS: CtoT
+    EM: CtoT
+    RR: CtoT
+    PS: mCtoT
+  align:
+    extra_params:
+  count:
+    extra_params:
+  idbias:
+    extra_params:
+  mbias:
+    extra_params:
+
+biscuit:
+  align:
+    extra_params:
+  count:
+    extra_params:
+  stats:
+    extra_params:
+
+bismark:
+  align_bowtie2:
+    extra_params:
+  align_hisat2:
+    extra_params:
+  exactor:
+    extra_params:
+  coverage2cytosine:
+    extra_params:
+  dedup:
+    extra_params:
+  bam2nuc:
+    extra_params:
+
+bwa-meme:
+  extra_params:
+
+bwa-meth:
+  extra_params:
+
+falco:
+  extra_params:
+
+fastp:
+  extra_params:
+
+fastqc:
+  extra_params:
+
+gatk:
+  cal_bqsr:
+    snp_vcf: /hot_warm_data/ref/GRCh38/DNA/dbsnp/common.dbsnp.vcf.gz
+    extra_params:
+  apply_bqsr:
+    extra_params:
+  analyze_covariates:
+    extra_params:
+  dedup:
+    extra_params:
+
+methyldackel:
+  count:
+    extra_params:
+  mbias:
+    extra_params:
+
+qualimap:
+  extra_params:
+
+samtools:
+  fixmate:
+    extra_params:
+  mkdup:
+    extra_params:
+  stats:
+    extra_params:
+  flagstat:
+    extra_params:
+
+trim-galore:
+  extra_params:
