@@ -83,7 +83,7 @@ profile_default/
 ipython_config.py
 
 # snakemake
-.snakemake
+.snakemake/
 input
 result
 test
