@@ -2,8 +2,10 @@ configfile: "config/runtime_config.yaml"
 
 rule fastp:
     input:
-        r1           = "input/{fname}.R1.fq.gz",
-        r2           = "input/{fname}.R2.fq.gz"
+        r1           = (f"{config.input_dir}"
+                        "/{fname}.R1.fq.gz"),
+        r2           = (f"{config.input_dir}"
+                        "/{fname}.R2.fq.gz")
     output:
         r1           = "result/{fname}/fastp/{fname}.R1.fq.gz",
         r2           = "result/{fname}/fastp/{fname}.R2.fq.gz",

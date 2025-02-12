@@ -1,5 +1,7 @@
-#! this part is used to specify the reference genome file to be used
+input_dir: input
 sample_sheet: config/sample_sheet.csv
+
+#! this part is used to specify the reference genome file to be used
 ref:
   astair:
     D5:

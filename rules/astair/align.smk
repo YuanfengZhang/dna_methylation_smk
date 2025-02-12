@@ -1,3 +1,4 @@
+#! DO NOT USE THIS! USE BWA-MEME INSTEAD
 configfile: "config/runtime_config.yaml"
 
 rule astair_align:
