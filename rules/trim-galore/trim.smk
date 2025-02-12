@@ -1,16 +1,11 @@
 configfile: "config/runtime_config.yaml"
 
-rule all:
-    input:
-        "result/test/trim_galore/test.R1.fq.gz",
-        "result/test/trim_galore/test.R2.fq.gz",
-        "result/test/trim_galore/test.R1.report",
-        "result/test/trim_galore/test.R2.report"
-
 rule trim_galore:
     input:
-        r1           = "input/{fname}.R1.fq.gz",
-        r2           = "input/{fname}.R2.fq.gz"
+        r1           = (f"{config.input_dir}"
+                        "/{fname}.R1.fq.gz"),
+        r2           = (f"{config.input_dir}"
+                        "/{fname}.R2.fq.gz")
     output:
         r1           = "result/{fname}/trim_galore/{fname}.R1.fq.gz",
         r2           = "result/{fname}/trim_galore/{fname}.R2.fq.gz",

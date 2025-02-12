@@ -1,5 +1,7 @@
+input_dir: input
+sample_sheet: config/sample_sheet.csv
+
 #! this part is used to specify the reference genome file to be used
-sample_sheet: /mnt/eqa/zhangyuanfeng/methylation/dna_methylation_smk/config/sample_sheet.csv
 ref:
   astair:
     D5:

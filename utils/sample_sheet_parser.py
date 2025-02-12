@@ -44,7 +44,7 @@ AVAILABLE_TRIMMERS: Set[str] = {'fastp', 'trim-galore'}
 AVAILABLE_QC_REPORTERS: Set[str] = {'fastqc', 'falco'}  # no fastp here
 AVAILABLE_ALIGNERS: Set[str] = {'bismark-bowtie2', 'bismark_-hisat2',
                                 'bwa-meth', 'bwa-meme', 'dnmtools',
-                                'biscuit', 'bsmapz', 'astair'}
+                                'biscuit', 'bsmapz'}
 AVAILABLE_DEDUPERS: Set[str] = {'bismark', 'gatk', 'samtools', 'sambamba'}
 RECALIBRATE: Set[bool] = {True, False}
 COUNTER: Set[str] = {'bismark', 'biscuit', 'methyldackel',
