@@ -1,18 +1,6 @@
 #! this part is used to specify the reference genome file to be used
-sample_sheet: /mnt/eqa/zhangyuanfeng/methylation/dna_methylation_smk/config/sample_sheet.csv
-ref:
-  astair:
-    D5:
-    D6:
-    F7:
-    M8:
-    BC:
-    BL:
-    HF: /hot_warm_data/ref/GRCh38/DNA/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa
-    T1:
-    T2:
-    T3:
-    T4:
+sample_sheet: config/sample_sheet.csv  # never use absolute path.
+ref:  # `astair align` has been deprecated because it's just calling bwa-mem and it introduces bugs.
   bwa-mem:
     D5:
     D6:
