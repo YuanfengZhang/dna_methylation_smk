@@ -131,7 +131,7 @@ fastqc:
 
 gatk:
   cal_bqsr:
-    snp_vcf: /hot_warm_data/ref/GRCh38/DNA/dbsnp/common.dbsnp.vcf.gz
+    snp_vcf: resources/dbsnp/common.dbsnp.vcf.gz
     extra_params:
   apply_bqsr:
     extra_params:
