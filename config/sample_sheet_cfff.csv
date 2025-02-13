@@ -1,6 +1,6 @@
 # bismark (aligner) 和 gatk (deduper) 不兼容
 # BS/EM 不能使用astair, 会报错
 FNAME,TRIMMER,QC_REPORTER,ALIGNER,DEDUPER,RECALIBRATE,COUNTER,STATS
-BS_M8_1_MGI,trim-galore,falco,BISMARK-BOWTIE2,BISMARK,False,BISMARK,True
-EM_BL_2_FDU,trim-galore,falco,BISMARK-BOWTIE2,BISMARK,False,BISMARK,True
+BS_M8_1_MGI,trim-galore,falco,bismark-bowtie2,bismark,False,bismark,True
+EM_BL_2_FDU,trim-galore,falco,bismark-BOWTIE2,bismark,False,bismark,True
 PS_HF_1_Geneplus,fastp,falco,bwa-meme,samtools,False,astair,True
