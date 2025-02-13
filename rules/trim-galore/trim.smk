@@ -2,9 +2,9 @@ configfile: "config/runtime_config.yaml"
 
 rule trim_galore:
     input:
-        r1           = (f"{config.input_dir}"
+        r1           = (f"{config[input_dir]}"
                         "/{fname}.R1.fq.gz"),
-        r2           = (f"{config.input_dir}"
+        r2           = (f"{config[input_dir]}"
                         "/{fname}.R2.fq.gz")
     output:
         r1           = "result/{fname}/trim_galore/{fname}.R1.fq.gz",
