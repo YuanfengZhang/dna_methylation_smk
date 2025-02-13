@@ -20,7 +20,7 @@ rule trim_galore:
     shell:
         """
         trim_galore \
-            -j {threads} \
+            -j {threads} --paired \
             --output_dir result/{wildcards.fname}/trim-galore \
             {input.r1} {input.r2} {params.extra_params}
         mv \
