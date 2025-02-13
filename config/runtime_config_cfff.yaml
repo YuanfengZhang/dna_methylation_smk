@@ -1,4 +1,4 @@
-input_dir: /cpfs01/projects-HDD/cff-e44ef5cf7aa5_HHD/gxr_22210700111/eqa/fastq
+input_dir: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/eqa/fastq
 sample_sheet: config/sample_sheet.csv  # never use absolute path.
 
 #! this part is used to specify the reference genome file to be used

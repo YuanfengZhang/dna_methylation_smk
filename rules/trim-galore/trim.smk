@@ -12,17 +12,17 @@ rule trim_galore:
         r1_report    = "result/{fname}/trim-galore/{fname}.R1.report",
         r2_report    = "result/{fname}/trim-galore/{fname}.R2.report"
     params:
-        extra_params = config["trim-galore"]["extra_params"]
+        extra_params = (config["trim-galore"]["extra_params"]
+                        if config["trim-galore"]["extra_params"] else "")
     threads: 8
     conda:
-        "rule/trim-galore/conda.yaml"
+        "conda.yaml"
     shell:
         """
         trim_galore \
-            {params.extra_params} \
             -j {threads} \
             --output_dir result/{wildcards.fname}/trim-galore \
-            {input.r1} {input.r2}
+            {input.r1} {input.r2} {params.extra_params}
         mv \
             result/{wildcards.fname}/trim-galore/{wildcards.fname}.R1_trimmed.fq.gz \
             {output.r1}

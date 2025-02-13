@@ -8,8 +8,6 @@ rule all:
 
 tool_dict = generate_tool_ls(config['sample_sheet'])
 
-print(tool_dict)
-
 if tool_dict["TRIMMER"]:
     for tool in tool_dict["TRIMMER"]:
         include: f"rules/{tool}/trim.smk"
