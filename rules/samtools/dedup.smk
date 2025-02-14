@@ -6,7 +6,7 @@ rule samtools_dedup:
     output:
         bam            = "result/{fname}/{trimmer}/{aligner}/samtools/{fname}.bam",
         bai            = "result/{fname}/{trimmer}/{aligner}/samtools/{fname}.bam.bai",
-        stats          = "result/{fname}/{trimmer}/{aligner}/samtools/{fname}.dup.stats",
+        stats          = "result/{fname}/{trimmer}/{aligner}/samtools/{fname}.dup.stats"
     params:
         fixmate_params = (config["samtools"]["fixmate"]["extra_params"]
                           if config["samtools"]["fixmate"]["extra_params"] else ""),
@@ -31,5 +31,6 @@ rule samtools_dedup:
             -f {output.stats} \
             {params.mkdup_params} \
             - {output.bam}
-        samtools index -@ {threads} {output.bam}
+        samtools index \
+            -@ {threads} {output.bam} || echo "skip"
         """

@@ -53,5 +53,6 @@ rule gatk_bqsr:
             -csv {output.pdf} \
             {params.cov_params}
         
-        samtools index -@ {threads} {output.bam}
+        samtools index \
+            -@ {threads} {output.bam}
         """

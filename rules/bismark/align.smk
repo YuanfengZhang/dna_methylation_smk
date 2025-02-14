@@ -23,10 +23,10 @@ rule bismark_bowtie2:
         """
         bismark \
             -p {threads} --bam \
-            {params.extra_params} \
             --genome_folder {params.ref} \
             -1 {input.r1} -2 {input.r2} \
-            --output_dir result/{wildcards.fname}/{wildcards.trimmer}/bismark-bowtie2
+            --output_dir result/{wildcards.fname}/{wildcards.trimmer}/bismark-bowtie2 \
+            {params.extra_params}
         
         cd result/{wildcards.fname}/{wildcards.trimmer}/bismark-bowtie2
         
@@ -66,18 +66,17 @@ rule bismark_hisat2:
         """
         bismark \
             -p {threads} --bam --hisat2 \
-            {params.extra_params} \
             --genome_folder {params.ref} \
             -1 {input.r1} -2 {input.r2} \
-            --output_dir result/{wildcards.fname}/{wildcards.trimmer}/bismark-hisat2
+            --output_dir result/{wildcards.fname}/{wildcards.trimmer}/bismark-hisat2 \
+            {params.extra_params}
 
         cd result/{wildcards.fname}/{wildcards.trimmer}/bismark-hisat2
 
         samtools sort \
             {wildcards.fname}.R1_bismark_bt2_pe.bam \
-            -m 1G \
-            --output-fmt bam,level=1 \
-            -@ {threads} -o {wildcards.fname}.bam
+            -O bam -@ {threads} \
+            -o {wildcards.fname}.bam
 
         samtools index -@ {threads} {wildcards.fname}.bam
 

@@ -20,10 +20,11 @@ rule bwameth_align:
             --threads {threads} \
             --reference {params.ref} {params.extra_params} \
             {input.r1} {input.r2} |\
-            mbuffer -m 1G |\
-            samtools sort -m 1G \
+        mbuffer -m 1G |\
+        samtools sort -m 1G \
             -O bam,level=9 -@ {threads} \
-            -o {output.bam}
+            -o {output.bam} -
 
-        samtools index -@ {threads} {output.bam}
+        samtools index \
+            -@ {threads} {output.bam} || echo "skip"
         """

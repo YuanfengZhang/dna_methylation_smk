@@ -21,7 +21,9 @@ rule gatk_dedup:
             -I {input} \
             -O {output.bam} \
             -M {output.metrics} \
-            --ASSUME_SORT_ORDER coordinate {params.extra_params}
+            --ASSUME_SORT_ORDER coordinate \
+            {params.extra_params}
 
-        samtools index -@ {threads} {output.bam}
+        samtools index \
+            -@ {threads} {output.bam}
         """

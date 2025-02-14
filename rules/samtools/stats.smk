@@ -4,8 +4,8 @@ rule samtools_stats:
     input:
         "result/{fname}/{trimmer}/{aligner}/{deduper}/{fname}{bqsr}bam"
     output:
-        ("result/{fname}/{trimmer}/{aligner}/{deduper}"
-         "/{fname}{bqsr}samtools.stats.txt")
+        ("result/{fname}/{trimmer}/{aligner}/{deduper}/"
+         "{fname}{bqsr}samtools.stats.txt")
     params:
         ref          = lambda wildcards: config["ref"]["bwa-mem"][wildcards.fname.split('_')[1]],
         extra_params = (config["samtools"]["stats"]["extra_params"]
@@ -37,5 +37,8 @@ rule samtools_flagstat:
         "conda.yaml"
     shell:
         """
-        samtools flagstat -@ {threads} -O tsv {input} > {output}
+        samtools flagstat \
+            -@ {threads} \
+            -O tsv \
+            {input} > {output}
         """
