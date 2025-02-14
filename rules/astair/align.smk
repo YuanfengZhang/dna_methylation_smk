@@ -28,5 +28,5 @@ rule astair_align:
             -o {wildcards.fname}.bam \
             {wildcards.fname}_{params.method}.bam
         rm {wildcards.fname}_{params.method}.bam
-        samtools index -@ {threads} {wildcards.fname}.bam
+        samtools index -@ {threads} {wildcards.fname}.bam || echo "suppress non-zero exit"
         """

@@ -36,7 +36,7 @@ rule bismark_bowtie2:
             --output-fmt bam,level=1 \
             -@ {threads} -o {wildcards.fname}.bam
 
-        samtools index -@ {threads} {wildcards.fname}.bam
+        samtools index -@ {threads} {wildcards.fname}.bam || echo "suppress non-zero exit"
 
         mv \
             {wildcards.fname}.R1_bismark_bt2_PE_report.txt \
@@ -78,7 +78,7 @@ rule bismark_hisat2:
             -O bam -@ {threads} \
             -o {wildcards.fname}.bam
 
-        samtools index -@ {threads} {wildcards.fname}.bam
+        samtools index -@ {threads} {wildcards.fname}.bam || echo "suppress non-zero exit"
 
         mv \
             {wildcards.fname}.R1_bismark_bt2_PE_report.txt \

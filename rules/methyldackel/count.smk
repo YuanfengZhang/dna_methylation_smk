@@ -44,9 +44,7 @@ rule methyldackel_merge_context:
         cd result/{wildcards.fname}/{wildcards.trimmer}/{wildcards.aligner}/{wildcards.deduper}/methyldackel
         MethylDackel mergeContext \
             {params.ref} {wildcards.fname}{params.pattern}_cpg.bedgraph \
-            -o {wildcards.fname}{params.pattern}.cpg.bedgraph \
-            {params.extra_params}
-        
+            -o {wildcards.fname}{params.pattern}.cpg.bedgraph {params.extra_params}
         mv \
             {wildcards.fname}{params.pattern}_cpg.bedgraph \
             {wildcards.fname}{params.pattern}.bedgraph

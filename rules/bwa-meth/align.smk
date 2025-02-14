@@ -25,6 +25,5 @@ rule bwameth_align:
             -O bam,level=9 -@ {threads} \
             -o {output.bam} -
 
-        samtools index \
-            -@ {threads} {output.bam} || echo "skip"
+        samtools index -@ {threads} {output.bam} || echo "suppress non-zero exit"
         """

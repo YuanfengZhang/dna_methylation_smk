@@ -31,6 +31,5 @@ rule samtools_dedup:
             -f {output.stats} \
             {params.mkdup_params} \
             - {output.bam}
-        samtools index \
-            -@ {threads} {output.bam} || echo "skip"
+        samtools index -@ {threads} {output.bam} || echo "suppress non-zero exit"
         """

@@ -24,6 +24,5 @@ rule gatk_dedup:
             --ASSUME_SORT_ORDER coordinate \
             {params.extra_params}
 
-        samtools index \
-            -@ {threads} {output.bam}
+        samtools index -@ {threads} {output.bam} || echo "suppress non-zero exit"
         """

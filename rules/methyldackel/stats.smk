@@ -19,6 +19,5 @@ rule methyldackel_mbias:
         cd result/{wildcards.fname}/{wildcards.trimmer}/{wildcards.aligner}/{wildcards.deduper}
         MethylDackel mbias \
             {params.ref} {wildcards.fname}{params.pattern}.bam \
-            ./{wildcards.fname}{params.pattern}.methydackel_mbias \
-            {params.extra_params}
+            ./{wildcards.fname}{params.pattern}.methydackel_mbias {params.extra_params}
         """

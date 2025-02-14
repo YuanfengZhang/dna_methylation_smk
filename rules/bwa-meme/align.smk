@@ -1,17 +1,5 @@
 configfile: "config/runtime_config.yaml"
 
-"""
-bwa-meme mem \
-    -7 -Y -K 100000000 -t {threads} \
-    {params.ref} {input.r1} {input.r2} \
-    -o result/{wildcards.trimmer}/bwa-meme/{wildcards.fname}.sam
-samtools sort \
-    -@ {threads} \
-    -O bam -o {output.bam} \
-    result/{wildcards.trimmer}/bwa-meme/{wildcards.fname}.sam
-rm result/{wildcards.trimmer}/bwa-meme/{wildcards.fname}.sam
-"""
-
 rule bwa_meme:
     input:
         r1           = "result/{trimmer}/{fname}.R1.fq.gz",

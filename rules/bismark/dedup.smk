@@ -34,7 +34,7 @@ rule bismark_dedup:
             -o {wildcards.fname}.bam \
             {wildcards.fname}.deduplicated.bam
 
-        samtools index -@ {threads} {wildcards.fname}.bam
+        samtools index -@ {threads} {wildcards.fname}.bam || echo "suppress non-zero exit"
 
         rm {wildcards.fname}.sort_n_tmp.bam
         rm {wildcards.fname}.deduplicated.bam
