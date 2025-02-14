@@ -23,11 +23,10 @@ rule bismark_bowtie2:
         """
         bismark \
             -p {threads} --bam \
+            --output_dir result/{wildcards.fname}/{wildcards.trimmer}/bismark-bowtie2
             --genome_folder {params.ref} \
-            -1 {input.r1} -2 {input.r2} \
-            --output_dir result/{wildcards.fname}/{wildcards.trimmer}/bismark-bowtie2 \
-            {params.extra_params}
-        
+            -1 {input.r1} -2 {input.r2} {params.extra_params}
+
         cd result/{wildcards.fname}/{wildcards.trimmer}/bismark-bowtie2
         
         samtools sort \
