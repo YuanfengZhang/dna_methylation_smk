@@ -9,4 +9,3 @@ dependencies:
   - bowtie2
   - minimap2
   - perl-gdgraph
-  - rename

@@ -176,3 +176,9 @@ cython_debug/
 .pypirc
 
 .vscode
+
+# Qodo Gen
+.qodo/
+
+# pyright
+pyrightConfig.json
