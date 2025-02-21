@@ -38,7 +38,7 @@ if any(tool_dict["RECALIBRATE"]):
     include: "rules/gatk/bqsr.smk"
 
 if any(tool_dict["STATS"]):
-    for tool in ['astair', 'samtools', 'bismark']:
+    for tool in ['astair', 'samtools', 'bismark', 'methyldackel']:
         include: f"rules/{tool}/stats.smk"
 
     if any(tool_dict["RECALIBRATE"]) and not all(tool_dict["RECALIBRATE"]):

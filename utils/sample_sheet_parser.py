@@ -264,6 +264,13 @@ class OneRun:
                         f'astair/{self.fname}{pattern}{ext}'
                         for ext in ('.astair.mods.gz',
                                     '.astair.stats')]
+                case 'methyldackel':
+                    methylation_files = [
+                        f'result/{self.fname}/{self.trimmer}/'
+                        f'{self.aligner}/{self.deduper}/'
+                        f'methyldackel/{self.fname}{pattern}{ext}'
+                        for ext in ('.bedgraph.gz',
+                                    '.merged.bedgraph.gz')]
                 case _:
                     methylation_files = []
 
@@ -296,7 +303,9 @@ class OneRun:
                                 '.astair.Mbias.pdf',
                                 '.samtools.stats.txt',
                                 '.samtools.flagstats.txt',
-                                '.bam2nuc.txt')
+                                '.bam2nuc.txt',
+                                '.methydackel_mbias_OT.svg',
+                                '.methydackel_mbias_OB.svg')
                 ]
             else:
                 stats_files = [
@@ -311,7 +320,9 @@ class OneRun:
                                 '.astair.Mbias.stats',
                                 '.astair.Mbias.pdf',
                                 '.samtools.stats.txt',
-                                '.samtools.flagstats.txt')]
+                                '.samtools.flagstats.txt',
+                                '.methydackel_mbias_OT.svg',
+                                '.methydackel_mbias_OB.svg')]
                 # well, it's because bam2nuc would recognize the bam file
                 # from other aligners as single-end and throw an error.
 

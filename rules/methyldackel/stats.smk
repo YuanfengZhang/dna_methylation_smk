@@ -5,7 +5,9 @@ rule methyldackel_mbias:
         "result/{fname}/{trimmer}/{aligner}/{deduper}/{fname}{bqsr}bam"
     output:
         ("result/{fname}/{trimmer}/{aligner}/{deduper}/"
-         "{fname}{bqsr}methydackel_mbias_OT.svg")
+         "{fname}{bqsr}methydackel_mbias_OT.svg"),
+        ("result/{fname}/{trimmer}/{aligner}/{deduper}/"
+         "{fname}{bqsr}methydackel_mbias_OB.svg")
     params:
         ref          = lambda wildcards: config["ref"]["bwa-mem"][wildcards.fname.split('_')[1]],
         extra_params = (config["methyldackel"]["mbias"]["extra_params"]
@@ -19,5 +21,6 @@ rule methyldackel_mbias:
         cd result/{wildcards.fname}/{wildcards.trimmer}/{wildcards.aligner}/{wildcards.deduper}
         MethylDackel mbias \
             {params.ref} {wildcards.fname}{params.pattern}.bam \
-            ./{wildcards.fname}{params.pattern}.methydackel_mbias {params.extra_params}
+            ./{wildcards.fname}{params.pattern}.methydackel_mbias \
+            -@ {threads} {params.extra_params}
         """

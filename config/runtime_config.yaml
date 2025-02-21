@@ -146,7 +146,7 @@ methyldackel:
     extra_params:
 
 qualimap:
-  extra_params:
+  extra_params: --java-mem-size=80G
 
 samtools:
   fixmate:
