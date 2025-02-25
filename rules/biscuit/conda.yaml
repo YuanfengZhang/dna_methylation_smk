@@ -1,0 +1,5 @@
+channels:
+    - bioconda
+dependencies:
+    - bioconda::biscuit>=1.6.0.20241216
+    - bioconda::samtools>=1.21

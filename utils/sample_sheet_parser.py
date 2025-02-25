@@ -1,3 +1,4 @@
+from argparse import ArgumentParser, Namespace
 from pathlib import Path
 from typing import Dict, List, Set
 import numpy as np
@@ -299,13 +300,11 @@ class OneRun:
                                 '.astair.IDbias_indel_rate.pdf',
                                 '.astair.IDbias_mod_co-localize.pdf',
                                 '.astair.IDbias.stats',
-                                '.astair.Mbias.stats',
-                                '.astair.Mbias.pdf',
                                 '.samtools.stats.txt',
                                 '.samtools.flagstats.txt',
-                                '.bam2nuc.txt',
                                 '.methydackel_mbias_OT.svg',
-                                '.methydackel_mbias_OB.svg')
+                                '.methydackel_mbias_OB.svg'
+                                '.bam2nuc.txt')
                 ]
             else:
                 stats_files = [
@@ -317,14 +316,15 @@ class OneRun:
                                 '.astair.IDbias_indel_rate.pdf',
                                 '.astair.IDbias_mod_co-localize.pdf',
                                 '.astair.IDbias.stats',
-                                '.astair.Mbias.stats',
-                                '.astair.Mbias.pdf',
                                 '.samtools.stats.txt',
                                 '.samtools.flagstats.txt',
                                 '.methydackel_mbias_OT.svg',
                                 '.methydackel_mbias_OB.svg')]
                 # well, it's because bam2nuc would recognize the bam file
                 # from other aligners as single-end and throw an error.
+
+                # also, astair mbias files are excluded because it will takes years
+                # to run on an actual ~30x pair-end WGBS sample.
 
         else:
             stats_files = []
@@ -401,8 +401,8 @@ def read_sample_sheet(csv_path: Path) -> pd.DataFrame:
     return df
 
 
-def generate_file_ls(tsv_path: Path) -> List[str]:
-    df = read_sample_sheet(tsv_path)
+def generate_file_ls(csv_path: Path) -> List[str]:
+    df = read_sample_sheet(csv_path)
 
     all_files = []
 
@@ -420,8 +420,8 @@ def generate_file_ls(tsv_path: Path) -> List[str]:
     return all_files
 
 
-def generate_tool_ls(tsv_path: Path) -> Dict[str, List[str]]:
-    df = read_sample_sheet(tsv_path)
+def generate_tool_ls(csv_path: Path) -> Dict[str, List[str]]:
+    df = read_sample_sheet(csv_path)
     tool_dict = {
         'TRIMMER': [i for i in df['TRIMMER'].unique() if i],
         'QC_REPORTER': [i for i in df['QC_REPORTER'].unique() if i],
@@ -429,7 +429,7 @@ def generate_tool_ls(tsv_path: Path) -> Dict[str, List[str]]:
         'DEDUPER': [i for i in df['DEDUPER'].unique() if i],
         'COUNTER': [i for i in df['COUNTER'].unique() if i],
         'RECALIBRATE': [i for i in df['RECALIBRATE'].unique() if i],
-        'STATS': [i for i in df['STATS'].unique() if i]}
+        'STATS': [True for i in df['STATS'].unique() if i]}
     return tool_dict
 
 
@@ -438,8 +438,13 @@ def hook_test():
 
 
 if __name__ == '__main__':
-    for i in sorted(generate_file_ls(Path('../test/example.tsv'))):
+    arg_parser: ArgumentParser = ArgumentParser()
+    arg_parser.add_argument('-i', '--input', type=str, required=True,
+                            help='csv file to investigate')
+    args: Namespace = arg_parser.parse_args()
+    for i in sorted(generate_file_ls(Path(args.input))):
         print(i)
     print('\ntool list:')
-    for k, v in generate_tool_ls(Path('../test/example.tsv')).items():
+
+    for k, v in generate_tool_ls(Path(args.input)).items():
         print(f'{k}: {v}')

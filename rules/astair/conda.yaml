@@ -6,7 +6,7 @@ dependencies:
     - python=3.7.12
     - pip
     - pip:
-        - ../../resources/astair
+      - git+https://bitbucket.org/zyf1997/astair.git
     - bwa>=0.7.18
     - bwameth>=0.2.7
     - samtools>=1.21

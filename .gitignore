@@ -182,3 +182,7 @@ cython_debug/
 
 # pyright
 pyrightConfig.json
+
+# dbsnp
+resources/dbsnp/common.dbsnp.vcf.gz
+resources/dbsnp/common.dbsnp.vcf.gz.tbi
