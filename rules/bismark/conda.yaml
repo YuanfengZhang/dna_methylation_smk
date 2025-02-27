@@ -3,9 +3,9 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - bismark>=0.24.2
-  - samtools>=1.21
-  - hisat2
-  - bowtie2
-  - minimap2
-  - perl-gdgraph
+  - bioconda::bismark>=0.24.2
+  - bioconda::samtools>=1.21
+  - bioconda::hisat2
+  - bioconda::bowtie2
+  - bioconda::minimap2
+  - bioconda::perl-gdgraph
