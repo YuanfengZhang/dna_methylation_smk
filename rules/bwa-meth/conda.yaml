@@ -3,8 +3,8 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - bwameth>=0.2.7
-  - bwa-mem2>=2.2.1
-  - toolshed
-  - samtools
-  - mbuffer
+  - bioconda::bwameth>=0.2.7
+  - bioconda::bwa-mem2>=2.2.1
+  - bioconda::toolshed
+  - bioconda::samtools
+  - bioconda::mbuffer

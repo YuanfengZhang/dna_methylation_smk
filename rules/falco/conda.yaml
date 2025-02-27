@@ -3,4 +3,4 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - falco>=1.2.5
+  - bioconda::falco>=1.2.5

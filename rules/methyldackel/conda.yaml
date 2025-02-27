@@ -3,4 +3,4 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - methyldackel>=0.6.1
+  - bioconda::methyldackel>=0.6.1
