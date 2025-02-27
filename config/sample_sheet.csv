@@ -1,5 +1,7 @@
 # bismark (aligner) 和 gatk (deduper) 不兼容
 # BS/EM 不能使用astair, 会报错
 FNAME,TRIMMER,QC_REPORTER,ALIGNER,DEDUPER,RECALIBRATE,COUNTER,STATS
-PS_HF_1_MX,trim-galore,falco,bwa-meme,samtools,False,astair,True
-BS_HF_1_MX,trim-galore,falco,bwa-meth,samtools,False,methyldackel,True
+PS_HF_1_MX,trim-galore,falco,bwa-meme,gatk,False,astair,True
+BS_HF_1_MX,trim-galore,falco,bwa-meth,gatk,False,methyldackel,True
+BS_HF_1_MX,trim-galore,falco,bismark-bowtie2,gatk,False,bismark,True
+BS_HF_1_MX,trim-galore,falco,bismark-bowtie2,gatk,True,bismark,True

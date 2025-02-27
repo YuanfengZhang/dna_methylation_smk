@@ -241,7 +241,7 @@ class OneRun:
                                available_tools=COUNTER,
                                tool_name='counter'):
             if self.recalibrate:
-                pattern = 'bqsr'
+                pattern = '.bqsr'
             else:
                 pattern = ''
 
@@ -428,8 +428,8 @@ def generate_tool_ls(csv_path: Path) -> Dict[str, List[str]]:
         'ALIGNER': [i for i in df['ALIGNER'].unique() if i],
         'DEDUPER': [i for i in df['DEDUPER'].unique() if i],
         'COUNTER': [i for i in df['COUNTER'].unique() if i],
-        'RECALIBRATE': [i for i in df['RECALIBRATE'].unique() if i],
-        'STATS': [True for i in df['STATS'].unique() if i]}
+        'RECALIBRATE': df['RECALIBRATE'].unique().tolist(),
+        'STATS': df['STATS'].unique().tolist()}
     return tool_dict
 
 

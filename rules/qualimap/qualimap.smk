@@ -17,14 +17,14 @@ rule qualimap:
     shell:
         """
         cd result/{wildcards.fname}/{wildcards.trimmer}/{wildcards.aligner}/{wildcards.deduper}
-        qualimap bamqc \
-            -bam {wildcards.fname}.bam \
-            -outdir . \
-            -outfile {wildcards.fname}.qualimap.pdf \
-            -outformat PDF:HTML \
-            -nt {threads} {params.extra_params}
         if [ -d "qualimap" ]; then
             rm -rf qualimap
         fi
-        mv {wildcards.fname}_stats qualimap
+
+        qualimap bamqc \
+            -bam {wildcards.fname}.bam \
+            -outdir qualimap \
+            -outfile {wildcards.fname}.qualimap.pdf \
+            -outformat PDF:HTML \
+            -nt {threads} {params.extra_params}
         """
