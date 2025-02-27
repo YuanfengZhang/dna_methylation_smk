@@ -17,14 +17,17 @@ rule qualimap_bqsr:
     shell:
         """
         cd result/{wildcards.fname}/{wildcards.trimmer}/{wildcards.aligner}/{wildcards.deduper}
-        qualimap bamqc \
-            -bam {wildcards.fname}.bam \
-            -outdir . \
-            -outfile {wildcards.fname}.qualimap.pdf \
-            -outformat PDF:HTML \
-            -nt {threads} {params.extra_params}
         if [ -d "qualimap_bqsr" ]; then
             rm -rf qualimap_bqsr
         fi
-        mv {wildcards.fname}{params.pattern}.bqsr_stats qualimap_bqsr
+        qualimap bamqc \
+            -bam {wildcards.fname}.bam \
+            -outdir qualimap_bqsr \
+            -outfile {wildcards.fname}.qualimap.pdf \
+            -outformat PDF:HTML \
+            -nt {threads} {params.extra_params}
+        cd qualimap_bqsr
+        mv \
+            {wildcards.fname}.qualimap.pdf \
+            {wildcards.fname}.bqsr.qualimap.pdf
         """

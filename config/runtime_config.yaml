@@ -101,9 +101,9 @@ biscuit:
 
 bismark:
   align_bowtie2:
-    extra_params:
+    extra_params: --strandID
   align_hisat2:
-    extra_params:
+    extra_params: --strandID
   exactor:
     extra_params:
   coverage2cytosine:
