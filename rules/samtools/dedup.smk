@@ -21,15 +21,12 @@ rule samtools_dedup:
             -@ {threads} -n \
             -m 1G {input} |\
         samtools fixmate \
-            -cmM -@ {threads} \
-            {params.fixmate_params} \
+            -cmM -@ {threads} {params.fixmate_params} \
             - - |\
         samtools sort \
             -@ {threads} -m 1G |\
         samtools markdup \
-            -@ {threads} \
-            -f {output.stats} \
-            {params.mkdup_params} \
+            -@ {threads} -f {output.stats} {params.mkdup_params} \
             - {output.bam}
         samtools index -@ {threads} {output.bam} || echo "suppress non-zero exit"
         """

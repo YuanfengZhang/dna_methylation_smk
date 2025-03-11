@@ -188,3 +188,4 @@ resources/dbsnp/common.dbsnp.vcf.gz
 resources/dbsnp/common.dbsnp.vcf.gz.tbi
 
 .swp
+cspell.json

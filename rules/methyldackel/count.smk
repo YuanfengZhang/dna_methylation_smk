@@ -8,9 +8,10 @@ rule methyldackel_count:
          "methyldackel/{fname}{bqsr}bedgraph")
     params:
         ref          = lambda wildcards: config["ref"]["bwa-mem"][wildcards.fname.split('_')[1]],
+        pattern      = lambda wildcards: "" if wildcards.bqsr == "." else ".bqsr",
+        mode         = lambda wildcards: "-mCtoT" if wildcards.fname.split('_')[0] == "PS" else "",
         extra_params = (config["methyldackel"]["count"]["extra_params"]
-                        if config["methyldackel"]["count"]["extra_params"] else ""),
-        pattern      = lambda wildcards: "" if wildcards.bqsr == "." else ".bqsr"
+                        if config["methyldackel"]["count"]["extra_params"] else "")
     threads: 8
     conda:
         "conda.yaml"
@@ -20,7 +21,7 @@ rule methyldackel_count:
         MethylDackel extract \
             {params.ref} {wildcards.fname}{params.pattern}.bam \
             -o methyldackel/{wildcards.fname}{params.pattern} \
-            -@ {threads} {params.extra_params}
+            -@ {threads} {params.mode} {params.extra_params}
         mv \
             methyldackel/{wildcards.fname}{params.pattern}_CpG.bedGraph \
             methyldackel/{wildcards.fname}{params.pattern}.bedgraph
@@ -48,7 +49,9 @@ rule methyldackel_merge_context:
         MethylDackel mergeContext \
             {params.ref} {wildcards.fname}{params.pattern}.bedgraph \
             -o {wildcards.fname}{params.pattern}.merged.bedgraph {params.extra_params}
+        
+        sed -i '1d' *.bedgraph
 
-        pigz --best {wildcards.fname}{params.pattern}.bedgraph
-        pigz --best {wildcards.fname}{params.pattern}.merged.bedgraph
+        pigz --best -p 8 {wildcards.fname}{params.pattern}.bedgraph
+        pigz --best -p 8 {wildcards.fname}{params.pattern}.merged.bedgraph
         """

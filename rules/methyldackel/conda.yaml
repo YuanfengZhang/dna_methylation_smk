@@ -4,3 +4,5 @@ channels:
   - defaults
 dependencies:
   - bioconda::methyldackel>=0.6.1
+  - conda-forge::pigz
+  - conda-forge::sed

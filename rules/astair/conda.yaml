@@ -11,3 +11,4 @@ dependencies:
     - bioconda::bwameth>=0.2.7
     - bioconda::samtools>=1.21
     - conda-forge::matplotlib
+    - conda-forge::pigz
