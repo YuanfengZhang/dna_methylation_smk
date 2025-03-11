@@ -295,12 +295,7 @@ class OneRun:
                     f'result/{self.fname}/{self.trimmer}/'
                     f'{self.aligner}/{self.deduper}/'
                     f'{self.fname}{pattern}{ext}'
-                    for ext in ('.astair.IDbias_abundance_10bp_mod_site.pdf',
-                                '.astair.IDbias_abundance.pdf',
-                                '.astair.IDbias_indel_rate.pdf',
-                                '.astair.IDbias_mod_co-localize.pdf',
-                                '.astair.IDbias.stats',
-                                '.samtools.stats.txt',
+                    for ext in ('.samtools.stats.txt',
                                 '.samtools.flagstats.txt',
                                 '.methydackel_mbias_OT.svg',
                                 '.methydackel_mbias_OB.svg'
@@ -311,20 +306,22 @@ class OneRun:
                     f'result/{self.fname}/{self.trimmer}/'
                     f'{self.aligner}/{self.deduper}/'
                     f'{self.fname}{pattern}{ext}'
-                    for ext in ('.astair.IDbias_abundance_10bp_mod_site.pdf',
-                                '.astair.IDbias_abundance.pdf',
-                                '.astair.IDbias_indel_rate.pdf',
-                                '.astair.IDbias_mod_co-localize.pdf',
-                                '.astair.IDbias.stats',
-                                '.samtools.stats.txt',
+                    for ext in ('.samtools.stats.txt',
                                 '.samtools.flagstats.txt',
                                 '.methydackel_mbias_OT.svg',
                                 '.methydackel_mbias_OB.svg')]
                 # well, it's because bam2nuc would recognize the bam file
                 # from other aligners as single-end and throw an error.
 
-                # also, astair mbias files are excluded because it will takes years
+                # also, astair mbias and IDbias files are excluded because it will takes years
                 # to run on an actual ~30x pair-end WGBS sample.
+                # '.astair.IDbias_abundance_10bp_mod_site.pdf',
+                # '.astair.IDbias_abundance.pdf',
+                # '.astair.IDbias_indel_rate.pdf',
+                # '.astair.IDbias_mod_co-localize.pdf',
+                # '.astair.IDbias.stats',
+                # '.astair.Mbias.stats',
+                # '.astair.Mbias.pdf'
 
         else:
             stats_files = []

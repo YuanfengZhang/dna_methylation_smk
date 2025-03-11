@@ -189,3 +189,4 @@ resources/dbsnp/common.dbsnp.vcf.gz.tbi
 
 .swp
 cspell.json
+resources/hpg_methyl/hpg-methyl
