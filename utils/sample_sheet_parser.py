@@ -272,6 +272,11 @@ class OneRun:
                         f'methyldackel/{self.fname}{pattern}{ext}'
                         for ext in ('.bedgraph.gz',
                                     '.merged.bedgraph.gz')]
+                case 'biscuit':
+                    methylation_files = [
+                        f'result/{self.fname}/{self.trimmer}/'
+                        f'{self.aligner}/{self.deduper}/'
+                        f'biscuit/{self.fname}{pattern}.epibed.gz']
                 case _:
                     methylation_files = []
 
@@ -299,8 +304,16 @@ class OneRun:
                                 '.samtools.flagstats.txt',
                                 '.methydackel_mbias_OT.svg',
                                 '.methydackel_mbias_OB.svg'
-                                '.bam2nuc.txt')
-                ]
+                                '.bam2nuc.txt',
+                                '.biscuit.CpGRetentionByReadPos.txt',
+                                '.biscuit.CpHRetentionByReadPos.txt',
+                                '.biscuit.dup_report.txt',
+                                '.biscuit.isize_table.txt',
+                                '.biscuit.mapq_table.txt',
+                                '.biscuit.strand_table.txt',
+                                '.biscuit.totalReadConversionRate.txt',
+                                '.biscuit.bsstrand.txt',
+                                '.biscuit.cinread.txt')]
             else:
                 stats_files = [
                     f'result/{self.fname}/{self.trimmer}/'
@@ -309,7 +322,16 @@ class OneRun:
                     for ext in ('.samtools.stats.txt',
                                 '.samtools.flagstats.txt',
                                 '.methydackel_mbias_OT.svg',
-                                '.methydackel_mbias_OB.svg')]
+                                '.methydackel_mbias_OB.svg',
+                                '.biscuit.CpGRetentionByReadPos.txt',
+                                '.biscuit.CpHRetentionByReadPos.txt',
+                                '.biscuit.dup_report.txt',
+                                '.biscuit.isize_table.txt',
+                                '.biscuit.mapq_table.txt',
+                                '.biscuit.strand_table.txt',
+                                '.biscuit.totalReadConversionRate.txt',
+                                '.biscuit.bsstrand.txt',
+                                '.biscuit.cinread.txt')]
                 # well, it's because bam2nuc would recognize the bam file
                 # from other aligners as single-end and throw an error.
 

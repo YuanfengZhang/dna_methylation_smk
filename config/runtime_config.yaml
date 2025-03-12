@@ -74,6 +74,8 @@ ref:
     T2:
     T3:
     T4:
+  biscuit:
+    HF: /hot_warm_data/ref/GRCh38/DNA/biscuit/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa
 
 
 astair:
@@ -94,9 +96,15 @@ astair:
 biscuit:
   align:
     extra_params:
-  count:
+  pileup:
     extra_params:
-  stats:
+  vcf2bed:
+    extra_params:
+  qc:
+    extra_params:
+  bsstrand:
+    extra_params:
+  cinread:
     extra_params:
 
 bismark:
