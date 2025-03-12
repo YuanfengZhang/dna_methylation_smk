@@ -1,5 +1,9 @@
 channels:
     - bioconda
+    - conda-forge
 dependencies:
     - bioconda::biscuit>=1.6.0.20241216
+    - bioconda::mbuffer
     - bioconda::samtools>=1.21
+    - bioconda::bedtools>=2.29.1
+    - conda-forge::pigz
