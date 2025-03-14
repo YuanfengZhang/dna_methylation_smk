@@ -9,7 +9,7 @@ ref:
     M8:
     BC:
     BL:
-    HF: /hot_warm_data/ref/GRCh38/DNA/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa
+    HF: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/samtools/BL.fa
     T1:
     T2:
     T3:
@@ -21,7 +21,7 @@ ref:
     M8:
     BC:
     BL:
-    HF: /hot_warm_data/ref/GRCh38/DNA/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa
+    HF: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/bwa-mem/BL.fa
     T1:
     T2:
     T3:
@@ -33,7 +33,7 @@ ref:
     M8:
     BC:
     BL:
-    HF: /hot_warm_data/ref/GRCh38/DNA/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa
+    HF: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/bwa-meme/BL.fa
     T1:
     T2:
     T3:
@@ -45,7 +45,7 @@ ref:
     M8:
     BC:
     BL:
-    HF: /hot_warm_data/ref/GRCh38/DNA/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa
+    HF: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/bwa-meth/BL.fa
     T1:
     T2:
     T3:
@@ -57,7 +57,7 @@ ref:
     M8:
     BC:
     BL:
-    HF: /hot_warm_data/ref/GRCh38/DNA
+    HF: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/bismark-bowtie2/BL.fa
     T1:
     T2:
     T3:
@@ -69,15 +69,17 @@ ref:
     M8:
     BC:
     BL:
-    HF: /hot_warm_data/ref/GRCh38/DNA
+    HF: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/bismark-hisat2/BL.fa
     T1:
     T2:
     T3:
     T4:
   biscuit:
-    HF: /hot_warm_data/ref/GRCh38/DNA/biscuit/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa
+    HF: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/biscuit/BL.fa
   bsgenova:
-    HF: /hot_warm_data/ref/GRCh38/DNA/bsgenova/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa
+    HF: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/samtools/BL.fa
+  FAME:
+    HF: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/FAME/BL.fa
 
 astair:
   method:

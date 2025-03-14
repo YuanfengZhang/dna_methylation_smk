@@ -21,7 +21,8 @@ RUN printf 'CREATE_MAIL_SPOOL=no' >> /etc/default/useradd \
     && mkdir -p /home/snake \
     && groupadd snake \
     && useradd snake -g snake -d /home/snake \
-    && chown snake:snake /home/snake
+    && chown snake:snake /home/snake \
+    && usermod -aG sudo snake
 
 USER snake
 
