@@ -76,7 +76,8 @@ ref:
     T4:
   biscuit:
     HF: /hot_warm_data/ref/GRCh38/DNA/biscuit/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa
-
+  bsgenova:
+    HF: /hot_warm_data/ref/GRCh38/DNA/bsgenova/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa
 
 astair:
   method:
@@ -105,6 +106,10 @@ biscuit:
   bsstrand:
     extra_params:
   cinread:
+    extra_params:
+
+bsgenova:
+  count:
     extra_params:
 
 bismark:

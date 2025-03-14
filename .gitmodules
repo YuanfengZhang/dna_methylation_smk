@@ -1,3 +1,6 @@
 [submodule "resources/rastair"]
 	path = resources/rastair
 	url = https://bitbucket.org/bsblabludwig/rastair/
+[submodule "resources/bsgenova"]
+	path = resources/bsgenova
+	url = https://github.com/YuanfengZhang/bsgenova.git

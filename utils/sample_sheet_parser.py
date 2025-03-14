@@ -49,7 +49,8 @@ AVAILABLE_ALIGNERS: Set[str] = {'bismark-bowtie2', 'bismark_-hisat2',
 AVAILABLE_DEDUPERS: Set[str] = {'bismark', 'gatk', 'samtools', 'sambamba'}
 RECALIBRATE: Set[bool] = {True, False}
 COUNTER: Set[str] = {'bismark', 'biscuit', 'methyldackel',
-                     'dnmtools', 'bs_seeker2', 'astair'}
+                     'dnmtools', 'bs_seeker2', 'astair',
+                     'bsgenova'}
 STATS: Set[bool] = {True, False}
 
 
@@ -277,6 +278,14 @@ class OneRun:
                         f'result/{self.fname}/{self.trimmer}/'
                         f'{self.aligner}/{self.deduper}/'
                         f'biscuit/{self.fname}{pattern}.epibed.gz']
+                case 'bsgenova':
+                    methylation_files = [
+                        f'result/{self.fname}/{self.trimmer}/'
+                        f'{self.aligner}/{self.deduper}/'
+                        f'bsgenova/{self.fname}{pattern}{ext}'
+                        for ext in ('.bsgenova.ATCGmap.gz',
+                                    '.bsgenova.CGmap.gz',
+                                    '.bsgenova.bed.gz')]
                 case _:
                     methylation_files = []
 
