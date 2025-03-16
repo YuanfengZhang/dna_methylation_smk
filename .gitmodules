@@ -4,3 +4,6 @@
 [submodule "resources/bsgenova"]
 	path = resources/bsgenova
 	url = https://github.com/YuanfengZhang/bsgenova.git
+[submodule "resources/FAME"]
+	path = resources/FAME
+	url = git@github.com:YuanfengZhang/FAME.git

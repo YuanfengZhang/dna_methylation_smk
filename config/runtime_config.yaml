@@ -137,6 +137,9 @@ bwa-meth:
 falco:
   extra_params:
 
+fame:
+  extra_params: --gzip_reads
+
 fastp:
   extra_params:
 
