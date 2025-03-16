@@ -50,7 +50,7 @@ AVAILABLE_DEDUPERS: Set[str] = {'bismark', 'gatk', 'samtools', 'sambamba'}
 RECALIBRATE: Set[bool] = {True, False}
 COUNTER: Set[str] = {'bismark', 'biscuit', 'methyldackel',
                      'dnmtools', 'bs_seeker2', 'astair',
-                     'bsgenova'}
+                     'bsgenova', 'fame'}
 STATS: Set[bool] = {True, False}
 
 
@@ -286,6 +286,10 @@ class OneRun:
                         for ext in ('.bsgenova.ATCGmap.gz',
                                     '.bsgenova.CGmap.gz',
                                     '.bsgenova.bed.gz')]
+                case 'fame':
+                    methylation_files = [
+                        f'result/{self.fname}/{self.trimmer}/'
+                        f'fame/{self.fname}.fame.bedgraph.gz']
                 case _:
                     methylation_files = []
 
@@ -394,10 +398,11 @@ class OneRun:
 
 
 def clear_row(row: pd.Series) -> pd.Series:
-    for col_idx in range(len(row)):
-        if pd.isna(row.iloc[col_idx]):
-            row.iloc[col_idx + 1:] = np.nan
-            break
+    if row['COUNTER'] != 'fame':
+        for col_idx in range(len(row)):
+            if pd.isna(row.iloc[col_idx]):
+                row.iloc[col_idx + 1:] = np.nan
+                break
     return row
 
 
