@@ -1,4 +1,6 @@
 configfile: "config/runtime_config.yaml"
+# to build the index:
+# resources/FAME/FAME --genome ref.fa --store_index ref.fa.fame
 
 rule fq2tsv:
     input:
