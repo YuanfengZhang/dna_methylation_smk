@@ -11,7 +11,7 @@ rule bsgenova_count:
                  "bsgenova.bed.gz")
     params:
         ref          = lambda wildcards: config["ref"]["bsgenova"][wildcards.fname.split('_')[1]],
-        count_params = (config["bsgenova"]["count"]["extra_params"]
+        extra_params = (config["bsgenova"]["count"]["extra_params"]
                         if config["bsgenova"]["count"]["extra_params"] else ""),
         pattern      = lambda wildcards: "" if wildcards.bqsr == "." else ".bqsr"
     threads: 8
@@ -19,13 +19,12 @@ rule bsgenova_count:
         "conda.yaml"
     shell:
         """
-        cd result/{wildcards.fname}/{wildcards.trimmer}/{wildcards.aligner}/{wildcards.deduper}
-        python ../../../../../resources/bsgenova/bsextractor.py \
+        bsgenova_dir="result/{wildcards.fname}/{wildcards.trimmer}/{wildcards.aligner}/{wildcards.deduper}"
+        python resources/bsgenova/bsextractor.py \
             -b {wildcards.fname}{params.pattern}.bam \
             -g {params.ref} \
-            --output-atcgmap bsgenova/{wildcards.fname}{params.pattern}.bsgenova.ATCGmap.gz \
-            --output-cgmap bsgenova/{wildcards.fname}{params.pattern}.bsgenova.CGmap.gz \
-            --output-bed bsgenova/{wildcards.fname}{params.pattern}.bsgenova.bed.gz \
-            --threads {threads} {params.count_params} 
+            --output-atcgmap ${{bsgenova_dir}}/{wildcards.fname}{params.pattern}.bsgenova.ATCGmap.gz \
+            --output-cgmap ${{bsgenova_dir}}/{wildcards.fname}{params.pattern}.bsgenova.CGmap.gz \
+            --output-bed ${{bsgenova_dir}}/{wildcards.fname}{params.pattern}.bsgenova.bed.gz \
+            --threads {threads} {params.extra_params} 
         """
-
