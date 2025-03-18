@@ -9,7 +9,7 @@ rule astair_count:
                  "astair.mods.gz",
                  "astair.stats")
     params:
-        ref          = lambda wildcards: config["ref"]["bwa-mem"][wildcards.fname.split('_')[1]],
+        ref          = lambda wildcards: config["ref"]["astair"][wildcards.fname.split('_')[1]],
         method       = lambda wildcards: config["astair"]["method"][wildcards.fname.split('_')[0]],
         extra_params = (config["astair"]["count"]["extra_params"]
                         if config["astair"]["count"]["extra_params"] else ""),

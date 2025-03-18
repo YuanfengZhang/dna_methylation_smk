@@ -1,0 +1,13 @@
+channels:
+  - bioconda
+  - conda-forge
+  - r
+  - defaults
+
+dependencies:
+  - bioconda::bowtie2
+  - bioconda::hisat2
+  - bioconda::samtools
+  - conda-forge::r-base>=4.4.3
+  - conda-forge::perl
+  - conda-forge::make

@@ -80,6 +80,8 @@ ref:
     HF: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/samtools/BL.fa
   FAME:
     HF: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/FAME/BL.fa
+  msuite2:
+    HF: /home/zhangyuanfeng/software/Msuite2_edited/index/BL
 
 astair:
   method:
@@ -162,6 +164,9 @@ methyldackel:
     extra_params:
   mbias:
     extra_params:
+
+msuite2:
+  extra_params:
 
 qualimap:
   extra_params: --java-mem-size=80G

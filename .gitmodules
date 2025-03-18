@@ -7,3 +7,6 @@
 [submodule "resources/FAME"]
 	path = resources/FAME
 	url = git@github.com:YuanfengZhang/FAME.git
+[submodule "resources/Msuite2"]
+	path = resources/Msuite2
+	url = git@github.com:YuanfengZhang/Msuite2.git

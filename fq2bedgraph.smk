@@ -20,6 +20,8 @@ if tool_dict["ALIGNER"]:
     for tool in tool_dict["ALIGNER"]:
         if 'bismark' in tool:
             include: f"rules/bismark/align.smk"
+        elif 'msuite2' in tool:
+            include: f"rules/msuite2/count.smk"
         else:
             include: f"rules/{tool}/align.smk"
 
