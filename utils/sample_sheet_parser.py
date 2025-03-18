@@ -43,14 +43,16 @@ REQUIRED_COLS: List[str] = ['FNAME', 'TRIMMER', 'QC_REPORTER',
 # ! only lower case names and hyphen-minus (-) are allowed.
 AVAILABLE_TRIMMERS: Set[str] = {'fastp', 'trim-galore'}
 AVAILABLE_QC_REPORTERS: Set[str] = {'fastqc', 'falco'}  # no fastp here
-AVAILABLE_ALIGNERS: Set[str] = {'bismark-bowtie2', 'bismark_-hisat2',
+AVAILABLE_ALIGNERS: Set[str] = {'bismark-bowtie2', 'bismark-hisat2',
+                                'msuite2-bowtie2', 'msuite2-hisat2',
                                 'bwa-meth', 'bwa-meme', 'dnmtools',
                                 'biscuit', 'bsmapz'}
 AVAILABLE_DEDUPERS: Set[str] = {'bismark', 'gatk', 'samtools', 'sambamba'}
 RECALIBRATE: Set[bool] = {True, False}
 COUNTER: Set[str] = {'bismark', 'biscuit', 'methyldackel',
                      'dnmtools', 'bs_seeker2', 'astair',
-                     'bsgenova', 'fame'}
+                     'bsgenova', 'fame',
+                     'msuite2-bowtie2', 'msuite2-hisat2'}
 STATS: Set[bool] = {True, False}
 
 
@@ -150,6 +152,14 @@ class OneRun:
                 (f'result/{self.fname}/{self.trimmer}/'
                  f'{self.aligner}/{self.fname}.bam')
             ]
+            if self.aligner in ('msuite2-bowtie2',
+                                'msuite2-hisat2'):
+                aligned_files += [
+                    f'result/{self.fname}/{self.trimmer}/'
+                    f'{self.aligner}/{ext}'
+                    for ext in (f'{self.fname}.msuite2.bedgraph.gz',
+                                'Msuite2.report/index.html')
+                ]
         else:
             aligned_files = []
 
@@ -398,7 +408,7 @@ class OneRun:
 
 
 def clear_row(row: pd.Series) -> pd.Series:
-    if row['COUNTER'] != 'fame':
+    if not row['COUNTER'] in ('fame'):
         for col_idx in range(len(row)):
             if pd.isna(row.iloc[col_idx]):
                 row.iloc[col_idx + 1:] = np.nan
