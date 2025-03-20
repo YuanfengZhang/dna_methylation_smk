@@ -1,6 +1,7 @@
 configfile: "config/runtime_config.yaml"
 
-from utils.sample_sheet_parser import generate_file_ls, generate_tool_ls
+from utils.sample_sheet_parser import (fq2bedgraph_file_ls,
+                                       fq2bedgraph_tool_ls)
 
 rule all:
     input:

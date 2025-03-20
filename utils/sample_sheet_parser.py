@@ -444,7 +444,7 @@ def read_sample_sheet(csv_path: Path) -> pd.DataFrame:
     return df
 
 
-def generate_file_ls(csv_path: Path) -> List[str]:
+def fq2bedgraph_file_ls(csv_path: Path) -> List[str]:
     df = read_sample_sheet(csv_path)
 
     all_files = []
@@ -463,7 +463,7 @@ def generate_file_ls(csv_path: Path) -> List[str]:
     return all_files
 
 
-def generate_tool_ls(csv_path: Path) -> Dict[str, List[str]]:
+def fq2bedgraph_tool_ls(csv_path: Path) -> Dict[str, List[str]]:
     df = read_sample_sheet(csv_path)
     tool_dict = {
         'TRIMMER': [i for i in df['TRIMMER'].unique() if i],
@@ -485,9 +485,9 @@ if __name__ == '__main__':
     arg_parser.add_argument('-i', '--input', type=str, required=True,
                             help='csv file to investigate')
     args: Namespace = arg_parser.parse_args()
-    for i in sorted(generate_file_ls(Path(args.input))):
+    for i in sorted(fq2bedgraph_file_ls(Path(args.input))):
         print(i)
     print('\ntool list:')
 
-    for k, v in generate_tool_ls(Path(args.input)).items():
+    for k, v in fq2bedgraph_tool_ls(Path(args.input)).items():
         print(f'{k}: {v}')

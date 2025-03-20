@@ -2,7 +2,9 @@
 #   docker built \
 #        -t ${pkg}:{ver} \
 #        -f Rpkgs.Dockerfile \
-#        --build-arg PACKAGE_NAME=${pkg} .
+#        --build-arg CORES=8 \
+#        --build-arg PACKAGE_NAME=${pkg} \
+#        .
 FROM ubuntu:24.04
 
 ENV DEBIAN_FORNTED=noninteractive
@@ -39,7 +41,7 @@ RUN cd /opt/htslib/ && \
     make -j "${CORES}" && \
     make install
 
-# ! If R=4.4.3 is needed, uncomment line 43 to 50 and comment line 52 to 60.
+# ! If R=4.4.3 is needed, uncomment line 45 to 52 and comment line 54 to 62.
 # RUN gpg --keyserver keyserver.ubuntu.com --recv-key E298A3A825C0D65DFD57CBB651716619E084DAB9
 # RUN gpg -a --export E298A3A825C0D65DFD57CBB651716619E084DAB9 |\
 #     apt-key add -
