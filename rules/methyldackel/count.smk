@@ -2,14 +2,12 @@ configfile: "config/runtime_config.yaml"
 
 rule methyldackel_count:
     input:
-        "result/{fname}/{trimmer}/{aligner}/{deduper}/{fname}{bqsr}bam"
+        "result/{BaseName}/{CountParentDir}/{BaseName}.bam"
     output:
-        ("result/{fname}/{trimmer}/{aligner}/{deduper}/"
-         "methyldackel/{fname}{bqsr}bedgraph")
+        "result/{BaseName}/{CountParentDir}/methyldackel/{BaseName}.bedgraph"
     params:
-        ref          = lambda wildcards: config["ref"]["bwa-mem"][wildcards.fname.split('_')[1]],
-        pattern      = lambda wildcards: "" if wildcards.bqsr == "." else ".bqsr",
-        mode         = lambda wildcards: "-mCtoT" if wildcards.fname.split('_')[0] == "PS" else "",
+        ref          = lambda wildcards: config["ref"]["bwa-mem"][wildcards.BaseName.split('_')[1]],
+        mode         = lambda wildcards: "-mCtoT" if wildcards.BaseName.split('_')[0] == "PS" else "",
         extra_params = (config["methyldackel"]["count"]["extra_params"]
                         if config["methyldackel"]["count"]["extra_params"] else "")
     threads: 8
@@ -17,41 +15,38 @@ rule methyldackel_count:
         "conda.yaml"
     shell:
         """
-        cd result/{wildcards.fname}/{wildcards.trimmer}/{wildcards.aligner}/{wildcards.deduper}
+        cd result/{wildcards.BaseName}/{wildcards.CountParentDir}
         MethylDackel extract \
-            {params.ref} {wildcards.fname}{params.pattern}.bam \
-            -o methyldackel/{wildcards.fname}{params.pattern} \
+            {params.ref} {wildcards.BaseName}.bam \
+            -o methyldackel/{wildcards.BaseName} \
             -@ {threads} {params.mode} {params.extra_params}
         mv \
-            methyldackel/{wildcards.fname}{params.pattern}_CpG.bedGraph \
-            methyldackel/{wildcards.fname}{params.pattern}.bedgraph
+            methyldackel/{wildcards.BaseName}_CpG.bedGraph \
+            methyldackel/{wildcards.BaseName}.bedgraph
         """
 
 rule methyldackel_merge_context:
     input:
-        ("result/{fname}/{trimmer}/{aligner}/{deduper}/methyldackel/{fname}{bqsr}bedgraph")
+        ("result/{BaseName}/{CountParentDir}/methyldackel/{BaseName}.bedgraph")
     output:
-        ("result/{fname}/{trimmer}/{aligner}/{deduper}/"
-         "methyldackel/{fname}{bqsr}bedgraph.gz"),
-        ("result/{fname}/{trimmer}/{aligner}/{deduper}/"
-         "methyldackel/{fname}{bqsr}merged.bedgraph.gz")
+        "result/{BaseName}/{CountParentDir}/methyldackel/{BaseName}.bedgraph.gz",
+        "result/{BaseName}/{CountParentDir}/methyldackel/{BaseName}.merged.bedgraph.gz"
     params:
-        ref          = lambda wildcards: config["ref"]["bwa-mem"][wildcards.fname.split('_')[1]],
+        ref          = lambda wildcards: config["ref"]["bwa-mem"][wildcards.BaseName.split('_')[1]],
         extra_params = (config["methyldackel"]["count"]["extra_params"]
-                        if config["methyldackel"]["count"]["extra_params"] else ""),
-        pattern      = lambda wildcards: "" if wildcards.bqsr == "." else ".bqsr"
+                        if config["methyldackel"]["count"]["extra_params"] else "")
     threads: 1
     conda:
         "conda.yaml"
     shell:
         """
-        cd result/{wildcards.fname}/{wildcards.trimmer}/{wildcards.aligner}/{wildcards.deduper}/methyldackel
+        cd result/{wildcards.BaseName}/{wildcards.CountParentDir}/methyldackel
         MethylDackel mergeContext \
-            {params.ref} {wildcards.fname}{params.pattern}.bedgraph \
-            -o {wildcards.fname}{params.pattern}.merged.bedgraph {params.extra_params}
+            {params.ref} {wildcards.BaseName}.bedgraph \
+            -o {wildcards.BaseName}.merged.bedgraph {params.extra_params}
         
         sed -i '1d' *.bedgraph
 
-        pigz --best -p 8 {wildcards.fname}{params.pattern}.bedgraph
-        pigz --best -p 8 {wildcards.fname}{params.pattern}.merged.bedgraph
+        pigz --best -p 8 {wildcards.BaseName}.bedgraph
+        pigz --best -p 8 {wildcards.BaseName}.merged.bedgraph
         """

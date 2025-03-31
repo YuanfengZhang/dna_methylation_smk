@@ -2,15 +2,15 @@ configfile: "config/runtime_config.yaml"
 
 rule fastp:
     input:
-        r1           = (f"{config['input_dir']}"
-                        "/{fname}.R1.fq.gz"),
-        r2           = (f"{config['input_dir']}"
-                        "/{fname}.R2.fq.gz")
+        r1           = (f"{config['input_dir']}/"
+                        "{BaseName}.R1.fq.gz"),
+        r2           = (f"{config['input_dir']}/"
+                        "{BaseName}.R2.fq.gz")
     output:
-        r1           = "result/{fname}/fastp/{fname}.R1.fq.gz",
-        r2           = "result/{fname}/fastp/{fname}.R2.fq.gz",
-        qc_html      = "result/{fname}/fastp/{fname}.fastp.html",
-        qc_json      = "result/{fname}/fastp/{fname}.fastp.json"
+        r1           = "result/{BaseName}/fastp/{BaseName}.R1.fq.gz",
+        r2           = "result/{BaseName}/fastp/{BaseName}.R2.fq.gz",
+        qc_html      = "result/{BaseName}/fastp/{BaseName}.fastp.html",
+        qc_json      = "result/{BaseName}/fastp/{BaseName}.fastp.json"
     params:
         extra_params = (config["fastp"]["extra_params"]
                         if config["fastp"]["extra_params"] else "")

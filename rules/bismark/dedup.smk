@@ -2,9 +2,9 @@ configfile: "config/runtime_config.yaml"
 
 rule bismark_dedup:
     input:
-        "result/{fname}/{trimmer}/{aligner}/{fname}.bam"
+        "result/{BaseName}/{DedupParentDir}/{BaseName}.bam"
     output:
-        multiext("result/{fname}/{trimmer}/{aligner}/bismark/{fname}",
+        multiext("result/{BaseName}/{DedupParentDir}/bismark/{BaseName}",
                  ".bam",
                  ".bam.bai")
     params:
@@ -15,27 +15,27 @@ rule bismark_dedup:
         "conda.yaml"
     shell:
         """
-        cd result/{wildcards.fname}/{wildcards.trimmer}/{wildcards.aligner}
+        cd result/{wildcards.BaseName}/{wildcards.DedupParentDir}
         samtools \
             sort -n \
             -@ {threads} \
-            -o bismark/{wildcards.fname}.sort_n_tmp.bam \
-            {wildcards.fname}.bam
+            -o bismark/{wildcards.BaseName}.sort_n_tmp.bam \
+            {wildcards.BaseName}.bam
         cd bismark
         deduplicate_bismark \
             --paired --bam \
-            --outfile {wildcards.fname} \
+            --outfile {wildcards.BaseName} \
             --output_dir . \
-            {wildcards.fname}.sort_n_tmp.bam \
+            {wildcards.BaseName}.sort_n_tmp.bam \
             {params.extra_params}
         
         samtools sort -@ {threads} \
             -O bam,level=9 \
-            -o {wildcards.fname}.bam \
-            {wildcards.fname}.deduplicated.bam
+            -o {wildcards.BaseName}.bam \
+            {wildcards.BaseName}.deduplicated.bam
 
-        samtools index -@ {threads} {wildcards.fname}.bam || echo "suppress non-zero exit"
+        samtools index -@ {threads} {wildcards.BaseName}.bam || echo "suppress non-zero exit"
 
-        rm {wildcards.fname}.sort_n_tmp.bam
-        rm {wildcards.fname}.deduplicated.bam
+        rm {wildcards.BaseName}.sort_n_tmp.bam
+        rm {wildcards.BaseName}.deduplicated.bam
         """

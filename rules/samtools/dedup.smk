@@ -2,11 +2,11 @@ configfile: "config/runtime_config.yaml"
 
 rule samtools_dedup:
     input:
-        "result/{fname}/{trimmer}/{aligner}/{fname}.bam"
+        "result/{BaseName}/{DedupParentDir}/{BaseName}.bam"
     output:
-        bam            = "result/{fname}/{trimmer}/{aligner}/samtools/{fname}.bam",
-        bai            = "result/{fname}/{trimmer}/{aligner}/samtools/{fname}.bam.bai",
-        stats          = "result/{fname}/{trimmer}/{aligner}/samtools/{fname}.dup.stats"
+        bam            = "result/{BaseName}/{DedupParentDir}/samtools/{BaseName}.bam",
+        bai            = "result/{BaseName}/{DedupParentDir}/samtools/{BaseName}.bam.bai",
+        stats          = "result/{BaseName}/{DedupParentDir}/samtools/{BaseName}.dup.stats"
     params:
         fixmate_params = (config["samtools"]["fixmate"]["extra_params"]
                           if config["samtools"]["fixmate"]["extra_params"] else ""),

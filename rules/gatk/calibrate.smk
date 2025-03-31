@@ -2,16 +2,16 @@ configfile: "config/runtime_config.yaml"
 
 rule gatk_bqsr:
     input:
-        "result/{fname}/{trimmer}/{aligner}/{dedup}/{fname}.bam"
+        "result/{BaseName}/{CalibrateParentDir}/{BaseName}.bam"
     output:
-        bam          = "result/{fname}/{trimmer}/{aligner}/{dedup}/{fname}.bqsr.bam",
-        bai          = "result/{fname}/{trimmer}/{aligner}/{dedup}/{fname}.bqsr.bam.bai",
-        before_table = "result/{fname}/{trimmer}/{aligner}/{dedup}/{fname}.before.table",
-        after_table  = "result/{fname}/{trimmer}/{aligner}/{dedup}/{fname}.after.table",
-        pdf          = "result/{fname}/{trimmer}/{aligner}/{dedup}/{fname}.AnalyzeCovariates.pdf"
+        bam          = "result/{BaseName}/{CalibrateParentDir}/gatk-cali/{BaseName}.bam",
+        bai          = "result/{BaseName}/{CalibrateParentDir}/gatk-cali/{BaseName}.bam.bai",
+        before_table = "result/{BaseName}/{CalibrateParentDir}/gatk-cali/{BaseName}.before.table",
+        after_table  = "result/{BaseName}/{CalibrateParentDir}/gatk-cali/{BaseName}.after.table",
+        pdf          = "result/{BaseName}/{CalibrateParentDir}/gatk-cali/{BaseName}.AnalyzeCovariates.pdf"
     params:
         snp_vcf      = config["gatk"]["cal_bqsr"]["snp_vcf"],
-        ref          = lambda wildcards: config["ref"]["bwa-mem"][wildcards.fname.split('_')[1]],
+        ref          = lambda wildcards: config["ref"]["bwa-mem"][wildcards.BaseName.split('_')[1]],
         bqsr_params  = (config["gatk"]["cal_bqsr"]["extra_params"]
                         if config["gatk"]["cal_bqsr"]["extra_params"] else ""),
         apply_params = (config["gatk"]["apply_bqsr"]["extra_params"]

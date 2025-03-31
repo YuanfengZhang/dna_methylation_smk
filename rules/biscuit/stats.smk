@@ -2,95 +2,91 @@ configfile: "config/runtime_config.yaml"
 
 rule biscuit_qc:
     input:
-        "result/{fname}/{trimmer}/{aligner}/{deduper}/{fname}{bqsr}bam"
+        "result/{BaseName}/{BamStatsParentDir}/{BaseName}.bam"
     output:
-        multiext("result/{fname}/{trimmer}/{aligner}/{deduper}/"
-                 "{fname}{bqsr}",
-                 "biscuit.CpGRetentionByReadPos.txt",
-                 "biscuit.CpHRetentionByReadPos.txt",
-                 "biscuit.dup_report.txt",
-                 "biscuit.isize_table.txt",
-                 "biscuit.mapq_table.txt",
-                 "biscuit.strand_table.txt",
-                 "biscuit.totalReadConversionRate.txt")
+        multiext("result/{BaseName}/{BamStatsParentDir}/"
+                 "{BaseName}",
+                 ".biscuit.CpGRetentionByReadPos.txt",
+                 ".biscuit.CpHRetentionByReadPos.txt",
+                 ".biscuit.dup_report.txt",
+                 ".biscuit.isize_table.txt",
+                 ".biscuit.mapq_table.txt",
+                 ".biscuit.strand_table.txt",
+                 ".biscuit.totalReadConversionRate.txt")
     params:
-        ref          = lambda wildcards: config["ref"]["biscuit"][wildcards.fname.split('_')[1]],
+        ref          = lambda wildcards: config["ref"]["biscuit"][wildcards.BaseName.split('_')[1]],
         qc_params    = (config["biscuit"]["qc"]["extra_params"]
-                        if config["biscuit"]["qc"]["extra_params"] else ""),
-        pattern      = lambda wildcards: "" if wildcards.bqsr == "." else ".bqsr"
+                        if config["biscuit"]["qc"]["extra_params"] else "")
     threads: 1
     conda:
         "conda.yaml"
     shell:
         """
-        cd result/{wildcards.fname}/{wildcards.trimmer}/{wildcards.aligner}/{wildcards.deduper}
+        cd result/{wildcards.BaseName}/{wildcards.BamStatsParentDir}
         biscuit qc \
             {params.ref} \
-            {wildcards.fname}{params.pattern}.bam \
-            {wildcards.fname}{params.pattern} {params.qc_params}
+            {wildcards.BaseName}.bam \
+            {wildcards.BaseName} {params.qc_params}
         
         mv \
-            {wildcards.fname}{params.pattern}_CpGRetentionByReadPos.txt\
-            {wildcards.fname}{params.pattern}.biscuit.CpGRetentionByReadPos.txt
+            {wildcards.BaseName}_CpGRetentionByReadPos.txt\
+            {wildcards.BaseName}.biscuit.CpGRetentionByReadPos.txt
         mv \
-            {wildcards.fname}{params.pattern}_CpHRetentionByReadPos.txt\
-            {wildcards.fname}{params.pattern}.biscuit.CpHRetentionByReadPos.txt
+            {wildcards.BaseName}_CpHRetentionByReadPos.txt\
+            {wildcards.BaseName}.biscuit.CpHRetentionByReadPos.txt
         mv \
-            {wildcards.fname}{params.pattern}_dup_report.txt\
-            {wildcards.fname}{params.pattern}.biscuit.dup_report.txt
+            {wildcards.BaseName}_dup_report.txt\
+            {wildcards.BaseName}.biscuit.dup_report.txt
         mv \
-            {wildcards.fname}{params.pattern}_isize_table.txt\
-            {wildcards.fname}{params.pattern}.biscuit.isize_table.txt
+            {wildcards.BaseName}_isize_table.txt\
+            {wildcards.BaseName}.biscuit.isize_table.txt
         mv \
-            {wildcards.fname}{params.pattern}_mapq_table.txt\
-            {wildcards.fname}{params.pattern}.biscuit.mapq_table.txt
+            {wildcards.BaseName}_mapq_table.txt\
+            {wildcards.BaseName}.biscuit.mapq_table.txt
         mv \
-            {wildcards.fname}{params.pattern}_strand_table.txt\
-            {wildcards.fname}{params.pattern}.biscuit.strand_table.txt
+            {wildcards.BaseName}_strand_table.txt\
+            {wildcards.BaseName}.biscuit.strand_table.txt
         mv \
-            {wildcards.fname}{params.pattern}_totalReadConversionRate.txt\
-            {wildcards.fname}{params.pattern}.biscuit.totalReadConversionRate.txt
+            {wildcards.BaseName}_totalReadConversionRate.txt\
+            {wildcards.BaseName}.biscuit.totalReadConversionRate.txt
         """
 
 rule biscuit_bsstrand:
     input:
-        "result/{fname}/{trimmer}/{aligner}/{deduper}/{fname}{bqsr}bam"
+        "result/{BaseName}/{BamStatsParentDir}/{BaseName}.bam"
     output:
-        ("result/{fname}/{trimmer}/{aligner}/{deduper}/"
-         "{fname}{bqsr}biscuit.bsstrand.txt")
+        "result/{BaseName}/{BamStatsParentDir}/{BaseName}.biscuit.bsstrand.txt"
     params:
-        ref             = lambda wildcards: config["ref"]["biscuit"][wildcards.fname.split('_')[1]],
+        ref             = lambda wildcards: config["ref"]["biscuit"][wildcards.BaseName.split('_')[1]],
         bsstrand_params = (config["biscuit"]["bsstrand"]["extra_params"]
-                           if config["biscuit"]["bsstrand"]["extra_params"] else ""),
-        pattern         = lambda wildcards: "" if wildcards.bqsr == "." else ".bqsr"
+                           if config["biscuit"]["bsstrand"]["extra_params"] else "")
     threads: 1
     conda:
         "conda.yaml"
     shell:
         """
-        cd result/{wildcards.fname}/{wildcards.trimmer}/{wildcards.aligner}/{wildcards.deduper}
+        cd result/{wildcards.BaseName}/{wildcards.BamStatsParentDir}
         biscuit bsstrand \
-            {params.ref} {wildcards.fname}{params.pattern}.bam {params.bsstrand_params} > {wildcards.fname}{params.pattern}.biscuit.bsstrand.txt 2>&1
+            {params.ref} {wildcards.BaseName}.bam {params.bsstrand_params} > {wildcards.BaseName}.biscuit.bsstrand.txt 2>&1
         """
 
 rule biscuit_cinread:
     input:
-        "result/{fname}/{trimmer}/{aligner}/{deduper}/{fname}{bqsr}bam"
+        "result/{BaseName}/{BamStatsParentDir}/{BaseName}.bam"
     output:
-        ("result/{fname}/{trimmer}/{aligner}/{deduper}/"
-         "{fname}{bqsr}biscuit.cinread.txt")
+        ("result/{BaseName}/{BamStatsParentDir}/"
+         "{BaseName}.biscuit.cinread.txt")
     params:
-        ref            = lambda wildcards: config["ref"]["biscuit"][wildcards.fname.split('_')[1]],
+        ref            = lambda wildcards: config["ref"]["biscuit"][wildcards.BaseName.split('_')[1]],
         cinread_params = (config["biscuit"]["cinread"]["extra_params"]
-                          if config["biscuit"]["cinread"]["extra_params"] else ""),
-        pattern        = lambda wildcards: "" if wildcards.bqsr == "." else ".bqsr"
+                          if config["biscuit"]["cinread"]["extra_params"] else "")
     threads: 1
     conda:
         "conda.yaml"
     shell:
         """
-        cd result/{wildcards.fname}/{wildcards.trimmer}/{wildcards.aligner}/{wildcards.deduper}
+        cd result/{wildcards.BaseName}/{wildcards.BamStatsParentDir}
         biscuit cinread \
-            {params.ref} {wildcards.fname}{params.pattern}.bam {params.cinread_params}\
-            -o {wildcards.fname}{params.pattern}.biscuit.cinread.txt
+            {params.ref} {wildcards.BaseName}.bam {params.cinread_params}\
+            -o {wildcards.BaseName}.biscuit.cinread.txt
         """

@@ -2,13 +2,13 @@ configfile: "config/runtime_config.yaml"
 
 rule biscuit_align:
     input:
-        r1           = "result/{fname}/{trimmer}/{fname}.R1.fq.gz",
-        r2           = "result/{fname}/{trimmer}/{fname}.R2.fq.gz"
+        r1           = "result/{BaseName}/{AlignParentDir}/{BaseName}.R1.fq.gz",
+        r2           = "result/{BaseName}/{AlignParentDir}/{BaseName}.R2.fq.gz"
     output:
-        bam          = "result/{fname}/{trimmer}/biscuit/{fname}.bam",
-        bai          = "result/{fname}/{trimmer}/biscuit/{fname}.bam.bai"
+        bam          = "result/{BaseName}/{AlignParentDir}/biscuit/{BaseName}.bam",
+        bai          = "result/{BaseName}/{AlignParentDir}/biscuit/{BaseName}.bam.bai"
     params:
-        ref          = lambda wildcards: config["ref"]["biscuit"][wildcards.fname.split('_')[1]],
+        ref          = lambda wildcards: config["ref"]["biscuit"][wildcards.BaseName.split('_')[1]],
         extra_params = (config["biscuit"]["align"]["extra_params"]
                         if config["biscuit"]["align"]["extra_params"] else "")
     threads: 8
@@ -16,22 +16,24 @@ rule biscuit_align:
         "conda.yaml"
     shell:
         """
-        LIB=$(echo "{wildcards.fname}" | cut -d'_' -f1)
-        PLATFORM=$(echo "{wildcards.fname}" | cut -d'_' -f4)
-        SAMPLE=$(echo "{wildcards.fname}" | cut -d'_' -f2-3)
+        LIB=$(echo "{wildcards.BaseName}" | cut -d'_' -f1)
+        PLATFORM=$(echo "{wildcards.BaseName}" | cut -d'_' -f4)
+        SAMPLE=$(echo "{wildcards.BaseName}" | cut -d'_' -f2-3)
 
-        cd result/{wildcards.fname}/{wildcards.trimmer}
+        cd result/{wildcards.BaseName}/{wildcards.AlignParentDir}
         mkdir -p biscuit
         biscuit align \
             -@ {threads} \
             -C -V -Y {params.extra_params} \
-            {params.ref} {wildcards.fname}.R1.fq.gz {wildcards.fname}.R2.fq.gz |\
+            {params.ref} \
+            {wildcards.BaseName}.R1.fq.gz \
+            {wildcards.BaseName}.R2.fq.gz |\
         mbuffer -m 8G |\
         samtools sort - |\
         samtools addreplacerg - \
-            -r "@RG\\tID:{wildcards.fname}\\tSM:${{SAMPLE}}\\tPL:${{PLATFORM}}\\tLB:${{LIB}}\" \
+            -r "@RG\\tID:{wildcards.BaseName}\\tSM:${{SAMPLE}}\\tPL:${{PLATFORM}}\\tLB:${{LIB}}\" \
             --output-fmt bam,level=9 \
-            -@ {threads} -o biscuit/{wildcards.fname}.bam
+            -@ {threads} -o biscuit/{wildcards.BaseName}.bam
 
-        samtools index -@ {threads} biscuit/{wildcards.fname}.bam || echo "suppress non-zero exit"
+        samtools index -@ {threads} biscuit/{wildcards.BaseName}.bam || echo "suppress non-zero exit"
         """

@@ -2,11 +2,10 @@ configfile: "config/runtime_config.yaml"
 
 rule qualimap:
     input:
-        "result/{fname}/{trimmer}/{aligner}/{deduper}/{fname}.bam"
+        "result/{BaseName}/{QualimapParentDir}/{BaseName}.bam"
     output:
-        multiext("result/{fname}/{trimmer}/{aligner}/"
-                 "{deduper}/qualimap/",
-                 "{fname}.qualimap.pdf",
+        multiext("result/{BaseName}/{QualimapParentDir}/qualimap/",
+                 "{BaseName}.qualimap.pdf",
                  "qualimapReport.html")
     params:
         extra_params = (config["qualimap"]["extra_params"]
@@ -16,15 +15,15 @@ rule qualimap:
         "conda.yaml"
     shell:
         """
-        cd result/{wildcards.fname}/{wildcards.trimmer}/{wildcards.aligner}/{wildcards.deduper}
+        cd result/{wildcards.BaseName}/{wildcards.QualimapParentDir}
         if [ -d "qualimap" ]; then
             rm -rf qualimap
         fi
 
         qualimap bamqc \
-            -bam {wildcards.fname}.bam \
+            -bam {wildcards.BaseName}.bam \
             -outdir qualimap \
-            -outfile {wildcards.fname}.qualimap.pdf \
+            -outfile {wildcards.BaseName}.qualimap.pdf \
             -outformat PDF:HTML \
             -nt {threads} {params.extra_params}
         """
