@@ -1,493 +1,765 @@
+from abc import ABC, abstractmethod
 from argparse import ArgumentParser, Namespace
+from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Dict, List, Set
+from typing import Dict, List, Literal, LiteralString, Optional, Tuple, Set, Union
 import numpy as np
 import pandas as pd
-# ? We have to use pandas since it is the default choice in snakemake.
-# ? And the sample sheet is too tiny to use the polars library.
-
-"""
-To explain...
-# 0. The reason why the sample sheet is parsed here instead of main smk file is
-to 1) make the main smk file clean;
-   2) decouple, since the snakemake API is not stable;
-   3) scrutiny the sample sheet in detail;
-   4) provide a clear error message when the sample sheet is wrong.
-# 1. FNAME should be the stem of R1.fq.gz and R2.fq.gz files. E.g.,
-for BS_HCC1395_2.R1.fq.gz and BS_HCC1395_2.R2.fq.gz, FNAME should be BS_HCC1395_2.
-The files will be searched in the input dir, which you should specify in the config.yaml,
-using the pathlib.Path().glob() method. If the Snakemake complains about missing files
-or more than 2 files found, please debug yourself.
-
-# 2. TRIMMER is the tool to trim the adapters as well as low quality reads.
-# 3. QC_REPORTER is the statistic tool to check out the sequencing quality.
-# 4. ALIGNER is the alignment tool to use for this sample.
-# 5. DEDUPER is the tool to remove duplicated reads which are labeled by the aligner.
-# 6. RECALIBRATE is the choice to apply BQSR on the aligned bam file.
-# 7. COUNTER is the tool to get per-CpG methylation level.
-# 8. STATS is the choice to get the mapping quality and methylation level statistics.
-
-#! 9. The names of tools are in the restrict vocabulary below.
-# 10. It's possible to run multiple tools for a single sample. Let's say we want to compare
-the results of bismark_bowtie2 and bwa-meth. We can add two rows in the sample sheet,
-with same other columns but different ALIGNER values.
-#! In other words, one row = one run. Multiple tools in one cell is not allowed,
-because some tools are not compatible and all combinations once is a horrible choice.
-"""
-
-REQUIRED_COLS: List[str] = ['FNAME', 'TRIMMER', 'QC_REPORTER',
-                            'ALIGNER', 'DEDUPER', 'RECALIBRATE',
-                            'COUNTER', 'STATS']
 
 # ! To get rid of spelling issues,
 # ! only lower case names and hyphen-minus (-) are allowed.
-AVAILABLE_TRIMMERS: Set[str] = {'fastp', 'trim-galore'}
-AVAILABLE_QC_REPORTERS: Set[str] = {'fastqc', 'falco'}  # no fastp here
-AVAILABLE_ALIGNERS: Set[str] = {'bismark-bowtie2', 'bismark-hisat2',
-                                'msuite2-bowtie2', 'msuite2-hisat2',
-                                'bwa-meth', 'bwa-meme', 'dnmtools',
-                                'biscuit', 'bsmapz'}
-AVAILABLE_DEDUPERS: Set[str] = {'bismark', 'gatk', 'samtools', 'sambamba'}
-RECALIBRATE: Set[bool] = {True, False}
-COUNTER: Set[str] = {'bismark', 'biscuit', 'methyldackel',
-                     'dnmtools', 'bs_seeker2', 'astair',
-                     'bsgenova', 'fame',
-                     'msuite2-bowtie2', 'msuite2-hisat2'}
-STATS: Set[bool] = {True, False}
+# ! Also, headers only contain upper case letters and underscore (_) to distinguish.
+PIPELINE_CODING: Dict[str, Dict[str, str]] = {
+    'TRIMMER': {
+        'no-trim': '0', 'fastp': '1', 'trim-galore': '2'
+    },
+    'ALIGNER': {
+        'bismark-bowtie2': '0', 'bismark-hisat2': '1',
+        'msuite2-bowtie2': '2', 'msuite2-hisat2': '3',
+        'bwa-meth': '4', 'bwa-meme': '5', 'dnmtools': '6',
+        'biscuit': '7', 'bsmapz': '8'
+    },
+    'DEDUPER': {
+        'no-dedup': '0', 'bismark': '1', 'gatk-dedup': '2',  # .../gatk/gatk/... will cause ambiguity.
+        'samtools': '3', 'sambamba': '4', 'nubeam-dedup': '5',
+        'bio-seq-zip': '6', 'trie-dedup': '7', 'ngs-reads-treatment': '8'
+    },
+    'CALIBRATOR': {
+        'no-pre-calibrate': '@', 'no-calibrate': '0', 'gatk-calibrate': '1', 'care': '2',
+        'sequencerr': '3', 'reckoner2': '4', 'bfc': '5'
+    },
+    'COUNTER': {
+        'bismark': '0', 'biscuit': '1', 'methyldackel': '2',
+        'dnmtools': '3', 'bs_seeker2': '4', 'astair': '5',
+        'bsgenova': '6', 'fame': '7',
+        'msuite2-bowtie2': '8', 'msuite2-hisat2': '9'  # only for reverse coding.
+    },
+    'FASTQCER': {
+        'fastqc': '0', 'falco': '1'  # actually FASTQCER and BAMSTATIST are not coded,
+    },  # just put it here to make sure the right one included.
+    'BAMSTATIST': {'1': '1'}
+}
+
+rev_pipeline_coding: Dict[str, Dict[str, str]] = {k: {v: k for k, v in v.items()} for k, v in PIPELINE_CODING.items()}
+
+ENCODING_ORDER: List[str] = ['TRIMMER', 'DEDUPER', 'CALIBRATOR',
+                             'ALIGNER', 'DEDUPER', 'CALIBRATOR', 'COUNTER',]
+
+DEDUPER_BEFORE_ALIGNMENT: Set[str] = {'nubeam-dedup', 'bio-seq-zip', 'trie-dedup', 'ngs-reads-treatment'}
+CALIBRATOR_BEFORE_ALIGNMENT: Set[str] = {'care', 'sequencerr', 'reckoner2', 'bfc'}
 
 
-class OneRun:
-    def __init__(self, row: pd.Series):
-        self.row: pd.Series = row
-        self.fname: str = row['FNAME']
-        self.trimmer: str | None = row['TRIMMER']
-        self.qc_reporter: str | None = row['QC_REPORTER']
-        self.aligner: str | None = row['ALIGNER']
-        self.deduper: str | None = row['DEDUPER']
-        self.recalibrate: bool = row['RECALIBRATE']
-        self.counter: str | None = row['COUNTER']
-        self.stats: bool = row['STATS']
+@dataclass
+class PipelineContext:
+    fname: str
+    parent_dir: Path
+    trimmed: bool = False
+    aligned: bool = False
+    deduped: bool = False
+    calibrated: bool = False
+    counted: bool = False
+    trace: List[str] = field(default_factory=list)
 
-    def __repr__(self):
-        return (f'{self.fname}: {self.trimmer}, {self.qc_reporter},'
-                f'{self.aligner}, {self.deduper},'
-                f'{self.recalibrate}, {self.counter}, {self.stats}')
+    def update(self,
+               parent_dir: Optional[Path] = None,
+               trimmed: Optional[bool] = None,
+               aligned: Optional[bool] = None,
+               deduped: Optional[bool] = None,
+               calibrated: Optional[bool] = None,
+               counted: Optional[bool] = None) -> 'PipelineContext':
+        if sum(1 for attr in [trimmed, aligned, deduped, calibrated, counted] if attr is not None) > 1:
+            raise ValueError('Only one operation at a time.')
 
-    def __str__(self):
-        return (f'{self.fname}: {self.trimmer}, {self.qc_reporter},'
-                f'{self.aligner}, {self.deduper},'
-                f'{self.recalibrate}, {self.counter}, {self.stats}')
+        new_trace = self.trace.copy()
+        if trimmed is True and not self.trimmed:
+            new_trace.append('trimmed')
+        if aligned is True and not self.aligned:
+            new_trace.append('aligned')
+        if deduped is True and not self.deduped:
+            new_trace.append('deduped')
+        if calibrated is True and not self.calibrated:
+            new_trace.append('calibrated')
+        if counted is True and not self.counted:
+            new_trace.append('counted')
 
-    def _validate_tool(self,
-                       tool: str | None,
-                       available_tools: Set[str],
-                       tool_name: str) -> bool:
-        if tool in available_tools:
+        return PipelineContext(fname=self.fname,
+                               parent_dir=parent_dir if parent_dir is not None else self.parent_dir,
+                               trimmed=trimmed if trimmed is not None else self.trimmed,
+                               aligned=aligned if aligned is not None else self.aligned,
+                               deduped=deduped if deduped is not None else self.deduped,
+                               calibrated=calibrated if calibrated is not None else self.calibrated,
+                               counted=counted if counted is not None else self.counted,
+                               trace=new_trace)
+
+    def done_before(self, module1: str, module2: str) -> bool:
+        for m in (module1, module2):
+            if m not in self.trace:
+                raise ValueError(f'{m} not done yet.')
+
+        if self.trace.index(module1) < self.trace.index(module2):
             return True
         else:
-            raise ValueError(f'Not implemented yet: {tool}.'
-                             f'Available {tool_name}: {available_tools}')
+            return False
 
-    def _generate_trimmed_file_ls(self) -> List[str]:
-        trim_files: List[str]
-        # check the trimmer first
-        if self._validate_tool(self.trimmer,
-                               available_tools=AVAILABLE_TRIMMERS,
-                               tool_name='trimmer'):
-            match self.trimmer:
-                case 'fastp':
-                    trim_files = [
-                        f'result/{self.fname}/fastp/'
-                        f'{self.fname}{ext}'
-                        for ext in ('.R1.fq.gz',
-                                    '.R2.fq.gz',
-                                    '.fastp.json',
-                                    '.fastp.html')]
-                case 'trim-galore':
-                    trim_files = [
-                        f'result/{self.fname}/trim-galore/'
-                        f'{self.fname}{ext}'
-                        for ext in ('.R1.fq.gz',
-                                    '.R2.fq.gz',
-                                    '.R1.report',
-                                    '.R2.report')]
+
+@dataclass
+class EmptyModule:
+    module: str
+
+    def __bool__(self):
+        return False
+
+
+class PipelineModule(ABC):
+    @property
+    @abstractmethod
+    def tool(self) -> str:
+        pass
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.tool == other.tool
+        else:
+            return False
+
+    def __str__(self):
+        return f'{self.tool} as {self.__class__.__name__}'
+
+    def __hash__(self) -> int:
+        return hash((type(self), self.tool))
+
+    @abstractmethod
+    def files(self, context: PipelineContext) -> Tuple[List[Path], PipelineContext]:
+        pass
+
+
+class Trimmer(PipelineModule):
+    # ! YEAH, the file names spawn here.
+    EXT_MAPPING: Dict[str, List[str]] = {
+        'fastp': ['.R1.fq.gz', '.R2.fq.gz',
+                  '.fastp.json', '.fastp.html'],
+        'trim-galore': ['.R1.fq.gz', '.R2.fq.gz',
+                        '.R1.report', '.R2.report'],
+        'no-trim': ['.R1.fq.gz', '.R2.fq.gz']
+    }
+
+    def __init__(self, trimmer: str):
+        self._tool: str = trimmer
+
+    @property
+    def tool(self) -> str:
+        return self._tool
+
+    def __repr__(self):
+        return (f'{self.__class__.__name__}({self.tool}) '
+                f'-> files: {self.EXT_MAPPING[self.tool]}')
+
+    def __str__(self):
+        if self.tool == 'no-trim':
+            return 'Skipped: no Trimmer'
+        else:
+            return super().__str__()
+
+    def files(self, context: PipelineContext) -> Tuple[List[Path], PipelineContext]:
+        return ([context.parent_dir / self.tool / f'{context.fname}{ext}'
+                 for ext in self.EXT_MAPPING[self.tool]],
+                context.update(parent_dir=context.parent_dir / self.tool,
+                               trimmed=True))
+
+
+class Fastqcer(PipelineModule):
+    EXT_MAPPING: Dict[str, List[str]] = {
+        'fastqc': ['.R1.fastqc.html', '.R2.fastqc.html'],
+        'falco': ['.R1.falco.html', '.R2.falco.html']}
+
+    def __init__(self, fastqcer: str):
+        self._tool: str = fastqcer
+
+    @property
+    def tool(self) -> str:
+        return self._tool
+
+    def __repr__(self):
+        return (f'{self.__class__.__name__}({self.tool})'
+                f' -> files: {self.EXT_MAPPING[self.tool]}')
+
+    def files(self, context: PipelineContext) -> Tuple[List[Path], PipelineContext]:
+        return ([context.parent_dir / f'{context.fname}{ext}'
+                 for ext in self.EXT_MAPPING[self.tool]],
+                context)
+
+
+class Aligner(PipelineModule):
+    def __init__(self, aligner: str):
+        self._tool: str = aligner
+
+    @property
+    def tool(self) -> str:
+        return self._tool
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}({self.tool}) -> files: [.bam", ".bam.bai"]'
+
+    def files(self, context: PipelineContext) -> Tuple[List[Path], PipelineContext]:
+        current_dir: Path
+        files: List[Path]
+
+        if context.deduped and not context.calibrated:
+            current_dir = context.parent_dir / 'no-pre-calibrate' / self.tool
+        elif not context.deduped and not context.calibrated:
+            current_dir = context.parent_dir / 'no-pre-dedup' / 'no-pre-calibrate' / self.tool
+        else:
+            current_dir = context.parent_dir / self.tool
+
+        files = [current_dir / f'{context.fname}{ext}'
+                 for ext in ('.bam', '.bam.bai')]
+        if self.tool in ('msuite2-bowtie2',
+                         'msuite2-hisat2'):
+            files += [current_dir / f
+                      for f in (f'{context.fname}.msuite2.bedgraph.gz',
+                                'Msuite2.report/index.html')]
+        return files, context.update(parent_dir=current_dir, aligned=True)
+
+
+class DeDuper(PipelineModule):
+    EXT_MAPPING = {
+        'no-dedup': ['.bam', '.bam.bai'],
+        'bismark': ['.bam', '.bam.bai'],
+        'gatk-dedup': ['.bam', '.bam.bai', '.dedup.metrics'],
+        'samtools': ['.bam', '.bam.bai', '.dup.stats'],
+        'sambamba': ['.bam', '.bam.bai'],
+        'nubeam-dedup': ['.R1.fq.gz', '.R2.fq.gz'],
+        'bio-seq-zip': ['.R1.fq.gz', '.R2.fq.gz'],
+        'trie-dedup': ['.R1.fq.gz', '.R2.fq.gz'],
+        'ngs-reads-treatment': ['.R1.fq.gz', '.R2.fq.gz']
+    }
+
+    def __init__(self, deduper: str):
+        self._tool: str = deduper
+
+    @property
+    def tool(self) -> str:
+        return self._tool
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}({self.tool}) -> files: {self.EXT_MAPPING[self.tool]}'
+
+    def __str__(self):
+        if self.tool == 'no-dedup':
+            return 'Skipped: no DeDuper'
+        else:
+            return super().__str__()
+
+    def files(self, context: PipelineContext) -> Tuple[List[Path], PipelineContext]:
+        return ([context.parent_dir / self.tool / f'{context.fname}{ext}'
+                 for ext in self.EXT_MAPPING[self.tool]],
+                context.update(parent_dir=context.parent_dir / self.tool,
+                               deduped=True))
+
+
+class Calibrator(PipelineModule):
+    EXT_MAPPING = {
+        'no-calibrate': ['.bam', '.bam.bai'],
+        'gatk-cali': ['.bam', '.bam.bai',
+                      '.before.table', '.after.table',
+                      '.AnalyzeCovariates.pdf'],
+        'care': ['.R1.fq.gz', '.R2.fq.gz'],
+        'sequencerr': ['.R1.fq.gz', '.R2.fq.gz'],
+        'reckoner2': ['.R1.fq.gz', '.R2.fq.gz'],
+        'bfc': ['.R1.fq.gz', '.R2.fq.gz']
+    }
+
+    def __init__(self, calibrator: str):
+        self._tool: str = calibrator
+
+    @property
+    def tool(self) -> str:
+        return self._tool
+
+    def __repr__(self):
+        return (f'{self.__class__.__name__}({self.tool})'
+                f' -> files: {self.EXT_MAPPING[self.tool]}')
+
+    def __str__(self):
+        if self.tool == 'no-calibrate':
+            return 'Skipped: no Calibrator'
+        else:
+            return super().__str__()
+
+    def files(self, context: PipelineContext) -> Tuple[List[Path], PipelineContext]:
+        current_dir: Path
+
+        if context.deduped and context.aligned and context.done_before('deduped',
+                                                                       'aligned'):
+            current_dir = context.parent_dir / 'no-post-dedup' / self.tool
+
+        elif not context.deduped and not context.aligned:
+            current_dir = context.parent_dir / 'no-pre-dedup' / self.tool
+        else:
+            current_dir = context.parent_dir / self.tool
+
+        return ([current_dir / f'{context.fname}{ext}'
+                 for ext in self.EXT_MAPPING[self.tool]],
+                context.update(parent_dir=current_dir, calibrated=True))
+
+
+class Counter(PipelineModule):
+    EXT_MAPPING = {
+        'bismark': ['.bedgraph.gz', '.ucsc_bedgraph.gz',
+                    '.CHG_OB.txt.gz', '.CHG_OT.txt.gz',
+                    '.CHH_OB.txt.gz', '.CHH_OT.txt.gz',
+                    '.CpG_OB.txt.gz', '.CpG_OT.txt.gz',
+                    '.bismark.cov.gz', '.splitting_report',
+                    '.c2c.cov.gz', '.c2c.report.gz', '.c2c.summary'],
+        'astair': ['.astair.mods.gz', '.astair.stats'],
+        'methyldackel': ['.bedgraph.gz', '.merged.bedgraph.gz'],
+        'biscuit': ['.epibed.gz'],
+        'bsgenova': ['.ATCGmap.gz', '.CGmap.gz', '.bed.gz'],
+        'fame': ['.bedgraph.gz']
+    }
+
+    def __init__(self, counter: str):
+        self._tool: str = counter
+
+    @property
+    def tool(self) -> str:
+        return self._tool
+
+    def __repr__(self):
+        return (f'{self.__class__.__name__}({self.tool}) '
+                f'-> files: {self.EXT_MAPPING[self.tool]}')
+
+    def files(self, context: PipelineContext) -> Tuple[List[Path], PipelineContext]:
+        current_dir: Path
+
+        if context.aligned:
+            match (context.done_before('calibrated',
+                                       'aligned'),
+                   context.done_before('deduped',
+                                       'aligned')):
+                case (True, True):
+                    current_dir = context.parent_dir / 'no-pre-dedup' / 'no-pre-calibrate' / self.tool
+                case (False, True):
+                    current_dir = context.parent_dir / 'no-pre-calibrate' / self.tool
                 case _:
-                    trim_files = []
-        else:
-            trim_files = []
-
-        return trim_files
-
-    def _generate_qc_report_file_ls(self) -> List[str]:
-        qc_files: List[str]
-        if self._validate_tool(self.qc_reporter,
-                               available_tools=AVAILABLE_QC_REPORTERS,
-                               tool_name='qc_reporter'):
-            match self.qc_reporter:
-                case 'fastqc':
-                    qc_files = [
-                        f'result/{self.fname}/{self.trimmer}/'
-                        f'{self.fname}{ext}'
-                        for ext in ('.R1.fastqc.html',
-                                    '.R2.fastqc.html')]
-                case 'falco':
-                    qc_files = [
-                        f'result/{self.fname}/{self.trimmer}/'
-                        f'{self.fname}{ext}'
-                        for ext in ('.R1.falco.html',
-                                    '.R2.falco.html')]
+                    current_dir = context.parent_dir / self.tool
+        else:  # FAME
+            match (context.deduped, context.calibrated):
+                case (True, False):
+                    current_dir = context.parent_dir / 'no-pre-calibrate' / self.tool
+                case (False, False):
+                    current_dir = context.parent_dir / 'no-pre-dedup' / 'no-pre-calibrate' / self.tool
                 case _:
-                    qc_files = []
-        else:
-            qc_files = []
+                    current_dir = context.parent_dir / self.tool
 
-        return qc_files
+        return ([current_dir / f'{context.fname}{ext}'
+                 for ext in self.EXT_MAPPING[self.tool]],
+                context.update(parent_dir=current_dir, counted=True))
 
-    def _generate_aligned_bam(self) -> List[str]:
-        aligned_files: List[str]
-        if self._validate_tool(self.aligner,
-                               available_tools=AVAILABLE_ALIGNERS,
-                               tool_name='aligner'):
-            aligned_files = [
-                (f'result/{self.fname}/{self.trimmer}/'
-                 f'{self.aligner}/{self.fname}.bam')
-            ]
-            if self.aligner in ('msuite2-bowtie2',
-                                'msuite2-hisat2'):
-                aligned_files += [
-                    f'result/{self.fname}/{self.trimmer}/'
-                    f'{self.aligner}/{ext}'
-                    for ext in (f'{self.fname}.msuite2.bedgraph.gz',
-                                'Msuite2.report/index.html')
-                ]
-        else:
-            aligned_files = []
 
-        return aligned_files
+class BAMStatist(PipelineModule):
+    EXT_TUPLE = ('.samtools.stats.txt', '.samtools.flagstats.txt',
+                 '.methydackel_mbias_OT.svg', '.methydackel_mbias_OB.svg'
+                                              '.biscuit.CpGRetentionByReadPos.txt',
+                 '.biscuit.CpHRetentionByReadPos.txt',
+                 '.biscuit.dup_report.txt', '.biscuit.isize_table.txt',
+                 '.biscuit.mapq_table.txt', '.biscuit.strand_table.txt',
+                 '.biscuit.totalReadConversionRate.txt',
+                 '.biscuit.bsstrand.txt', '.biscuit.cinread.txt',
+                 '.qualimap.pdf')
 
-    def _generate_deduped_bam(self) -> List[str]:
-        dedup_files: List[str]
-        if self._validate_tool(self.deduper,
-                               available_tools=AVAILABLE_DEDUPERS,
-                               tool_name='deduper'):
-            match self.deduper:
-                case 'bismark':
-                    dedup_files = [
-                        f'result/{self.fname}/{self.trimmer}/'
-                        f'{self.aligner}/bismark/'
-                        f'{self.fname}{ext}'
-                        for ext in ('.bam', '.bam.bai')
-                    ]
-                case 'gatk':
-                    dedup_files = [
-                        f'result/{self.fname}/{self.trimmer}/'
-                        f'{self.aligner}/gatk/{self.fname}{ext}'
-                        for ext in ('.bam',
-                                    '.bam.bai',
-                                    '.dedup.metrics')
-                    ]
-                case 'samtools':
-                    dedup_files = [
-                        f'result/{self.fname}/{self.trimmer}/'
-                        f'{self.aligner}/samtools/{self.fname}{ext}'
-                        for ext in ('.bam',
-                                    '.bam.bai',
-                                    '.dup.stats')
-                    ]
-                case 'no_dedup':
-                    dedup_files = [
-                        f'result/{self.fname}/{self.trimmer}/'
-                        f'{self.aligner}/no_dedup/{self.fname}{ext}'
-                        for ext in ('.bam',
-                                    '.bam.bai')
-                    ]
-                case _:
-                    dedup_files = []
-        else:
-            dedup_files = []
+    def __init__(self):
+        self._tool: str = 'samtools,methydackel,biscuit,bismark,qualimap'
+        self.tool_list: List[str] | List[LiteralString] = self._tool.split(',')
 
-        return dedup_files
+    @property
+    def tool(self) -> str:
+        return self._tool
 
-    def _generate_recalibrated_bam(self) -> List[str]:
-        recalibrated_files: List[str]
-        if self.recalibrate:
-            recalibrated_files = [
-                f'result/{self.fname}/{self.trimmer}/'
-                f'{self.aligner}/{self.deduper}/{self.fname}{ext}'
-                for ext in ('.bqsr.bam',
-                            '.bqsr.bam.bai',
-                            '.before.table',
-                            '.after.table',
-                            '.AnalyzeCovariates.pdf')
-            ]
-        else:
-            recalibrated_files = []
+    def __repr__(self):
+        return (f'{self.__class__.__name__}({self.tool})'
+                f' -> files: {self.EXT_TUPLE}')
 
-        return recalibrated_files
+    def files(self, context: PipelineContext) -> Tuple[List[Path], PipelineContext]:
+        fname: str = context.fname
+        parent_dir: Path = context.parent_dir
 
-    def _generate_qualimap_files(self) -> List[str]:
-        qualimap_files: List[str]
+        files: List[Path]
+        files = [
+            parent_dir / f'{fname}{ext}'
+            for ext in self.EXT_TUPLE
+        ] + [
+            parent_dir / 'qualimap' / ext
+            for ext in (f'{fname}.qualimap.pdf', 'qualimapReport.html')
+        ]
+        if any(bismark in parent_dir.as_posix()
+               for bismark in ('bismark-bowtie2', 'bismark-hisat2')):
+            files.append(parent_dir / f'{fname}.bam2nuc.txt')
+        return files, context
 
-        if self.recalibrate:
-            qualimap_files = [
-                f'result/{self.fname}/{self.trimmer}/'
-                f'{self.aligner}/{self.deduper}/qualimap_bqsr/{ext}'
-                for ext in (f'{self.fname}.bqsr.qualimap.pdf',
-                            'qualimapReport.html')
-            ]
-        else:
-            qualimap_files = [
-                f'result/{self.fname}/{self.trimmer}/'
-                f'{self.aligner}/{self.deduper}/qualimap/{ext}'
-                for ext in (f'{self.fname}.qualimap.pdf',
-                            'qualimapReport.html')
-            ]
 
-        return qualimap_files
+RegisteredModule = Union[PipelineModule, EmptyModule]
+TrimmerOption = Union[Trimmer, EmptyModule]
+FastqcerOption = Union[Fastqcer, EmptyModule]
+AlignerOption = Union[Aligner, EmptyModule]
+DeDuperOption = Union[DeDuper, EmptyModule]
+CalibratorOption = Union[Calibrator, EmptyModule]
+CounterOption = Union[Counter, EmptyModule]
+BAMStatistOption = Union[BAMStatist, EmptyModule]
+CoreModule = Union[Trimmer, Aligner, DeDuper, Calibrator, Counter]
 
-    def _generate_methylation(self) -> List[str]:
-        pattern: str
-        methylation_files: List[str]
-        if self._validate_tool(self.counter,
-                               available_tools=COUNTER,
-                               tool_name='counter'):
-            if self.recalibrate:
-                pattern = '.bqsr'
+
+class Fq2BedGraphRun:
+    def __init__(self, row: pd.Series,
+                 root_dir: Path):
+        self.row: pd.Series = row
+        self.BaseName: str = row['FNAME']
+        self.Trimmer: Trimmer = Trimmer(row['TRIMMER'])
+        self.Fastqcer: FastqcerOption = (Fastqcer(row['FASTQCER'])
+                                         if row['FASTQCER']
+                                         else EmptyModule('Fastqcer'))
+        self.Aligner: AlignerOption = (Aligner(row['ALIGNER'])
+                                       if row['ALIGNER']
+                                       else EmptyModule('Aligner'))
+        self.DeDuper: DeDuperOption = (DeDuper(row['DEDUPER'])
+                                       if row['DEDUPER']
+                                       else EmptyModule('DeDuper'))
+        self.Calibrator: CalibratorOption = (Calibrator(row['CALIBRATOR'])
+                                             if row['CALIBRATOR']
+                                             else EmptyModule('Calibrator'))
+        self.Counter: CounterOption = (Counter(row['COUNTER'])
+                                       if row['COUNTER']
+                                       else EmptyModule('Counter'))
+        self.BAMStatist: BAMStatistOption = (BAMStatist()
+                                             if row['STATS']
+                                             else EmptyModule('BAMStatist'))
+        self.ModuleChain = self._tool_chain()
+        self.ParentDir = self._parent_dir(root_dir=root_dir, fname=self.BaseName)
+        self.Files = self._files()
+        self.Code = self._pipeline_encode(pipeline_coding=PIPELINE_CODING)
+
+    def __repr__(self):
+        return (f'{self.__class__.__name__} for {self.row["FNAME"]}\n'
+                f'Trimmer: {self.Trimmer}\n'
+                f'QCReporter: {self.Fastqcer}\n'
+                f'Aligner: {self.Aligner}\n'
+                f'DeDuper: {self.DeDuper}\n'
+                f'Calibrator: {self.Calibrator}\n'
+                f'Counter: {self.Counter}\n'
+                f'BAMStatist: {self.BAMStatist}\n'
+                f'ModuleChain: {self.ModuleChain}\n'
+                f'ParentDir: {self.ParentDir}')
+
+    @staticmethod
+    def _parent_dir(root_dir: Path, fname: str) -> Path:
+        return root_dir / fname
+
+    @staticmethod
+    def _order_check(module: RegisteredModule,
+                     pre_tools: Set[str]) -> Literal[-1, 0, 1]:
+        check_result = -1
+        if isinstance(module, PipelineModule):
+            if module.tool in pre_tools:
+                check_result = 1
             else:
-                pattern = ''
+                check_result = 0
+        return check_result
 
-            match self.counter:
-                case 'bismark':
-                    methylation_files = [
-                        f'result/{self.fname}/{self.trimmer}/'
-                        f'{self.aligner}/{self.deduper}/'
-                        f'bismark/{self.fname}{pattern}{ext}'
-                        for ext in ('.bedgraph.gz', '.ucsc_bedgraph.gz',
-                                    '.CHG_OB.txt.gz', '.CHG_OT.txt.gz',
-                                    '.CHH_OB.txt.gz', '.CHH_OT.txt.gz',
-                                    '.CpG_OB.txt.gz', '.CpG_OT.txt.gz',
-                                    '.bismark.cov.gz', '.splitting_report',
-                                    '.c2c.cov.gz', '.c2c.report.gz',
-                                    '.c2c.summary')]
-                case 'astair':
-                    methylation_files = [
-                        f'result/{self.fname}/{self.trimmer}/'
-                        f'{self.aligner}/{self.deduper}/'
-                        f'astair/{self.fname}{pattern}{ext}'
-                        for ext in ('.astair.mods.gz',
-                                    '.astair.stats')]
-                case 'methyldackel':
-                    methylation_files = [
-                        f'result/{self.fname}/{self.trimmer}/'
-                        f'{self.aligner}/{self.deduper}/'
-                        f'methyldackel/{self.fname}{pattern}{ext}'
-                        for ext in ('.bedgraph.gz',
-                                    '.merged.bedgraph.gz')]
-                case 'biscuit':
-                    methylation_files = [
-                        f'result/{self.fname}/{self.trimmer}/'
-                        f'{self.aligner}/{self.deduper}/'
-                        f'biscuit/{self.fname}{pattern}.epibed.gz']
-                case 'bsgenova':
-                    methylation_files = [
-                        f'result/{self.fname}/{self.trimmer}/'
-                        f'{self.aligner}/{self.deduper}/'
-                        f'bsgenova/{self.fname}{pattern}{ext}'
-                        for ext in ('.bsgenova.ATCGmap.gz',
-                                    '.bsgenova.CGmap.gz',
-                                    '.bsgenova.bed.gz')]
-                case 'fame':
-                    methylation_files = [
-                        f'result/{self.fname}/{self.trimmer}/'
-                        f'fame/{self.fname}.fame.bedgraph.gz']
+    def _tool_chain(self) -> List[PipelineModule]:
+        full_toolchain: List[RegisteredModule]
+        tool_chain: List[PipelineModule]
+
+        if isinstance(self.Counter, PipelineModule) and self.Counter.tool == 'fame':
+            # fame only needs pre-dedup and pre-calibrate, so no-dedup and no-calibrate are illegal.
+            # Just ,, in csv if no pre-dedup or pre-calibrate.
+            for _m, _l in [[self.DeDuper, DEDUPER_BEFORE_ALIGNMENT],
+                           [self.Calibrator, CALIBRATOR_BEFORE_ALIGNMENT]]:
+                if isinstance(_m, EmptyModule):
+                    pass
+                else:
+                    if _m.tool not in _l:
+                        raise ValueError(f'{_m} not in {_l}')
+                    else:
+                        pass
+            if isinstance(self.DeDuper, PipelineModule) or isinstance(self.Calibrator, PipelineModule):
+                full_toolchain = [i for i in [self.Trimmer, self.Fastqcer, self.DeDuper,
+                                              self.Calibrator, self.Fastqcer, self.Counter]
+                                  if isinstance(i, PipelineModule)]
+            else:
+                full_toolchain = [self.Trimmer, self.Fastqcer, self.Counter]
+        else:
+            match (self._order_check(module=self.DeDuper,
+                                     pre_tools=DEDUPER_BEFORE_ALIGNMENT),
+                   self._order_check(module=self.Calibrator,
+                                     pre_tools=CALIBRATOR_BEFORE_ALIGNMENT)):
+                # ! -1 = None; 0 = post; 1 = pre.
+                # ! When -1, treat the left chain as conventional one.
+                case (1, -1) | (1, 0):
+                    full_toolchain = [self.Trimmer, self.Fastqcer, self.DeDuper, self.Fastqcer,
+                                      self.Aligner, self.BAMStatist, self.Calibrator, self.BAMStatist, self.Counter]
+                case (-1, 1) | (0, 1):
+                    full_toolchain = [self.Trimmer, self.Fastqcer, self.Calibrator, self.Fastqcer,
+                                      self.Aligner, self.BAMStatist, self.DeDuper, self.BAMStatist, self.Counter]
+                case (1, 1):
+                    full_toolchain = [self.Trimmer, self.Fastqcer, self.DeDuper, self.Calibrator,
+                                      self.Fastqcer, self.Aligner, self.BAMStatist, self.Counter]
                 case _:
-                    methylation_files = []
+                    full_toolchain = [self.Trimmer, self.Fastqcer, self.Aligner, self.BAMStatist,
+                                      self.DeDuper, self.Calibrator, self.BAMStatist, self.Counter]
 
-        else:
-            methylation_files = []
-
-        return methylation_files
-
-    def _generate_stats(self) -> List[str]:
-        pattern: str
-        stats_files: List[str]
-
-        if self.stats:
-            if self.recalibrate:
-                pattern = '.bqsr'
+        tool_chain = []
+        for module in full_toolchain:
+            if isinstance(module, PipelineModule):
+                tool_chain.append(module)
+                if module.tool in ('msuite2-bowtie2', 'msuite2-hisat2'):
+                    break
             else:
-                pattern = ''
+                if module.module not in ('Fastqcer', 'BAMStatist'):
+                    break
+        return tool_chain
 
-            if self.aligner == 'bismark':
-                stats_files = [
-                    f'result/{self.fname}/{self.trimmer}/'
-                    f'{self.aligner}/{self.deduper}/'
-                    f'{self.fname}{pattern}{ext}'
-                    for ext in ('.samtools.stats.txt',
-                                '.samtools.flagstats.txt',
-                                '.methydackel_mbias_OT.svg',
-                                '.methydackel_mbias_OB.svg'
-                                '.bam2nuc.txt',
-                                '.biscuit.CpGRetentionByReadPos.txt',
-                                '.biscuit.CpHRetentionByReadPos.txt',
-                                '.biscuit.dup_report.txt',
-                                '.biscuit.isize_table.txt',
-                                '.biscuit.mapq_table.txt',
-                                '.biscuit.strand_table.txt',
-                                '.biscuit.totalReadConversionRate.txt',
-                                '.biscuit.bsstrand.txt',
-                                '.biscuit.cinread.txt')]
+    def _files(self) -> List[Path]:
+        files: List[Path] = []
+        last_non_stat_files = []
+        current_context: PipelineContext = PipelineContext(fname=self.BaseName,
+                                                           parent_dir=self.ParentDir)
+        for tool in self.ModuleChain:
+            (new_files,
+             current_context) = tool.files(context=current_context)
+            if any(isinstance(tool, module) for module in (Fastqcer, BAMStatist)):
+                files += new_files
             else:
-                stats_files = [
-                    f'result/{self.fname}/{self.trimmer}/'
-                    f'{self.aligner}/{self.deduper}/'
-                    f'{self.fname}{pattern}{ext}'
-                    for ext in ('.samtools.stats.txt',
-                                '.samtools.flagstats.txt',
-                                '.methydackel_mbias_OT.svg',
-                                '.methydackel_mbias_OB.svg',
-                                '.biscuit.CpGRetentionByReadPos.txt',
-                                '.biscuit.CpHRetentionByReadPos.txt',
-                                '.biscuit.dup_report.txt',
-                                '.biscuit.isize_table.txt',
-                                '.biscuit.mapq_table.txt',
-                                '.biscuit.strand_table.txt',
-                                '.biscuit.totalReadConversionRate.txt',
-                                '.biscuit.bsstrand.txt',
-                                '.biscuit.cinread.txt')]
-                # well, it's because bam2nuc would recognize the bam file
-                # from other aligners as single-end and throw an error.
+                last_non_stat_files = new_files
 
-                # also, astair mbias and IDbias files are excluded because it will takes years
-                # to run on an actual ~30x pair-end WGBS sample.
-                # '.astair.IDbias_abundance_10bp_mod_site.pdf',
-                # '.astair.IDbias_abundance.pdf',
-                # '.astair.IDbias_indel_rate.pdf',
-                # '.astair.IDbias_mod_co-localize.pdf',
-                # '.astair.IDbias.stats',
-                # '.astair.Mbias.stats',
-                # '.astair.Mbias.pdf'
+        files += last_non_stat_files
 
-        else:
-            stats_files = []
+        return files
 
-        return stats_files
-
-    def generate_output_files_ls(self) -> List[str]:
-        output_ls = []
-
-        # early return since the intermediate files can be solved automatically.
-        if self.counter:
-            output_ls.extend(self._generate_methylation())
-            if self.stats:
-                output_ls.extend(self._generate_stats())
-                output_ls.extend(self._generate_qualimap_files())
-            return output_ls
-
-        # handle the situation when the bedgraph is not needed.
-        if self.recalibrate:
-            output_ls.extend(self._generate_recalibrated_bam())
-            return output_ls
-
-        if self.deduper:
-            output_ls.extend(self._generate_deduped_bam())
-            return output_ls
-
-        if self.aligner:
-            output_ls.extend(self._generate_aligned_bam())
-            return output_ls
-
-        # handle the situation when the bam is not needed.
-        if self.trimmer:
-            output_ls.extend(self._generate_trimmed_file_ls())
-            if self.qc_reporter:
-                output_ls.extend(self._generate_qc_report_file_ls())
-            return output_ls
-
-        raise ValueError('No valid tools found in the sample sheet.')
-
-
-def clear_row(row: pd.Series) -> pd.Series:
-    if not row['COUNTER'] in ('fame'):
-        for col_idx in range(len(row)):
-            if pd.isna(row.iloc[col_idx]):
-                row.iloc[col_idx + 1:] = np.nan
+    def module_context(self, module_type: str) -> Path:
+        module_dir: Path | None = None
+        current_context: PipelineContext = PipelineContext(fname=self.BaseName,
+                                                           parent_dir=self.ParentDir)
+        for module in self.ModuleChain:
+            (new_files,
+             current_context) = module.files(context=current_context)
+            if module.__class__.__name__ == module_type:
+                module_dir = current_context.parent_dir / module.tool
                 break
-    return row
+        if not module_dir:
+            raise ValueError(f'{module_type} not found in the current {self.ModuleChain}.')
+        return module_dir
 
-
-def read_sample_sheet(csv_path: Path) -> pd.DataFrame:
-    df: pd.DataFrame
-    # There should be no missing values in the FNAME col
-    df = (pd.read_csv(csv_path, comment='#',
-                      dtype={'FNAME': 'str', 'TRIMMER': 'str',
-                             'QC_REPORTER': 'str', 'ALIGNER': 'str',
-                             'DEDUPER': 'str', 'RECALIBRATE': 'boolean',
-                             'COUNTER': 'str', 'STATS': 'boolean'})
-            .apply(clear_row, axis=1)
-            .dropna(subset=['FNAME'])
-            .replace(to_replace=np.nan, value=None))
-    # We have to skip the deduplication for RRBS
-    df['DEDUPER'] = (
-        df.apply(lambda row: 'no_dedup'
-                 if row['FNAME'].startswith('RR') and row['DEDUPER']
-                 else row['DEDUPER'],
-                 axis=1))
-    # Check if the sample sheet has the required columns
-    if df.columns.tolist() != REQUIRED_COLS:
-        raise ValueError('Wrong columns in sample sheet.'
-                         f'Expected: {REQUIRED_COLS}'
-                         f'Found: {df.columns.tolist()}')
-    if df.empty:
-        raise ValueError('Missing values in FNAME col is not allowed.')
-
-    return df
-
-
-def fq2bedgraph_file_ls(csv_path: Path) -> List[str]:
-    df = read_sample_sheet(csv_path)
-
-    all_files = []
-
-    for idx, row in df.iterrows():
+    @staticmethod
+    def _code(module: RegisteredModule, coding_dict: Dict[str, Dict[str, str]]):
         try:
-            run = OneRun(row)
-            all_files.extend(run.generate_output_files_ls())
-        except ValueError as e:
-            print(f'at {idx} there is an error:\n{e}')
-            continue
+            return coding_dict[module.__class__.__name__.upper()][module.tool]  # type: ignore
+        except (KeyError, AttributeError, ValueError):
+            return '?'
 
-    if not all_files:
-        raise ValueError('No valid runs found in the sample sheet.')
-
-    return all_files
-
-
-def fq2bedgraph_tool_ls(csv_path: Path) -> Dict[str, List[str]]:
-    df = read_sample_sheet(csv_path)
-    tool_dict = {
-        'TRIMMER': [i for i in df['TRIMMER'].unique() if i],
-        'QC_REPORTER': [i for i in df['QC_REPORTER'].unique() if i],
-        'ALIGNER': [i for i in df['ALIGNER'].unique() if i],
-        'DEDUPER': [i for i in df['DEDUPER'].unique() if i],
-        'COUNTER': [i for i in df['COUNTER'].unique() if i],
-        'RECALIBRATE': df['RECALIBRATE'].unique().tolist(),
-        'STATS': df['STATS'].unique().tolist()}
-    return tool_dict
-
-
-def hook_test():
-    print('hook found')
+    def _pipeline_encode(self,
+                         pipeline_coding: Dict[str, Dict[str, str]] = PIPELINE_CODING,
+                         encoding_order: List[str] = ENCODING_ORDER) -> str:
+        # ! do not code the ModuleChain. Instead, code the final context.
+        if isinstance(self.Counter, EmptyModule) and \
+                isinstance(self.Aligner, PipelineModule) and \
+                self.Aligner.tool in ('msuite2-bowtie2', 'msuite2-hisat2'):
+            # which do not need a counter
+            counter_dir_parts = (self.module_context(module_type='Aligner')
+                                 .relative_to(self.ParentDir)
+                                 .parts)
+        else:
+            counter_dir_parts = (self.module_context(module_type='Counter')
+                                     .relative_to(self.ParentDir)
+                                     .parts)
+        # trimmer, pre_dedup, pre_calibrate, align, dedup, calibrate, counter = relative_counter_dir.parts
+        return ''.join(pipeline_coding[module_type].get(dir_part, '?')
+                       for dir_part, module_type in zip(counter_dir_parts, encoding_order))
 
 
-if __name__ == '__main__':
+def pipeline_decode(pipeline_code: str,
+                    pipeline_decoding: Dict[str, Dict[str, str]] = PIPELINE_CODING,
+                    encoding_order: List[str] = ENCODING_ORDER) -> Path:
+    if '?' in pipeline_code and pipeline_code[3] not in ['2', '3']:  # msuit2-bowtie2 and msuit-hisat2
+        raise ValueError('Invalid pipeline code.')
+
+    if pipeline_code[3] in ['2', '3']:  # msuit2-bowtie2 and msuit-hisat2
+        return Path('/'.join(pipeline_decoding[module_type][code]
+                             for module_type, code in zip(encoding_order, pipeline_code[: 4])))
+    else:
+        return Path('/'.join(pipeline_decoding[module_type][code]
+                             for module_type, code in zip(encoding_order, pipeline_code)))
+
+
+def read_fq2bedgraph_sheet(csv_path: Path,
+                           pipeline_coding: Dict = PIPELINE_CODING) -> pd.DataFrame:  # type: ignore
+    query_string = ('FNAME.notna() and TRIMMER.notna() and '
+                    '(FASTQCER.isna() | FASTQCER.isin(@pipeline_coding["FASTQCER"].keys())) and '
+                    '(ALIGNER.isna() | ALIGNER.isin(@pipeline_coding["ALIGNER"].keys())) and '
+                    '(DEDUPER.isna() | DEDUPER.isin(@pipeline_coding["DEDUPER"].keys())) and '
+                    '(CALIBRATOR.isna() | CALIBRATOR.isin(@pipeline_coding["CALIBRATOR"].keys())) and '
+                    '(COUNTER.isna() | COUNTER.isin(@pipeline_coding["COUNTER"].keys())) and '
+                    '(STATS.isna() | STATS.isin([True, False]))')
+
+    f2b_df: pd.DataFrame
+    f2b_df = (pd.read_csv(csv_path, comment='#',
+                          dtype={'FNAME': 'str', 'TRIMMER': 'str',
+                                 'FASTQCER': 'str', 'ALIGNER': 'str',
+                                 'DEDUPER': 'str', 'CALIBRATOR': 'str',
+                                 'COUNTER': 'str', 'STATS': 'boolean'})
+              .dropna(subset=['FNAME', 'TRIMMER'])
+              .query(query_string, engine='python'))  # ! LEGALITY CHECK HERE BEFORE INITIALIZATION. NoneType IS LEGAL.
+
+    if f2b_df.empty:
+        raise ValueError('No valid rows found in the sheet.')
+
+    return f2b_df.replace(np.nan, None)
+
+
+def fq2bedgraph_file_ls(csv_path_str: str) -> List[str]:
+    df = read_fq2bedgraph_sheet(csv_path=Path(csv_path_str))
+    return ([
+        file.as_posix()
+        for _, row in df.iterrows()
+        for file in Fq2BedGraphRun(row=row, root_dir=Path('result')).Files
+    ])
+
+
+def dev_fq2bedgraph_file_ls(df: pd.DataFrame) -> List[str]:
+    return ([
+        file.relative_to(Path()).as_posix()
+        for _, row in df.iterrows()
+        for file in Fq2BedGraphRun(row=row, root_dir=Path('result')).Files
+    ])
+
+
+def fq2bedgraph_tool_ls(csv_path_str: str) -> Dict[str, List[str] | List[LiteralString]]:
+    df = read_fq2bedgraph_sheet(csv_path=Path(csv_path_str))
+    tool_chain_set: Set[PipelineModule] = {
+        tool
+        for _, row in df.iterrows()
+        for tool in Fq2BedGraphRun(row=row, root_dir=Path('result')).ModuleChain
+    }
+
+    return ({
+        'TRIMMER': [module.tool for module in tool_chain_set if isinstance(module, Trimmer)],
+        'FASTQCER': [module.tool for module in tool_chain_set if isinstance(module, Fastqcer)],
+        'ALIGNER': [module.tool for module in tool_chain_set if isinstance(module, Aligner)],
+        'DEDUPER': [module.tool for module in tool_chain_set if isinstance(module, DeDuper)],
+        'CALIBRATOR': [module.tool for module in tool_chain_set if isinstance(module, Calibrator)],
+        'COUNTER': [module.tool for module in tool_chain_set if isinstance(module, Counter)],
+        'BAMStatist': (BAMStatist().tool_list if any(isinstance(module, BAMStatist)
+                                                     for module in tool_chain_set) else [])
+    })
+
+
+def dev_fq2bedgraph_tool_ls(df: pd.DataFrame) -> Dict[str, List[str] | List[LiteralString]]:
+    tool_chain_set: Set[PipelineModule] = {
+        tool
+        for _, row in df.iterrows()
+        for tool in Fq2BedGraphRun(row=row, root_dir=Path.cwd() / 'result').ModuleChain
+    }
+
+    return ({
+        'TRIMMER': [module.tool for module in tool_chain_set if isinstance(module, Trimmer)],
+        'FASTQCER': [module.tool for module in tool_chain_set if isinstance(module, Fastqcer)],
+        'ALIGNER': [module.tool for module in tool_chain_set if isinstance(module, Aligner)],
+        'DEDUPER': [module.tool for module in tool_chain_set if isinstance(module, DeDuper)],
+        'CALIBRATOR': [module.tool for module in tool_chain_set if isinstance(module, Calibrator)],
+        'COUNTER': [module.tool for module in tool_chain_set if isinstance(module, Counter)],
+        'BAMSTATIST': (BAMStatist().tool_list if any(isinstance(module, BAMStatist)
+                                                     for module in tool_chain_set) else [])
+    })
+
+
+# TODO: 添加bedgraph2dm相关解析，输出编码后的文件和文件夹名
+class BedGraph2DMRun:
+    DM_OUTPUT_MAP: Dict[str, List[str]] = {
+        'methylsig': ['bedgraph.zst']
+    }
+
+    def __init__(self, row: pd.Series, root_dir: Path):
+        for col in ('FASTQCER1', 'FASTQCER2', 'STATS1', 'STATS2'):
+            row[col] = None
+
+        self.A: Fq2BedGraphRun
+        self.B: Fq2BedGraphRun
+
+        (self.A,
+         self.B) = [Fq2BedGraphRun(pd.Series({col.replace(suffix, ''): row[col]
+                                              for col in row.index if col.endswith(suffix)}),
+                                   root_dir=Path('./result'))
+                    for suffix in ('1', '2')]
+        self.DMer: str = row['DMER']
+        self.Files: List[Path] = self._generate_output(root_dir=root_dir)
+
+    def _generate_output(self, root_dir) -> List[Path]:
+        # ! the work to generate input files for DM analysis is done in rule/{DMer}/prepare.smk
+        return [root_dir / self.DMer / f'{self.A.BaseName}.{self.B.BaseName}' / f'{self.A.Code}.{self.B.Code}.{ext}'
+                for ext in self.DM_OUTPUT_MAP[self.DMer]]
+
+
+def read_bedgraph2dm_sheet(csv_path: Path,
+                           pipeline_coding: Dict = PIPELINE_CODING) -> pd.DataFrame:  # type: ignore
+    query_string = ('FNAME1.notna() and TRIMMER1.notna() and '
+                    'FNAME2.notna() and TRIMMER2.notna() and '
+                    '(ALIGNER1.isna() | ALIGNER1.isin(@pipeline_coding["ALIGNER"].keys())) and '
+                    '(ALIGNER2.isna() | ALIGNER2.isin(@pipeline_coding["ALIGNER"].keys())) and '
+                    '(DEDUPER1.isna() | DEDUPER1.isin(@pipeline_coding["DEDUPER"].keys())) and '
+                    '(DEDUPER2.isna() | DEDUPER2.isin(@pipeline_coding["DEDUPER"].keys())) and '
+                    '(CALIBRATOR1.isna() | CALIBRATOR1.isin(@pipeline_coding["CALIBRATOR"].keys())) and '
+                    '(CALIBRATOR2.isna() | CALIBRATOR2.isin(@pipeline_coding["CALIBRATOR"].keys())) and '
+                    '(COUNTER1.isna() | COUNTER1.isin(@pipeline_coding["COUNTER"].keys())) and '
+                    '(COUNTER2.isna() | COUNTER2.isin(@pipeline_coding["COUNTER"].keys())) and '
+                    'DMER.isin(@pipeline_coding["DMER"].keys())')
+
+    b2d_df: pd.DataFrame
+    b2d_df = (pd.read_csv(csv_path, comment='#',
+                          dtype={'FNAME1': 'str', 'TRIMMER1': 'str', 'ALIGNER1': 'str',
+                                 'DEDUPER1': 'str', 'CALIBRATOR1': 'str', 'COUNTER1': 'str',
+                                 'FNAME2': 'str', 'TRIMMER2': 'str', 'ALIGNER2': 'str',
+                                 'DEDUPER2': 'str', 'CALIBRATOR2': 'str', 'COUNTER2': 'str',
+                                 'DMER': 'str'})
+              .dropna(subset=['FNAME1', 'FNAME2', 'DMER'])
+              .query(query_string, engine='python'))
+
+    if b2d_df.empty:
+        raise ValueError('No valid rows found in the sheet.')
+
+    return b2d_df.replace(np.nan, None)
+
+
+def bedgraph2dm_file_ls(csv_path_str: str) -> List[str]:
+    df = read_bedgraph2dm_sheet(csv_path=Path(csv_path_str))
+    return ([
+        file.relative_to(Path()).as_posix()
+        for _, row in df.iterrows()
+        for file in BedGraph2DMRun(row=row, root_dir=Path.cwd() / 'result').Files
+    ])
+
+
+def bedgraph2dm_tool_ls(csv_path_str: str) -> Set[str]:
+    df = read_bedgraph2dm_sheet(csv_path=Path(csv_path_str))
+    return ({
+        BedGraph2DMRun(row=row, root_dir=Path.cwd() / 'result').DMer for _, row in df.iterrows()
+    })
+
+# TODO: 添加新smk文件，解码文件夹和文件名，并运行差异甲基化分析
+
+
+def main():
     arg_parser: ArgumentParser = ArgumentParser()
     arg_parser.add_argument('-i', '--input', type=str, required=True,
                             help='csv file to investigate')
     args: Namespace = arg_parser.parse_args()
-    for i in sorted(fq2bedgraph_file_ls(Path(args.input))):
-        print(i)
-    print('\ntool list:')
 
-    for k, v in fq2bedgraph_tool_ls(Path(args.input)).items():
-        print(f'{k}: {v}')
+    f2b_df: pd.DataFrame = read_fq2bedgraph_sheet(csv_path=Path(args.input))
+
+    print(f2b_df)
+
+    print(dev_fq2bedgraph_tool_ls(df=f2b_df))
+
+    print(dev_fq2bedgraph_file_ls(df=f2b_df))
+
+
+if __name__ == '__main__':
+    main()

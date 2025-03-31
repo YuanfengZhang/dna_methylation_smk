@@ -1,36 +1,36 @@
 configfile: "config/runtime_config.yaml"
 
+
 rule astair_count:
     input:
-        "result/{fname}/{trimmer}/{aligner}/{deduper}/{fname}{bqsr}bam"
+        "result/{BaseName}/{CountParentDir}/{BaseName}.bam"
     output:
-        multiext("result/{fname}/{trimmer}/{aligner}/{deduper}"
-                 "/astair/{fname}{bqsr}",
-                 "astair.mods.gz",
-                 "astair.stats")
+        multiext("result/{BaseName}/{CountParentDir}"
+                 "/astair/{BaseName}",
+                 ".astair.mods.gz",
+                 ".astair.stats")
     params:
-        ref          = lambda wildcards: config["ref"]["astair"][wildcards.fname.split('_')[1]],
-        method       = lambda wildcards: config["astair"]["method"][wildcards.fname.split('_')[0]],
+        ref          = lambda wildcards: config["ref"]["astair"][wildcards.BaseName.split('_')[1]],
+        method       = lambda wildcards: config["astair"]["method"][wildcards.BaseName.split('_')[0]],
         extra_params = (config["astair"]["count"]["extra_params"]
-                        if config["astair"]["count"]["extra_params"] else ""),
-        pattern      = lambda wildcards: "" if wildcards.bqsr == "." else ".bqsr"
+                        if config["astair"]["count"]["extra_params"] else "")
     threads: 8
     conda:
         "conda.yaml"
     shell:
         """
-        cd result/{wildcards.fname}/{wildcards.trimmer}/{wildcards.aligner}/{wildcards.deduper}
+        cd result/{wildcards.BaseName}/{wildcards.CountParentDir}
         astair call \
-            -i {wildcards.fname}{params.pattern}.bam \
+            -i {wildcards.BaseName}.bam \
             --reference {params.ref} \
             -co CpG -ni . -d astair -t {threads} \
             --method {params.method} {params.extra_params}
         cd astair
         mv \
-            {wildcards.fname}{params.pattern}_{params.method}_CpG.mods \
-            {wildcards.fname}{params.pattern}.astair.mods
-        pigz --best {wildcards.fname}{params.pattern}.astair.mods
+            {wildcards.BaseName}_{params.method}_CpG.mods \
+            {wildcards.BaseName}.astair.mods
+        pigz --best {wildcards.BaseName}.astair.mods
         mv \
-            {wildcards.fname}{params.pattern}_{params.method}_CpG.stats \
-            {wildcards.fname}{params.pattern}.astair.stats
+            {wildcards.BaseName}_{params.method}_CpG.stats \
+            {wildcards.BaseName}.astair.stats
         """

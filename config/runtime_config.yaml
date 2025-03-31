@@ -57,7 +57,7 @@ ref:
     M8:
     BC:
     BL:
-    HF: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/bismark-bowtie2/BL.fa
+    HF: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/bismark-bowtie2
     T1:
     T2:
     T3:
@@ -69,7 +69,7 @@ ref:
     M8:
     BC:
     BL:
-    HF: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/bismark-hisat2/BL.fa
+    HF: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/bismark-hisat2
     T1:
     T2:
     T3:
@@ -78,8 +78,8 @@ ref:
     HF: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/biscuit/BL.fa
   bsgenova:
     HF: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/samtools/BL.fa
-  FAME:
-    HF: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/FAME/BL.fa
+  fame:
+    HF: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/FAME/BL.fa.index
   msuite2:
     HF: /home/zhangyuanfeng/software/Msuite2_edited/index/BL
 

@@ -1,22 +1,10 @@
 from argparse import ArgumentParser
-from concurrent.futures import ThreadPoolExecutor
-import csv
-import gzip
-from typing import List
+import warnings
+import polars as pl
+from zstandard import ZstdCompressor
 
 
-def process_fame_row(row: List):
-    if (not row) or any(col == '0' for col in row[2:6]):
-        return None
-    try:
-        new_row = (
-            row[:2] + [           # 0-based start
-                int(row[1]) + 2,  # 0-based end
-                100 * (int(row[2]) + int(row[4])) / (sum(int(i) for i in row[2: 6]))  # beta value
-            ] + row[2:])          # m+, u+, m-, u-
-        return new_row
-    except ValueError:
-        return None
+warnings.filterwarnings("ignore", message="Polars found a filename")
 
 
 def main():
@@ -26,17 +14,22 @@ def main():
     parser.add_argument('-t', '--threads', help='The number of threads to use',
                         default=1, type=int)
     args = parser.parse_args()
+    df: pl.DataFrame = (pl.scan_csv(args.input, separator='\t', has_header=False,
+                                    schema={'chrom': pl.String, 'start': pl.Int64,
+                                            'm+': pl.Int64, 'u+': pl.Int64, 'm-': pl.Int64, 'u-': pl.Int64})
+                        .filter(pl.sum_horizontal('m+', 'u+', 'm-', 'u-') > 0)
+                        .with_columns([(pl.col('start') + 2).alias('end'),
+                                       (100 * pl.sum_horizontal('m+',
+                                                                'm-') / pl.sum_horizontal('m+', 'u+',
+                                                                                          'm-', 'u-'))
+                                       .alias('beta')])
+                        .select(['chrom', 'start', 'end', 'beta', 'm+', 'u+', 'm-', 'u-'])
+                        .collect())
 
-    rows = [['chrom', 'start', 'end', 'beta', 'm+', 'u+', 'm-', 'u-']]
-
-    with open(args.input, mode='r', newline='') as fame_f:
-        reader = csv.reader(fame_f, delimiter='\t')
-        with ThreadPoolExecutor(max_workers=args.threads) as executor:
-            rows += list(executor.map(process_fame_row, reader))
-
-    with gzip.open(args.output, mode='wt', compresslevel=9) as bedgraph_f:
-        writer = csv.writer(bedgraph_f, delimiter='\t')  # type: ignore
-        writer.writerows(filter(None, rows))
+    zstd_compressor = ZstdCompressor(level=19, threads=args.threads)
+    with zstd_compressor.stream_writer(writer=open(file=args.output,
+                                                   mode='wb+')) as _writer:
+        df.write_csv(_writer, separator='\t')
 
 
 if __name__ == '__main__':

@@ -2,13 +2,13 @@ configfile: "config/runtime_config.yaml"
 
 rule bwameth_align:
     input:
-        r1           = "result/{fname}/{trimmer}/{fname}.R1.fq.gz",
-        r2           = "result/{fname}/{trimmer}/{fname}.R2.fq.gz"
+        r1           = "result/{BaseName}/{AlignParentDir}/{BaseName}.R1.fq.gz",
+        r2           = "result/{BaseName}/{AlignParentDir}/{BaseName}.R2.fq.gz"
     output:
-        bam          = "result/{fname}/{trimmer}/bwa-meth/{fname}.bam",
-        bai          = "result/{fname}/{trimmer}/bwa-meth/{fname}.bam.bai"
+        bam          = "result/{BaseName}/{AlignParentDir}/bwa-meth/{BaseName}.bam",
+        bai          = "result/{BaseName}/{AlignParentDir}/bwa-meth/{BaseName}.bam.bai"
     params:
-        ref          = lambda wildcards: config["ref"]["bwa-meth"][wildcards.fname.split('_')[1]],
+        ref          = lambda wildcards: config["ref"]["bwa-meth"][wildcards.BaseName.split('_')[1]],
         extra_params = (config["bwa-meth"]["extra_params"]
                         if config["bwa-meth"]["extra_params"] else "")
     threads: 8
@@ -16,11 +16,11 @@ rule bwameth_align:
         "conda.yaml"
     shell:
         """
-        LIB=$(echo "{wildcards.fname}" | cut -d'_' -f1)
-        PLATFORM=$(echo "{wildcards.fname}" | cut -d'_' -f4)
-        SAMPLE=$(echo "{wildcards.fname}" | cut -d'_' -f2-3)
+        LIB=$(echo "{wildcards.BaseName}" | cut -d'_' -f1)
+        PLATFORM=$(echo "{wildcards.BaseName}" | cut -d'_' -f4)
+        SAMPLE=$(echo "{wildcards.BaseName}" | cut -d'_' -f2-3)
         bwameth.py \
-            --read-group "@RG\\tID:{wildcards.fname}\\tSM:${{SAMPLE}}\\tPL:${{PLATFORM}}\\tLB:${{LIB}}\" \
+            --read-group "@RG\\tID:{wildcards.BaseName}\\tSM:${{SAMPLE}}\\tPL:${{PLATFORM}}\\tLB:${{LIB}}\" \
             --threads {threads} \
             --reference {params.ref} {params.extra_params} \
             {input.r1} {input.r2} |\

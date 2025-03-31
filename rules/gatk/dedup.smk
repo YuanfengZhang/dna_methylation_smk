@@ -2,11 +2,11 @@ configfile: "config/runtime_config.yaml"
 
 rule gatk_dedup:
     input:
-        "result/{fname}/{trimmer}/{aligner}/{fname}.bam"
+        "result/{BaseName}/{DedupParentDir}/{BaseName}.bam"
     output:
-        bam          = "result/{fname}/{trimmer}/{aligner}/gatk/{fname}.bam",
-        bai          = "result/{fname}/{trimmer}/{aligner}/gatk/{fname}.bam.bai",
-        metrics      = "result/{fname}/{trimmer}/{aligner}/gatk/{fname}.dedup.metrics"
+        bam          = "result/{BaseName}/{DedupParentDir}/gatk-dedup/{BaseName}.bam",
+        bai          = "result/{BaseName}/{DedupParentDir}/gatk-dedup/{BaseName}.bam.bai",
+        metrics      = "result/{BaseName}/{DedupParentDir}/gatk-dedup/{BaseName}.dedup.metrics"
     params:
         extra_params = (config["gatk"]["dedup"]["extra_params"]
                         if config["gatk"]["dedup"]["extra_params"] else "")
