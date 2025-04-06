@@ -1,4 +1,6 @@
 configfile: "config/runtime_config.yaml"
+from textwrap import dedent
+
 
 rule biscuit_count:
     input:
@@ -6,16 +8,14 @@ rule biscuit_count:
     output:
         "result/{BaseName}/{CountParentDir}/biscuit/{BaseName}.epibed.gz"
     params:
-        ref          = lambda wildcards: config["ref"]["biscuit"][wildcards.BaseName.split('_')[1]],
-        pileup_params = (config["biscuit"]["pileup"]["extra_params"]
-                        if config["biscuit"]["pileup"]["extra_params"] else ""),
-        vcf2bed_params = (config["biscuit"]["vcf2bed"]["extra_params"]
-                        if config["biscuit"]["vcf2bed"]["extra_params"] else "")
+        ref            = lambda wildcards: config["ref"]["biscuit"][wildcards.BaseName.split('_')[1]],
+        pileup_params  = config["biscuit"]["pileup"]["extra_params"] or "",
+        vcf2bed_params = config["biscuit"]["vcf2bed"]["extra_params"] or ""
     threads: 8
     conda:
         "conda.yaml"
     shell:
-        """
+        dedent("""
         cd result/{wildcards.BaseName}/{wildcards.CountParentDir}
         mkdir -p biscuit
         biscuit pileup \
@@ -29,5 +29,5 @@ rule biscuit_count:
 
         rm biscuit/{wildcards.BaseName}.vcf.gz
         rm biscuit/{wildcards.BaseName}.vcf.gz.tbi
-        """
+        """)
 

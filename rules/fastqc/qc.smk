@@ -1,4 +1,6 @@
 configfile: "config/runtime_config.yaml"
+from textwrap import dedent
+
 
 rule fastqc:
     input:
@@ -8,15 +10,15 @@ rule fastqc:
         r1_html      = "result/{BaseName}/{ReportParentDir}/{BaseName}.R1.fastqc.html",
         r2_html      = "result/{BaseName}/{ReportParentDir}/{BaseName}.R2.fastqc.html"
     params:
-        extra_params = config["fastqc"]["extra_params"]
+        extra_params = config["fastqc"]["extra_params"] or ""
     threads: 8
     conda:
         "conda.yaml"
     shell:
-        """
+        dedent("""
         fastqc \
             {params.extra_params} \
             --threads {threads} \
             -o result/{wildcards.BaseName}/{wildcards.ReportParentDir} \
             {input.r1} {input.r2}
-        """
+        """)

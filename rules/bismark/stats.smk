@@ -1,4 +1,6 @@
 configfile: "config/runtime_config.yaml"
+from textwrap import dedent
+
 
 rule bam2nuc:
     input:
@@ -6,14 +8,13 @@ rule bam2nuc:
     output:
         "result/{BaseName}/{StatsParentDir}/{BaseName}.bam2nuc.txt"
     params:
-        ref = lambda wildcards: config["ref"]["bismark-bowtie2"][wildcards.BaseName.split('_')[1]],
-        extra_params = (config["bismark"]["bam2nuc"]["extra_params"]
-                        if config["bismark"]["bam2nuc"]["extra_params"] else "")
+        ref          = lambda wildcards: config["ref"]["bismark-bowtie2"][wildcards.BaseName.split('_')[1]],
+        extra_params = config["bismark"]["bam2nuc"]["extra_params"] or ""
     threads: 1
     conda:
         "conda.yaml"
     shell:
-        """
+        dedent("""
         cd result/{wildcards.BaseName}/{wildcards.StatsParentDir}
         bam2nuc \
             {wildcards.BaseName}.bam \
@@ -23,4 +24,4 @@ rule bam2nuc:
         mv \
             {wildcards.BaseName}.nucleotide_stats.txt \
             {wildcards.BaseName}.bam2nuc.txt
-        """
+        """)

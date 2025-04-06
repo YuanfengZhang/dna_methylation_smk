@@ -1,4 +1,5 @@
 configfile: "config/runtime_config.yaml"
+from textwrap import dedent
 
 
 rule astair_count:
@@ -12,13 +13,12 @@ rule astair_count:
     params:
         ref          = lambda wildcards: config["ref"]["astair"][wildcards.BaseName.split('_')[1]],
         method       = lambda wildcards: config["astair"]["method"][wildcards.BaseName.split('_')[0]],
-        extra_params = (config["astair"]["count"]["extra_params"]
-                        if config["astair"]["count"]["extra_params"] else "")
+        extra_params = config["astair"]["count"]["extra_params"] or ""
     threads: 8
     conda:
         "conda.yaml"
     shell:
-        """
+        dedent("""
         cd result/{wildcards.BaseName}/{wildcards.CountParentDir}
         astair call \
             -i {wildcards.BaseName}.bam \
@@ -33,4 +33,4 @@ rule astair_count:
         mv \
             {wildcards.BaseName}_{params.method}_CpG.stats \
             {wildcards.BaseName}.astair.stats
-        """
+        """)

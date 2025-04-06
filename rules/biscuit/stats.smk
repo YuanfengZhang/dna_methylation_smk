@@ -1,4 +1,6 @@
 configfile: "config/runtime_config.yaml"
+from textwrap import dedent
+
 
 rule biscuit_qc:
     input:
@@ -15,13 +17,12 @@ rule biscuit_qc:
                  ".biscuit.totalReadConversionRate.txt")
     params:
         ref          = lambda wildcards: config["ref"]["biscuit"][wildcards.BaseName.split('_')[1]],
-        qc_params    = (config["biscuit"]["qc"]["extra_params"]
-                        if config["biscuit"]["qc"]["extra_params"] else "")
+        qc_params    = config["biscuit"]["qc"]["extra_params"] or ""
     threads: 1
     conda:
         "conda.yaml"
     shell:
-        """
+        dedent("""
         cd result/{wildcards.BaseName}/{wildcards.BamStatsParentDir}
         biscuit qc \
             {params.ref} \
@@ -49,7 +50,7 @@ rule biscuit_qc:
         mv \
             {wildcards.BaseName}_totalReadConversionRate.txt\
             {wildcards.BaseName}.biscuit.totalReadConversionRate.txt
-        """
+        """)
 
 rule biscuit_bsstrand:
     input:
@@ -58,17 +59,16 @@ rule biscuit_bsstrand:
         "result/{BaseName}/{BamStatsParentDir}/{BaseName}.biscuit.bsstrand.txt"
     params:
         ref             = lambda wildcards: config["ref"]["biscuit"][wildcards.BaseName.split('_')[1]],
-        bsstrand_params = (config["biscuit"]["bsstrand"]["extra_params"]
-                           if config["biscuit"]["bsstrand"]["extra_params"] else "")
+        bsstrand_params = if config["biscuit"]["bsstrand"]["extra_params"] or ""
     threads: 1
     conda:
         "conda.yaml"
     shell:
-        """
+        dedent("""
         cd result/{wildcards.BaseName}/{wildcards.BamStatsParentDir}
         biscuit bsstrand \
             {params.ref} {wildcards.BaseName}.bam {params.bsstrand_params} > {wildcards.BaseName}.biscuit.bsstrand.txt 2>&1
-        """
+        """)
 
 rule biscuit_cinread:
     input:
@@ -78,15 +78,14 @@ rule biscuit_cinread:
          "{BaseName}.biscuit.cinread.txt")
     params:
         ref            = lambda wildcards: config["ref"]["biscuit"][wildcards.BaseName.split('_')[1]],
-        cinread_params = (config["biscuit"]["cinread"]["extra_params"]
-                          if config["biscuit"]["cinread"]["extra_params"] else "")
+        cinread_params = if config["biscuit"]["cinread"]["extra_params"] or ""
     threads: 1
     conda:
         "conda.yaml"
     shell:
-        """
+        dedent("""
         cd result/{wildcards.BaseName}/{wildcards.BamStatsParentDir}
         biscuit cinread \
             {params.ref} {wildcards.BaseName}.bam {params.cinread_params}\
             -o {wildcards.BaseName}.biscuit.cinread.txt
-        """
+        """)

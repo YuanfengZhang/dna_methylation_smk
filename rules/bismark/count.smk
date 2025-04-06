@@ -1,4 +1,6 @@
 configfile: "config/runtime_config.yaml"
+from textwrap import dedent
+
 
 """
 rule bismark_extractor will generate these files:
@@ -33,13 +35,12 @@ rule bismark_extractor:
                  "M-bias_R1.png", "M-bias_R2.png")
     params:
         ref           = lambda wildcards: config["ref"]["bismark-bowtie2"][wildcards.BaseName.split('_')[1]],
-        extra_params  = (config["bismark"]["exactor"]["extra_params"]
-                         if config["bismark"]["exactor"]["extra_params"] else "")
+        extra_params  = config["bismark"]["exactor"]["extra_params"] or ""
     threads: 8
     conda:
         "conda.yaml"
     shell:
-        """
+        dedent("""
         cd result/{wildcards.BaseName}/{wildcards.CountParentDir}
         samtools sort \
             -n -@ {threads} \
@@ -97,7 +98,7 @@ rule bismark_extractor:
         mv \
             {wildcards.BaseName}.sortn.M-bias.txt \
             {wildcards.BaseName}.M-bias.txt
-        """
+        """)
 
 """
 rule bismark_c2c will generate these files:
@@ -118,13 +119,12 @@ rule bismark_c2c:
                  ".c2c.summary")
     params:
         ref           = lambda wildcards: config["ref"]["bismark-bowtie2"][wildcards.BaseName.split('_')[1]],
-        extra_params  = (config["bismark"]["coverage2cytosine"]["extra_params"]
-                         if config["bismark"]["coverage2cytosine"]["extra_params"] else "")
+        extra_params  = config["bismark"]["coverage2cytosine"]["extra_params"] or ""
     threads: 8
     conda:
         "conda.yaml"
     shell:
-        """
+        dedent("""
         cd result/{wildcards.BaseName}/{wildcards.CountParentDir}
         coverage2cytosine \
             {wildcards.BaseName}.bam \
@@ -142,4 +142,4 @@ rule bismark_c2c:
         mv \
             {wildcards.BaseName}.cytosine_context_summary.txt \
             {wildcards.BaseName}.c2c.summary
-        """
+        """)

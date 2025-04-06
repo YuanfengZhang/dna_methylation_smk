@@ -1,4 +1,6 @@
 configfile: "config/runtime_config.yaml"
+from textwrap import dedent
+
 
 rule astair_idbias:
     input:
@@ -12,13 +14,12 @@ rule astair_idbias:
                  ".astair.IDbias.stats")
     params:
         ref          = lambda wildcards: config["ref"]["bwa-mem"][wildcards.BaseName.split('_')[1]],
-        extra_params = (config["astair"]["idbias"]["extra_params"]
-                        if config["astair"]["idbias"]["extra_params"] else "")
+        extra_params = config["astair"]["idbias"]["extra_params"] or ""
     threads: 8
     conda:
         "conda.yaml"
     shell:
-        """
+        dedent("""
         cd result/{wildcards.BaseName}/{wildcards.BamStatsParentDir}
         astair idbias \
             -i {wildcards.BaseName}.bam \
@@ -42,7 +43,7 @@ rule astair_idbias:
         mv \
             {wildcards.BaseName}_ID-bias.stats \
             {wildcards.BaseName}.astair.IDbias.stats
-        """
+        """)
 
 rule astair_mbias:
     input:
@@ -54,13 +55,13 @@ rule astair_mbias:
                  ".astair.Mbias.pdf")
     params:
         ref          = lambda wildcards: config["ref"]["bwa-mem"][wildcards.BaseName.split('_')[1]],
-        extra_params = (config["astair"]["mbias"]["extra_params"]
-                        if config["astair"]["mbias"]["extra_params"] else "")
+        extra_params = config["astair"]["mbias"]["extra_params"]
+                        if config["astair"]["mbias"]["extra_params"] or ""
     threads: 8
     conda:
         "conda.yaml"
     shell:
-        """
+        dedent("""
         cd result/{wildcards.BaseName}/{wildcards.BamStatsParentDir}
         astair mbias \
             -i {wildcards.BaseName}.bam \
@@ -73,4 +74,4 @@ rule astair_mbias:
         mv \
             {wildcards.BaseName}_M-bias_plot.pdf \
             {wildcards.BaseName}.astair.Mbias.pdf
-        """
+        """)

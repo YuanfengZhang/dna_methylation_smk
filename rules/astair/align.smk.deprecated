@@ -10,8 +10,7 @@ rule astair_align:
     params:
         ref          = lambda wildcards: config["ref"]["astair"][wildcards.BaseName.split('_')[1]],
         method       = lambda wildcards: config["astair"]["method"][wildcards.BaseName.split('_')[0]],
-        extra_params = (config["astair"]["align"]["extra_params"]
-                        if config["astair"]["align"]["extra_params"] else "")
+        extra_params = config["astair"]["align"]["extra_params"] or ""
     threads: 8
     conda:
         "conda.yaml"

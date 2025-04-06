@@ -1,4 +1,6 @@
 configfile: "config/runtime_config.yaml"
+from textwrap import dedent
+
 
 rule falco:
     input:
@@ -10,13 +12,12 @@ rule falco:
                  ".R1.falco.data.txt", ".R2.falco.data.txt",
                  ".R1.falco.summary", ".R2.falco.summary")
     params:
-        extra_params  = (config["falco"]["extra_params"]
-                         if config["falco"]["extra_params"] else "")
+        extra_params  = config["falco"]["extra_params"] or ""
     threads: 8
     conda:
         "conda.yaml"
     shell:
-        """
+        dedent("""
         falco \
             --threads {threads} \
             {input.r1} {input.r2} \
@@ -29,4 +30,4 @@ rule falco:
         mv {wildcards.BaseName}.R2.fq.gz_fastqc_data.txt {wildcards.BaseName}.R2.falco.data.txt
         mv {wildcards.BaseName}.R1.fq.gz_summary.txt {wildcards.BaseName}.R1.falco.summary
         mv {wildcards.BaseName}.R2.fq.gz_summary.txt {wildcards.BaseName}.R2.falco.summary
-        """
+        """)

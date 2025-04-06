@@ -1,4 +1,5 @@
 configfile: "config/runtime_config.yaml"
+from textwrap import dedent
 
 
 def get_ref_label(BaseName) -> str:
@@ -44,13 +45,13 @@ rule msuite2_bowtie2:
         platform     = lambda wildcards: get_platform_param(wildcards.BaseName),
         method_param = lambda wildcards: get_method_param(wildcards.BaseName),
         ref          = lambda wildcards: config["ref"]["msuite2"][wildcards.BaseName.split('_')[1]],
-        extra_params = (config["msuite2"]["extra_params"]
-                        if config["msuite2"]["extra_params"] else "")
+        extra_params = config["msuite2"]["extra_params"]
+                        if config["msuite2"]["extra_params"] or ""
     threads: 8
     conda:
         "conda.yaml"
     shell:
-        """
+        dedent("""
         output_dir="result/{wildcards.BaseName}/{wildcards.AlignParentDir}/msuite2-bowtie2"
 
         [ -L "resources/Msuite2/index/{params.label}" ] || ln -s {params.ref} "$(pwd)/resources/Msuite2/index/{params.label}"
@@ -65,7 +66,7 @@ rule msuite2_bowtie2:
         make -C "${{output_dir}}"
 
         bash rules/msuite2/format.sh ${{output_dir}} {wildcards.BaseName} {threads}
-        """
+        """)
 
 rule msuite2_hisat2:
     input:
@@ -81,13 +82,12 @@ rule msuite2_hisat2:
         platform     = lambda wildcards: get_platform_param(wildcards.BaseName),
         method_param = lambda wildcards: get_method_param(wildcards.BaseName),
         ref          = lambda wildcards: config["ref"]["msuite2"][wildcards.BaseName.split('_')[1]],
-        extra_params = (config["msuite2"]["extra_params"]
-                        if config["msuite2"]["extra_params"] else "")
+        extra_params = config["msuite2"]["extra_params"] or ""
     threads: 8
     conda:
         "conda.yaml"
     shell:
-        """
+        dedent("""
         output_dir="result/{wildcards.BaseName}/{wildcards.AlignParentDir}/msuite2-hisat2"
 
         [ -L "resources/Msuite2/index/{params.label}" ] || ln -s {params.ref} "$(pwd)/resources/Msuite2/index/{params.label}"
@@ -102,4 +102,4 @@ rule msuite2_hisat2:
         make -C ${{output_dir}}
 
         bash rules/msuite2/format.sh ${{output_dir}} {wildcards.BaseName} {threads}
-        """
+        """)
