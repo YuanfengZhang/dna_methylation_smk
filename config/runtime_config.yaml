@@ -2,6 +2,18 @@ input_dir: input
 
 #! this part is used to specify the reference genome file to be used
 ref:
+  abismal:
+    D5:
+    D6:
+    F7:
+    M8:
+    BC:
+    BL:
+    HF: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/abismal/BL.abismal_index
+    T1:
+    T2:
+    T3:
+    T4:
   astair:
     D5:
     D6:
@@ -10,6 +22,139 @@ ref:
     BC:
     BL:
     HF: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/samtools/BL.fa
+    T1:
+    T2:
+    T3:
+    T4:
+  aryana:
+      D5:
+      D6:
+      F7:
+      M8:
+      BC:
+      BL:
+      HF: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/aryana/BL.fa /hot_warm_data/ref/quartet/DNA/custom_genome/BL/aryana/aryana /hot_warm_data/ref/quartet/DNA/custom_genome/BL/aryana/BL.cgi.bed
+      T1:
+      T2:
+      T3:
+      T4:
+  batmeth2:
+    default:
+      D5:
+      D6:
+      F7:
+      M8:
+      BC:
+      BL:
+      HF: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/BatMeth2/BL.fa
+      T1:
+      T2:
+      T3:
+      T4:
+    RRBS:
+      D5:
+      D6:
+      F7:
+      M8:
+      BC:
+      BL:
+      HF: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/BatMeth2/RRBS/BL.fa
+      T1:
+      T2:
+      T3:
+      T4:
+  bismark-bowtie2:
+    D5:
+    D6:
+    F7:
+    M8:
+    BC:
+    BL:
+    HF: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/bismark-bowtie2
+    T1:
+    T2:
+    T3:
+    T4:
+  bismark-hisat2:
+    D5:
+    D6:
+    F7:
+    M8:
+    BC:
+    BL:
+    HF: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/bismark-hisat2
+    T1:
+    T2:
+    T3:
+    T4:
+  biscuit:
+    D5:
+    D6:
+    F7:
+    M8:
+    BC:
+    BL:
+    HF: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/biscuit/BL.fa
+    T1:
+    T2:
+    T3:
+    T4:
+  bitmapperbs:
+    D5:
+    D6:
+    F7:
+    M8:
+    BC:
+    BL:
+    HF: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/BitMapperBS/BL.fa
+    T1:
+    T2:
+    T3:
+    T4:
+  bowtie2:
+    D5:
+    D6:
+    F7:
+    M8:
+    BC:
+    BL:
+    HF: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/bowtie2/BL
+    T1:
+    T2:
+    T3:
+    T4:
+  bsgenova:
+    D5:
+    D6:
+    F7:
+    M8:
+    BC:
+    BL:
+    HF: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/samtools/BL.fa
+    T1:
+    T2:
+    T3:
+    T4:
+  bsmapz:
+    D5:
+    D6:
+    F7:
+    M8:
+    BC:
+    BL:
+    HF: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/bsmapz/BL.fa
+    T1:
+    T2:
+    T3:
+    T4:
+  bsbolt:
+    D5:
+    D6:
+    F7:
+    M8:
+    BC:
+    BL:
+    HF: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/BSBolt
     T1:
     T2:
     T3:
@@ -50,39 +195,210 @@ ref:
     T2:
     T3:
     T4:
-  bismark-bowtie2:
-    D5:
-    D6:
-    F7:
-    M8:
-    BC:
-    BL:
-    HF: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/bismark-bowtie2
-    T1:
-    T2:
-    T3:
-    T4:
-  bismark-hisat2:
-    D5:
-    D6:
-    F7:
-    M8:
-    BC:
-    BL:
-    HF: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/bismark-hisat2
-    T1:
-    T2:
-    T3:
-    T4:
-  biscuit:
-    HF: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/biscuit/BL.fa
-  bsgenova:
-    HF: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/samtools/BL.fa
   fame:
+    D5:
+    D6:
+    F7:
+    M8:
+    BC:
+    BL:
     HF: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/FAME/BL.fa.index
+    T1:
+    T2:
+    T3:
+    T4:
+  gem3:
+    original:
+      D5:
+      D6:
+      F7:
+      M8:
+      BC:
+      BL:
+      HF: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/gem3/BL.gem
+      T1:
+      T2:
+      T3:
+      T4:
+    bisulfite:
+      D5:
+      D6:
+      F7:
+      M8:
+      BC:
+      BL:
+      HF: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/gem3/BL_bisulfite.gem
+      T1:
+      T2:
+      T3:
+      T4:
+  hisat-3n:
+    D5:
+     c2t:
+     t2c:
+    D6:
+     c2t:
+     t2c:
+    F7:
+     c2t:
+     t2c:
+    M8:
+     c2t:
+     t2c:
+    BC:
+     c2t:
+     t2c:
+    BL:
+     c2t:
+     t2c:
+    HF:
+     c2t: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/hisat-3n/BL_c2t
+     t2c: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/hisat-3n/BL_t2c
+    T1:
+     c2t:
+     t2c:
+    T2:
+     c2t:
+     t2c:
+    T3:
+     c2t:
+     t2c:
+    T4:
+     c2t:
+     t2c:
+  hisat2:
+    D5:
+    D6:
+    F7:
+    M8:
+    BC:
+    BL:
+    HF: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/hisat2/BL
+    T1:
+    T2:
+    T3:
+    T4:
+  last:
+    D5:
+      fasta:
+      BISF:
+      BISR:
+      NEAR:
+    D6:
+      fasta:
+      BISF:
+      BISR:
+      NEAR:
+    F7:
+      fasta:
+      BISF:
+      BISR:
+      NEAR:
+    M8:
+      fasta:
+      BISF:
+      BISR:
+      NEAR:
+    BC:
+      fasta:
+      BISF:
+      BISR:
+      NEAR:
+    BL:
+      fasta:
+      BISF:
+      BISR:
+      NEAR:
+    HF:
+      fasta: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/last/BL.fa
+      BISF: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/last/BL_BISF
+      BISR: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/last/BL_BISR
+      NEAR: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/last/BL_NEAR
+    T1:
+      fasta:
+      BISF:
+      BISR:
+      NEAR:
+    T2:
+      fasta:
+      BISF:
+      BISR:
+      NEAR:
+    T3:
+      fasta:
+      BISF:
+      BISR:
+      NEAR:
+    T4:
+      fasta:
+      BISF:
+      BISR:
+      NEAR:
+  
   msuite2:
+    D5:
+    D6:
+    F7:
+    M8:
+    BC:
+    BL:
     HF: /home/zhangyuanfeng/software/Msuite2_edited/index/BL
+    T1:
+    T2:
+    T3:
+    T4:
+  pufferfish:
+    D5:
+    D6:
+    F7:
+    M8:
+    BC:
+    BL:
+    HF: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/pufferfish
+    T1:
+    T2:
+    T3:
+    T4:
+  segemehl:
+    D5:
+    D6:
+    F7:
+    M8:
+    BC:
+    BL:
+    HF: -i /hot_warm_data/ref/quartet/DNA/custom_genome/BL/segemehl/BL.idx -d /hot_warm_data/ref/quartet/DNA/custom_genome/BL/segemehl/BL.fa
+    T1:
+    T2:
+    T3:
+    T4:
+  strobealign:
+    D5:
+    D6:
+    F7:
+    M8:
+    BC:
+    BL:
+    HF: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/strobealign/BL.fa
+    T1:
+    T2:
+    T3:
+    T4:
+  whisper:
+    D5:
+    D6:
+    F7:
+    M8:
+    BC:
+    BL:
+    HF: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/Whisper/BL
+    T1:
+    T2:
+    T3:
+    T4:
 
+abismal:
+  align:
+    extra_params:
 astair:
   method:
     BS: CtoT
@@ -96,6 +412,12 @@ astair:
   idbias:
     extra_params:
   mbias:
+    extra_params:
+aryana:
+  align:
+    extra_params:
+batmeth2:
+  align:
     extra_params:
 
 biscuit:
@@ -111,11 +433,19 @@ biscuit:
     extra_params:
   cinread:
     extra_params:
+bowtie2:
+  align:
+    extra_params: -t -q --sensitive
+bsbolt:
+  align:
+    extra_params:
 
 bsgenova:
   count:
     extra_params:
-
+bsmapz:
+  align:
+    extra_params: -w 100
 bismark:
   align_bowtie2:
     extra_params: --strandID
@@ -129,6 +459,10 @@ bismark:
     extra_params:
   bam2nuc:
     extra_params:
+
+bitmapperbs:
+  align:
+    extra_params: --sensitive
 
 bwa-meme:
   extra_params:
@@ -158,6 +492,19 @@ gatk:
     extra_params:
   dedup:
     extra_params:
+gem3:
+  align:
+    extra_params:
+hisat-3n:
+  align:
+    extra_params: --sensitive -t -q
+hisat2:
+  align:
+    extra_params: --sensitive -t -q
+
+last:
+  align:
+    extra_params:
 
 methyldackel:
   count:
@@ -167,6 +514,10 @@ methyldackel:
 
 msuite2:
   extra_params:
+
+pufferfish:
+  align:
+    extra_params: --allowSoftclip --allowOverhangSoftclip --writeQualities --genomicReads
 
 qualimap:
   extra_params: --java-mem-size=80G
@@ -181,5 +532,17 @@ samtools:
   flagstat:
     extra_params:
 
+segemehl:
+  align:
+    extra_params:
+
+strobealign:
+  align:
+    extra_params: --mcs
+
 trim-galore:
   extra_params:
+
+whisper:
+  align:
+    extra_params: -store-BAM -gzipped-SAM 9
