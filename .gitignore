@@ -86,12 +86,26 @@ ipython_config.py
 .snakemake/
 input
 result
-test
+test/
+test/.snakemake/
 resources/dbsnp/
 resources/hpg_methyl/
 resources/FAME/
 resources/Msuite2/
 resources/bsgenova/
+resources/abismal/
+resources/aryana/
+resources/hisat-3n/
+resources/hisat2/
+resources/gemBS-rs/
+resources/SAPLING/
+resources/pufferfish/
+resources/gem3-mapper/
+resources/lastz/
+resources/last-split-pe/
+resources/BatMeth2/
+resources/Whisper/
+resources/segemehl-0.3.4/
 *.fastq
 
 # pyenv
@@ -191,3 +205,4 @@ cython_debug/
 pyrightConfig.json
 .swp
 cspell.json
+.qodo

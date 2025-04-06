@@ -1,0 +1,9 @@
+channels:
+    - cpfarrell
+    - bioconda
+    - conda-forge
+    - defaults
+
+dependencies:
+    - cpfarrell::bsbolt
+    - conda-forge::openssl=1.1.1w

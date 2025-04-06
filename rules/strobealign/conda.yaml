@@ -1,0 +1,9 @@
+channels:
+    - bioconda
+    - conda-forge
+    - defaults
+
+dependencies:
+    - bioconda::samtools>=1.21
+    - bioconda::strobealign>=0.15.0
+    - bioconda::mbuffer

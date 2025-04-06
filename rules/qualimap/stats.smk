@@ -1,4 +1,6 @@
 configfile: "config/runtime_config.yaml"
+from textwrap import dedent
+
 
 rule qualimap:
     input:
@@ -8,13 +10,12 @@ rule qualimap:
                  "{BaseName}.qualimap.pdf",
                  "qualimapReport.html")
     params:
-        extra_params = (config["qualimap"]["extra_params"]
-                        if config["qualimap"]["extra_params"] else "")
+        extra_params = config["qualimap"]["extra_params"] or ""
     threads: 8
     conda:
         "conda.yaml"
     shell:
-        """
+        dedent("""
         cd result/{wildcards.BaseName}/{wildcards.QualimapParentDir}
         if [ -d "qualimap" ]; then
             rm -rf qualimap
@@ -26,4 +27,4 @@ rule qualimap:
             -outfile {wildcards.BaseName}.qualimap.pdf \
             -outformat PDF:HTML \
             -nt {threads} {params.extra_params}
-        """
+        """)

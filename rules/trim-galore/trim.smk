@@ -1,4 +1,6 @@
 configfile: "config/runtime_config.yaml"
+from textwrap import dedent
+
 
 rule trim_galore:
     input:
@@ -12,13 +14,12 @@ rule trim_galore:
         r1_report    = "result/{BaseName}/trim-galore/{BaseName}.R1.report",
         r2_report    = "result/{BaseName}/trim-galore/{BaseName}.R2.report"
     params:
-        extra_params = (config["trim-galore"]["extra_params"]
-                        if config["trim-galore"]["extra_params"] else "")
+        extra_params = config["trim-galore"]["extra_params"] or ""
     threads: 8
     conda:
         "conda.yaml"
     shell:
-        """
+        dedent("""
         trim_galore \
             -j {threads} --paired \
             --output_dir result/{wildcards.BaseName}/trim-galore \
@@ -35,4 +36,4 @@ rule trim_galore:
         mv \
             result/{wildcards.BaseName}/trim-galore/{wildcards.BaseName}.R2.fq.gz_trimming_report.txt \
             {output.r2_report}
-        """
+        """)

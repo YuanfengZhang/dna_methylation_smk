@@ -1,12 +1,41 @@
-[submodule "resources/rastair"]
-	path = resources/rastair
-	url = https://bitbucket.org/bsblabludwig/rastair/
+[submodule "resources/abismal"]
+    path = resources/abismal
+    url = https://github.com/smithlabcode/abismal.git
+[submodule "resources/aryana"]
+    path = resources/aryana
+    url = https://github.com/hnikaein/aryana.git
+[submodule "resources/BatMeth2"]
+    path = resources/BatMeth2
+    url = https://github.com/GuoliangLi-HZAU/BatMeth2.git
 [submodule "resources/bsgenova"]
 	path = resources/bsgenova
 	url = https://github.com/YuanfengZhang/bsgenova.git
 [submodule "resources/FAME"]
 	path = resources/FAME
 	url = git@github.com:YuanfengZhang/FAME.git
+[submodule "resources/gem3-mapper"]
+    path = resources/gem3-mapper
+    url = https://github.com/smarco/gem3-mapper.git
+[submodule "resources/hisat2"]
+    path = resources/hisat2
+    url = https://github.com/DaehwanKimLab/hisat2.git
+[submodule "resources/hisat-3n"]
+    path = resources/hisat-3n
+    url = https://github.com/DaehwanKimLab/hisat2.git
+	branch = hisat-3n
+[submodule "resources/last-split-pe"]
+    path = resources/last-split-pe
+    url = https://bitbucket.org/splitpairedend/last-split-pe
 [submodule "resources/Msuite2"]
 	path = resources/Msuite2
 	url = git@github.com:YuanfengZhang/Msuite2.git
+[submodule "resources/pufferfish"]
+    path = resources/pufferfish
+    url = https://github.com/COMBINE-lab/pufferfish.git
+	branch = develop
+[submodule "resources/rastair"]
+	path = resources/rastair
+	url = https://bitbucket.org/bsblabludwig/rastair
+[submodule "resources/Whisper"]
+    path = resources/Whisper
+    url = https://github.com/refresh-bio/Whisper.git

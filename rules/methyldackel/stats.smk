@@ -1,4 +1,6 @@
 configfile: "config/runtime_config.yaml"
+from textwrap import dedent
+
 
 rule methyldackel_mbias:
     input:
@@ -8,16 +10,15 @@ rule methyldackel_mbias:
         "result/{BaseName}/{BamStatsParentDir}/{BaseName}methydackel_mbias_OB.svg"
     params:
         ref          = lambda wildcards: config["ref"]["bwa-mem"][wildcards.BaseName.split('_')[1]],
-        extra_params = (config["methyldackel"]["mbias"]["extra_params"]
-                        if config["methyldackel"]["mbias"]["extra_params"] else "")
+        extra_params = config["methyldackel"]["mbias"]["extra_params"] or ""
     threads: 8
     conda:
         "conda.yaml"
     shell:
-        """
+        dedent("""
         cd result/{wildcards.BaseName}/{wildcards.BamStatsParentDir}
         MethylDackel mbias \
             {params.ref} {wildcards.BaseName}.bam \
             ./{wildcards.BaseName}.methydackel_mbias \
             -@ {threads} {params.extra_params}
-        """
+        """)

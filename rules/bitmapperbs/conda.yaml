@@ -1,0 +1,9 @@
+channels:
+    - bioconda
+    - conda-forge
+    - defaults
+
+dependencies:
+    - bioconda::samtools>=1.21
+    - bioconda::bitmapperbs=1.0.2.3=hc088bd4_2  
+    - bioconda::mbuffer

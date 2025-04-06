@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from argparse import ArgumentParser, Namespace
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Dict, List, Literal, LiteralString, Optional, Tuple, Set, Union
+from typing import Any, Dict, List, Literal, LiteralString, Optional, Tuple, Set, Union
 import numpy as np
 import pandas as pd
 
@@ -17,7 +17,12 @@ PIPELINE_CODING: Dict[str, Dict[str, str]] = {
         'bismark-bowtie2': '0', 'bismark-hisat2': '1',
         'msuite2-bowtie2': '2', 'msuite2-hisat2': '3',
         'bwa-meth': '4', 'bwa-meme': '5', 'dnmtools': '6',
-        'biscuit': '7', 'bsmapz': '8'
+        'biscuit': '7', 'bsmapz': '8', 'batmeth2': '9',
+        'bsbolt': 'A', 'abismal': 'B', 'hisat-3n': 'C',
+        'bitmapperbs': 'D', 'whisper': 'E', 'pufferfish': 'F',
+        'strobealign': 'G', 'aryana': 'H', 'gem3': 'I',
+        'hisat2': 'J', 'bowtie2': 'K', 'segemehl': 'L',
+        'last': 'M'
     },
     'DEDUPER': {
         'no-dedup': '0', 'bismark': '1', 'gatk-dedup': '2',  # .../gatk/gatk/... will cause ambiguity.
@@ -413,30 +418,25 @@ class Fq2BedGraphRun:
     def __init__(self, row: pd.Series,
                  root_dir: Path):
         self.row: pd.Series = row
-        self.BaseName: str = row['FNAME']
-        self.Trimmer: Trimmer = Trimmer(row['TRIMMER'])
-        self.Fastqcer: FastqcerOption = (Fastqcer(row['FASTQCER'])
-                                         if row['FASTQCER']
+        self.BaseName: str = str(row['FNAME'])
+        self.Trimmer: Trimmer = Trimmer(str(row['TRIMMER']))
+        self.Fastqcer: FastqcerOption = (Fastqcer(str(row['FASTQCER'])) if self._vaild_str(row['FASTQCER'])
                                          else EmptyModule('Fastqcer'))
-        self.Aligner: AlignerOption = (Aligner(row['ALIGNER'])
-                                       if row['ALIGNER']
+        self.Aligner: AlignerOption = (Aligner(str(row['ALIGNER'])) if self._vaild_str(row['ALIGNER'])
                                        else EmptyModule('Aligner'))
-        self.DeDuper: DeDuperOption = (DeDuper(row['DEDUPER'])
-                                       if row['DEDUPER']
+        self.DeDuper: DeDuperOption = (DeDuper(str(row['DEDUPER'])) if self._vaild_str(row['DEDUPER'])
                                        else EmptyModule('DeDuper'))
-        self.Calibrator: CalibratorOption = (Calibrator(row['CALIBRATOR'])
-                                             if row['CALIBRATOR']
+        self.Calibrator: CalibratorOption = (Calibrator(str(row['CALIBRATOR'])) if self._vaild_str(row['CALIBRATOR'])
                                              else EmptyModule('Calibrator'))
-        self.Counter: CounterOption = (Counter(row['COUNTER'])
-                                       if row['COUNTER']
+        self.Counter: CounterOption = (Counter(str(row['COUNTER'])) if self._vaild_str(row['COUNTER'])
                                        else EmptyModule('Counter'))
         self.BAMStatist: BAMStatistOption = (BAMStatist()
-                                             if row['STATS']
+                                             if self._vaild_str(row['STATS'])
                                              else EmptyModule('BAMStatist'))
         self.ModuleChain = self._tool_chain()
         self.ParentDir = self._parent_dir(root_dir=root_dir, fname=self.BaseName)
         self.Files = self._files()
-        self.Code = self._pipeline_encode(pipeline_coding=PIPELINE_CODING)
+        self.Code = self._chain_encode(pipeline_coding=PIPELINE_CODING)
 
     def __repr__(self):
         return (f'{self.__class__.__name__} for {self.row["FNAME"]}\n'
@@ -449,6 +449,13 @@ class Fq2BedGraphRun:
                 f'BAMStatist: {self.BAMStatist}\n'
                 f'ModuleChain: {self.ModuleChain}\n'
                 f'ParentDir: {self.ParentDir}')
+
+    @staticmethod
+    def _vaild_str(some_obj: Any):
+        """
+        To get rid of annoying pyright error message.
+        """
+        return isinstance(some_obj, str) and len(some_obj) > 0
 
     @staticmethod
     def _parent_dir(root_dir: Path, fname: str) -> Path:
@@ -575,6 +582,25 @@ class Fq2BedGraphRun:
         return ''.join(pipeline_coding[module_type].get(dir_part, '?')
                        for dir_part, module_type in zip(counter_dir_parts, encoding_order))
 
+    def _chain_encode(self,
+                      pipeline_coding: Dict[str, Dict[str, str]] = PIPELINE_CODING,
+                      encoding_order: List[str] = ENCODING_ORDER) -> str:
+        last_non_stat_files: List[Path] = []
+        current_context: PipelineContext = PipelineContext(fname=self.BaseName,
+                                                           parent_dir=self.ParentDir)
+        for tool in self.ModuleChain:
+            (new_files,
+             current_context) = tool.files(context=current_context)
+            if any(isinstance(tool, module) for module in (Fastqcer, BAMStatist)):
+                pass
+            else:
+                last_non_stat_files = new_files
+
+        final_dir_parts = last_non_stat_files[0].relative_to(self.ParentDir).parts
+
+        return ''.join(pipeline_coding[module_type].get(dir_part, '?')
+                       for dir_part, module_type in zip(final_dir_parts, encoding_order))
+
 
 def pipeline_decode(pipeline_code: str,
                     pipeline_decoding: Dict[str, Dict[str, str]] = PIPELINE_CODING,
@@ -686,10 +712,10 @@ class BedGraph2DMRun:
 
         (self.A,
          self.B) = [Fq2BedGraphRun(pd.Series({col.replace(suffix, ''): row[col]
-                                              for col in row.index if col.endswith(suffix)}),
+                                              for col in row.columns if col.endswith(suffix)}),
                                    root_dir=Path('./result'))
                     for suffix in ('1', '2')]
-        self.DMer: str = row['DMER']
+        self.DMer: str = str(row['DMER'])
         self.Files: List[Path] = self._generate_output(root_dir=root_dir)
 
     def _generate_output(self, root_dir) -> List[Path]:

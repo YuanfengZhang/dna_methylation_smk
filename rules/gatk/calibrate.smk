@@ -1,4 +1,6 @@
 configfile: "config/runtime_config.yaml"
+from textwrap import dedent
+
 
 rule gatk_bqsr:
     input:
@@ -12,17 +14,14 @@ rule gatk_bqsr:
     params:
         snp_vcf      = config["gatk"]["cal_bqsr"]["snp_vcf"],
         ref          = lambda wildcards: config["ref"]["bwa-mem"][wildcards.BaseName.split('_')[1]],
-        bqsr_params  = (config["gatk"]["cal_bqsr"]["extra_params"]
-                        if config["gatk"]["cal_bqsr"]["extra_params"] else ""),
-        apply_params = (config["gatk"]["apply_bqsr"]["extra_params"]
-                        if config["gatk"]["apply_bqsr"]["extra_params"] else ""),
-        cov_params   = (config["gatk"]["analyze_covariates"]["extra_params"]
-                        if config["gatk"]["analyze_covariates"]["extra_params"] else ""),
+        bqsr_params  = config["gatk"]["cal_bqsr"]["extra_params"] or "",
+        apply_params = config["gatk"]["apply_bqsr"]["extra_params"] or "",
+        cov_params   = config["gatk"]["analyze_covariates"]["extra_params"] or "",
     threads: 8
     conda:
         "conda.yaml"
     shell:
-        """
+        dedent("""
         gatk \
             --java-options "-Xmx20g -XX:ParallelGCThreads={threads}"\
             BaseRecalibrator \
@@ -54,4 +53,4 @@ rule gatk_bqsr:
             {params.cov_params}
         
         samtools index  -@ {threads} {output.bam} || echo "suppress non-zero exit"
-        """
+        """)

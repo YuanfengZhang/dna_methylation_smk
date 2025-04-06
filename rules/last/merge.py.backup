@@ -1,0 +1,90 @@
+# ! This is not working because the length of reads in sam files
+# are different from them in fastq files.
+from argparse import ArgumentParser
+from pathlib import Path
+import gzip
+import polars as pl
+
+
+def retrieve_qual(reads: list[str], fq_f: str, qual_tmp_f: str):
+    reads_to_query = set(reads)
+    read_quals = dict()
+
+    open_param = [gzip.open, 'rt'] if fq_f.endswith('.gz') else [open, 'r']
+    with open_param[0](fq_f, open_param[1]) as fq:
+        while reads_to_query:
+            try:
+                read_header = fq.readline()[1:].strip()
+
+                if not read_header:  # empty line means EOF
+                    break
+
+                _ = fq.readline()  # skip
+                _ = fq.readline()  # skip
+
+                read_qual = fq.readline()  # no strip, just write the original row.
+
+            except StopIteration:  # in case EOF is reached
+                break
+
+            if read_header in reads_to_query:
+                read_quals[read_header] = read_qual
+                reads_to_query.remove(read_header)
+
+    quals = [read_quals[read] for read in reads]
+
+    with open(qual_tmp_f, 'w+') as qual_tmp:
+        for qual in quals:
+            qual_tmp.write(qual)
+
+
+def main():
+    parser = ArgumentParser(description=('Merge and unique BISF, BISR and '
+                                         'NEAR sam files to output.sam file.'))
+    parser.add_argument('--bisf', help='Path to the BISF sam file.')
+    parser.add_argument('--bisr', help='Path to the BISR sam file.')
+    parser.add_argument('--near', help='Path to the NEAR sam file.')
+    parser.add_argument('--header', help='Path to the sam header.')
+    parser.add_argument('--fq', help='Path to the merged fq file.')
+    parser.add_argument('--sam_tmp', help='Path to the tmp sam file.')
+    parser.add_argument('--qual_tmp', help='Path to the tmp qual file.')
+    args = parser.parse_args()
+
+    for _f in (args.bisf, args.bisr, args.near, args.header, args.fq):
+        if not Path(_f).exists():
+            raise FileNotFoundError(f'File {_f} does not exist.')
+
+    Path(args.sam_tmp).parent.mkdir(exist_ok=True)
+    Path(args.qual_tmp).parent.mkdir(exist_ok=True)
+
+    # Read the CSV file
+    reads_df: pl.LazyFrame = (
+        pl.concat(items=[
+            pl.scan_csv(args.bisf, separator='\t', has_header=False,
+                        schema={'QNAME': pl.String, 'FLAG': pl.UInt16, 'RNAME': pl.String,
+                                'POS': pl.Int64, 'MAPQ': pl.Int64, 'CIGAR': pl.String,
+                                'RNEXT': pl.String, 'PNEXT': pl.Int64, 'TLEN': pl.Int64,
+                                'SEQ': pl.String, 'QUAL': pl.String}),
+            pl.scan_csv(args.bisr, separator='\t', has_header=False,
+                        schema={'QNAME': pl.String, 'FLAG': pl.UInt16, 'RNAME': pl.String,
+                                'POS': pl.Int64, 'MAPQ': pl.Int64, 'CIGAR': pl.String,
+                                'RNEXT': pl.String, 'PNEXT': pl.Int64, 'TLEN': pl.Int64,
+                                'SEQ': pl.String, 'QUAL': pl.String}),
+            pl.scan_csv(args.near, separator='\t', has_header=False,
+                        schema={'QNAME': pl.String, 'FLAG': pl.UInt16, 'RNAME': pl.String,
+                                'POS': pl.Int64, 'MAPQ': pl.Int64, 'CIGAR': pl.String,
+                                'RNEXT': pl.String, 'PNEXT': pl.Int64, 'TLEN': pl.Int64,
+                                'SEQ': pl.String, 'QUAL': pl.String})],
+                  how='vertical')
+          .sort(by=['QNAME', 'FLAG', 'MAPQ'], descending=[False, False, True])
+          .unique(subset=['QNAME', 'FLAG'], keep='first')
+          .drop('QUAL'))
+
+    reads_df.sink_csv(path=args.sam_tmp, separator='\t', include_header=False)
+
+    retrieve_qual(reads=reads_df.collect()['QNAME'].to_list(),
+                  fq_f=args.fq, qual_tmp_f=args.qual_tmp)
+
+
+if __name__ == '__main__':
+    main()

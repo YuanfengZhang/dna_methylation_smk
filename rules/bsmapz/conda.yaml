@@ -1,0 +1,10 @@
+channels:
+    - zyndagj
+    - bioconda
+    - conda-forge
+    - defaults
+
+dependencies:
+    - bioconda::samtools>=1.21
+    - zyndagj::bsmapz
+    - bioconda::mbuffer

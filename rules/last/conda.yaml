@@ -1,0 +1,14 @@
+channels:
+    - bioconda
+    - conda-forge
+    - defaults
+
+dependencies:
+    - bioconda::samtools>=1.21
+    - bioconda::last>=1615
+    - bioconda::seqtk
+    - bioconda::mbuffer
+    - conda-forge::parallel
+    - conda-forge::pip
+    - pip:
+      - polars

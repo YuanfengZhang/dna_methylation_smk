@@ -1,4 +1,6 @@
 configfile: "config/runtime_config.yaml"
+from textwrap import dedent
+
 
 rule gatk_dedup:
     input:
@@ -8,13 +10,12 @@ rule gatk_dedup:
         bai          = "result/{BaseName}/{DedupParentDir}/gatk-dedup/{BaseName}.bam.bai",
         metrics      = "result/{BaseName}/{DedupParentDir}/gatk-dedup/{BaseName}.dedup.metrics"
     params:
-        extra_params = (config["gatk"]["dedup"]["extra_params"]
-                        if config["gatk"]["dedup"]["extra_params"] else "")
+        extra_params = config["gatk"]["dedup"]["extra_params"] or ""
     threads: 8
     conda:
         "conda.yaml"
     shell:
-        """
+        dedent("""
         gatk \
             --java-options "-Xmx20g -XX:ParallelGCThreads={threads}" \
             MarkDuplicates \
@@ -25,4 +26,4 @@ rule gatk_dedup:
             {params.extra_params}
 
         samtools index -@ {threads} {output.bam} || echo "suppress non-zero exit"
-        """
+        """)

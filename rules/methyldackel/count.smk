@@ -1,4 +1,6 @@
 configfile: "config/runtime_config.yaml"
+from textwrap import dedent
+
 
 rule methyldackel_count:
     input:
@@ -8,13 +10,12 @@ rule methyldackel_count:
     params:
         ref          = lambda wildcards: config["ref"]["bwa-mem"][wildcards.BaseName.split('_')[1]],
         mode         = lambda wildcards: "-mCtoT" if wildcards.BaseName.split('_')[0] == "PS" else "",
-        extra_params = (config["methyldackel"]["count"]["extra_params"]
-                        if config["methyldackel"]["count"]["extra_params"] else "")
+        extra_params = config["methyldackel"]["count"]["extra_params"] or ""
     threads: 8
     conda:
         "conda.yaml"
     shell:
-        """
+        dedent("""
         cd result/{wildcards.BaseName}/{wildcards.CountParentDir}
         MethylDackel extract \
             {params.ref} {wildcards.BaseName}.bam \
@@ -23,7 +24,7 @@ rule methyldackel_count:
         mv \
             methyldackel/{wildcards.BaseName}_CpG.bedGraph \
             methyldackel/{wildcards.BaseName}.bedgraph
-        """
+        """)
 
 rule methyldackel_merge_context:
     input:
@@ -33,13 +34,12 @@ rule methyldackel_merge_context:
         "result/{BaseName}/{CountParentDir}/methyldackel/{BaseName}.merged.bedgraph.gz"
     params:
         ref          = lambda wildcards: config["ref"]["bwa-mem"][wildcards.BaseName.split('_')[1]],
-        extra_params = (config["methyldackel"]["count"]["extra_params"]
-                        if config["methyldackel"]["count"]["extra_params"] else "")
+        extra_params = config["methyldackel"]["count"]["extra_params"] or ""
     threads: 1
     conda:
         "conda.yaml"
     shell:
-        """
+        dedent("""
         cd result/{wildcards.BaseName}/{wildcards.CountParentDir}/methyldackel
         MethylDackel mergeContext \
             {params.ref} {wildcards.BaseName}.bedgraph \
@@ -49,4 +49,4 @@ rule methyldackel_merge_context:
 
         pigz --best -p 8 {wildcards.BaseName}.bedgraph
         pigz --best -p 8 {wildcards.BaseName}.merged.bedgraph
-        """
+        """)

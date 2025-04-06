@@ -1,0 +1,12 @@
+channels:
+    - bioconda
+    - conda-forge
+    - defaults
+
+dependencies:
+    - bioconda::samtools>=1.21
+    - bioconda::vg=1.63.1  
+    - bioconda::mbuffer
+    - conda-forge::pip
+    - pip:
+      - methylGrapher>=0.1.3

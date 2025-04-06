@@ -597,8 +597,8 @@ class BedGraph2Metilene(BedGraphConverter):
 
         (df_s1r1.join(other=df_s1r2, on=['chrom', 'start'], how='inner'))
 
-        solo_out: Path = (self.A.Rep1.OutDir /
-                          f'{self.A.Rep1.BaseName}_vs_{self.B.Rep1.BaseName}' /
+        solo_out: Path = (self.A.Rep1.OutDir /  # noqa
+                          f'{self.A.Rep1.BaseName}_vs_{self.B.Rep1.BaseName}' /  # noqa
                           f'{self.A.Code}.{self.B.Code}.{self.Aim}')
 
         (df_s1r1.join(other=df_s1r2, on=['chrom', 'start'], how='inner')

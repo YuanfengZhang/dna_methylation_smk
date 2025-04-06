@@ -1,4 +1,6 @@
 configfile: "config/runtime_config.yaml"
+from textwrap import dedent
+
 
 rule bismark_dedup:
     input:
@@ -8,13 +10,12 @@ rule bismark_dedup:
                  ".bam",
                  ".bam.bai")
     params:
-        extra_params = (config["bismark"]["dedup"]["extra_params"]
-                        if config["bismark"]["dedup"]["extra_params"] else "")
+        extra_params = config["bismark"]["dedup"]["extra_params"] or ""
     threads: 8
     conda:
         "conda.yaml"
     shell:
-        """
+        dedent("""
         cd result/{wildcards.BaseName}/{wildcards.DedupParentDir}
         samtools \
             sort -n \
@@ -38,4 +39,4 @@ rule bismark_dedup:
 
         rm {wildcards.BaseName}.sort_n_tmp.bam
         rm {wildcards.BaseName}.deduplicated.bam
-        """
+        """)
