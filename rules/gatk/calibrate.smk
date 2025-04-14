@@ -11,6 +11,8 @@ rule gatk_bqsr:
         before_table = "result/{BaseName}/{CalibrateParentDir}/gatk-cali/{BaseName}.before.table",
         after_table  = "result/{BaseName}/{CalibrateParentDir}/gatk-cali/{BaseName}.after.table",
         pdf          = "result/{BaseName}/{CalibrateParentDir}/gatk-cali/{BaseName}.AnalyzeCovariates.pdf"
+    benchmark:
+        "result/{BaseName}/{CalibrateParentDir}/gatk-cali/{BaseName}.cali.benchmark"
     params:
         snp_vcf      = config["gatk"]["cal_bqsr"]["snp_vcf"],
         ref          = lambda wildcards: config["ref"]["bwa-mem"][wildcards.BaseName.split('_')[1]],

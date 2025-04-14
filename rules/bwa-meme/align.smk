@@ -11,6 +11,8 @@ rule bwa_meme:
     output:
         bam          = "result/{BaseName}/{AlignParentDir}/bwa-meme/{BaseName}.bam",
         bai          = "result/{BaseName}/{AlignParentDir}/bwa-meme/{BaseName}.bam.bai"
+    benchmark:
+        "result/{BaseName}/{AlignParentDir}/bwa-meme/{BaseName}.align.benchmark"
     params:
         ref          = lambda wildcards: config["ref"]["bwa-meme"][wildcards.BaseName.split('_')[1]],
         extra_params = config["bwa-meme"]["extra_params"] or ""

@@ -9,6 +9,8 @@ rule gatk_dedup:
         bam          = "result/{BaseName}/{DedupParentDir}/gatk-dedup/{BaseName}.bam",
         bai          = "result/{BaseName}/{DedupParentDir}/gatk-dedup/{BaseName}.bam.bai",
         metrics      = "result/{BaseName}/{DedupParentDir}/gatk-dedup/{BaseName}.dedup.metrics"
+    benchmark:
+        "result/{BaseName}/{DedupParentDir}/gatk-dedup/{BaseName}.dedup.benchmark"
     params:
         extra_params = config["gatk"]["dedup"]["extra_params"] or ""
     threads: 8

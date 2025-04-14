@@ -12,6 +12,8 @@ rule astair_idbias:
                  ".astair.IDbias_indel_rate.pdf",
                  ".astair.IDbias_mod_co-localize.pdf",
                  ".astair.IDbias.stats")
+    benchmark:
+        "result/{BaseName}/{BamStatsParentDir}/{BaseName}.idbias.benchmark"
     params:
         ref          = lambda wildcards: config["ref"]["bwa-mem"][wildcards.BaseName.split('_')[1]],
         extra_params = config["astair"]["idbias"]["extra_params"] or ""
@@ -47,12 +49,14 @@ rule astair_idbias:
 
 rule astair_mbias:
     input:
-        "result/{BaseName}/{BamStatsParentDiir}/{BaseName}.bam"
+        "result/{BaseName}/{BamStatsParentDir}/{BaseName}.bam"
     output:
-        multiext("result/{BaseName}/{BamStatsParentDiir}/"
+        multiext("result/{BaseName}/{BamStatsParentDir}/"
                  "{BaseName}",
                  ".astair.Mbias.stats",
                  ".astair.Mbias.pdf")
+    benchmark:
+        "result/{BaseName}/{BamStatsParentDir}/{BaseName}.mbias.benchmark"
     params:
         ref          = lambda wildcards: config["ref"]["bwa-mem"][wildcards.BaseName.split('_')[1]],
         extra_params = config["astair"]["mbias"]["extra_params"]

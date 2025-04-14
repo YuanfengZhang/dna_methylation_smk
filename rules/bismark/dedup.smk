@@ -9,6 +9,8 @@ rule bismark_dedup:
         multiext("result/{BaseName}/{DedupParentDir}/bismark/{BaseName}",
                  ".bam",
                  ".bam.bai")
+    benchmark:
+        "result/{BaseName}/{DedupParentDir}/bismark/{BaseName}.dedup.benchmark"
     params:
         extra_params = config["bismark"]["dedup"]["extra_params"] or ""
     threads: 8

@@ -19,6 +19,8 @@ rule bitmapperbs_align:
     output:
         bam          = "result/{BaseName}/{AlignParentDir}/bitmapperbs/{BaseName}.bam",
         bai          = "result/{BaseName}/{AlignParentDir}/bitmapperbs/{BaseName}.bam.bai"
+    benchmark:
+        "result/{BaseName}/{AlignParentDir}/bitmapperbs/{BaseName}.align.benchmark"
     params:
         ref          = lambda wildcards: config["ref"]["bitmapperbs"][wildcards.BaseName.split('_')[1]],
         extra_params = config["bitmapperbs"]["align"]["extra_params"] or ""

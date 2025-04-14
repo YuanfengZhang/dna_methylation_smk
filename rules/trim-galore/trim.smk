@@ -13,6 +13,8 @@ rule trim_galore:
         r2           = "result/{BaseName}/trim-galore/{BaseName}.R2.fq.gz",
         r1_report    = "result/{BaseName}/trim-galore/{BaseName}.R1.report",
         r2_report    = "result/{BaseName}/trim-galore/{BaseName}.R2.report"
+    benchmark:
+        "result/{BaseName}/trim-galore/{BaseName}.trim.benchmark"
     params:
         extra_params = config["trim-galore"]["extra_params"] or ""
     threads: 8

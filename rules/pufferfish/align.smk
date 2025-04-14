@@ -22,6 +22,8 @@ rule pufferfish_align:
     output:
         bam          = "result/{BaseName}/{AlignParentDir}/pufferfish/{BaseName}.bam",
         bai          = "result/{BaseName}/{AlignParentDir}/pufferfish/{BaseName}.bam.bai"
+    benchmark:
+        "result/{BaseName}/{AlignParentDir}/pufferfish/{BaseName}.align.benchmark"
     params:
         ref          = lambda wildcards: config["ref"]["pufferfish"][wildcards.BaseName.split('_')[1]],
         extra_params = config["pufferfish"]["align"]["extra_params"] or ""

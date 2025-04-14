@@ -14,6 +14,8 @@ rule bismark_bowtie2:
         multiext("result/{BaseName}/{AlignParentDir}/bismark-bowtie2/{BaseName}",
                  ".bam",
                  ".align.report")
+    benchmark:
+        "result/{BaseName}/{AlignParentDir}/bismark-bowtie2/{BaseName}.align.benchmark"
     params:
        # The BaseName example: BS_D5_1_Biochain.
        # We split the BaseName by '_' and get the second element.
@@ -64,6 +66,8 @@ rule bismark_hisat2:
         multiext("result/{BaseName}/{AlignParentDir}/bismark-hisat2/{BaseName}",
                  ".bam",
                  ".align.report")
+    benchmark:
+        "result/{BaseName}/{AlignParentDir}/bismark-hisat2/{BaseName}.align.benchmark"
     params:
        # The BaseName example: BS_D5_1_Biochain.
        # We split the BaseName by '_' and get the second element.

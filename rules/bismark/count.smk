@@ -33,6 +33,8 @@ rule bismark_extractor:
                  "bismark.cov.gz", "splitting_report",
                  "bismark.zero.cov", "M-bias.txt",
                  "M-bias_R1.png", "M-bias_R2.png")
+    benchmark:
+        "result/{BaseName}/{CountParentDir}/bismark/{BaseName}.extractor.benchmark"
     params:
         ref           = lambda wildcards: config["ref"]["bismark-bowtie2"][wildcards.BaseName.split('_')[1]],
         extra_params  = config["bismark"]["exactor"]["extra_params"] or ""
@@ -117,6 +119,8 @@ rule bismark_c2c:
                  ".c2c.cov.gz",
                  ".c2c.report.gz",
                  ".c2c.summary")
+    benchmark:
+        "result/{BaseName}/{CountParentDir}/bismark/{BaseName}.c2c.benchmark"
     params:
         ref           = lambda wildcards: config["ref"]["bismark-bowtie2"][wildcards.BaseName.split('_')[1]],
         extra_params  = config["bismark"]["coverage2cytosine"]["extra_params"] or ""

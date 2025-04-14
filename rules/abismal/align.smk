@@ -18,10 +18,12 @@ rule abismal_align:
     output:
         bam          = "result/{BaseName}/{AlignParentDir}/abismal/{BaseName}.bam",
         bai          = "result/{BaseName}/{AlignParentDir}/abismal/{BaseName}.bam.bai"
+    benchmark:
+        "result/{BaseName}/{AlignParentDir}/abismal/{BaseName}.align.benchmark"
     params:
         ref          = lambda wildcards: config["ref"]["abismal"][wildcards.BaseName.split('_')[1]],
         extra_params = config["abismal"]["align"]["extra_params"] or ""
-    threads: 8
+    threads: 64
     conda:
         "../samtools/conda.yaml"
     shell:
@@ -30,8 +32,9 @@ rule abismal_align:
         PLATFORM=$(echo "{wildcards.BaseName}" | cut -d'_' -f4)
         SAMPLE=$(echo "{wildcards.BaseName}" | cut -d'_' -f2-3)
 
-        CONDA_LIB=$(which python | sed 's/bin\/python/lib/')
+        CONDA_LIB=$(which samtools | sed 's/bin\/samtools/lib/')
         export LD_LIBRARY_PATH=$CONDA_LIB:$LD_LIBRARY_PATH
+        export LD_PRELOAD=$CONDA_LIB/libhts.so.3
 
         resources/abismal/bin/abismal \
             -i {params.ref} \
@@ -47,5 +50,4 @@ rule abismal_align:
 
         samtools index -@ {threads} {output.bam} || echo "suppress non-zero exit"
 
-        rm {output.bam}.tmp
-        """)
+        rm {output.bam}.tmp""")

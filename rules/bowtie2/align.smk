@@ -25,6 +25,8 @@ rule bowtie2_align:
     output:
         bam          = "result/{BaseName}/{AlignParentDir}/bowtie2/{BaseName}.bam",
         bai          = "result/{BaseName}/{AlignParentDir}/bowtie2/{BaseName}.bam.bai"
+    benchmark:
+        "result/{BaseName}/{AlignParentDir}/bowtie2/{BaseName}.align.benchmark"
     params:
         ref          = lambda wildcards: config["ref"]["bowtie2"][wildcards.BaseName.split('_')[1]],
         extra_params = config["bowtie2"]["align"]["extra_params"] or ""

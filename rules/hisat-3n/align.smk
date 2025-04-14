@@ -48,6 +48,8 @@ rule hisat3n_align:
     output:
         bam          = "result/{BaseName}/{AlignParentDir}/hisat-3n/{BaseName}.bam",
         bai          = "result/{BaseName}/{AlignParentDir}/hisat-3n/{BaseName}.bam.bai"
+    benchmark:
+        "result/{BaseName}/{AlignParentDir}/hisat-3n/{BaseName}.align.benchmark"
     params:
         ref          = lambda wildcards: retrieve_hisat3n_ref(wildcards,
                                                                config),

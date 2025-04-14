@@ -4,9 +4,11 @@ from textwrap import dedent
 
 rule samtools_stats:
     input:
-        "result/{BaseName}/{BamStatsParentDir}/{BaseName}bam"
+        "result/{BaseName}/{BamStatsParentDir}/{BaseName}.bam"
     output:
-        "result/{BaseName}/{BamStatsParentDir}/{BaseName}samtools.stats.txt"
+        "result/{BaseName}/{BamStatsParentDir}/{BaseName}.samtools.stats.txt"
+    benchmark:
+        "result/{BaseName}/{BamStatsParentDir}/{BaseName}.samtools.stats.benchmark"
     params:
         ref          = lambda wildcards: config["ref"]["bwa-mem"][wildcards.BaseName.split('_')[1]],
         extra_params = config["samtools"]["stats"]["extra_params"]
@@ -26,9 +28,11 @@ rule samtools_stats:
 
 rule samtools_flagstat:
     input:
-        "result/{BaseName}/{BamStatsParentDir}/{BaseName}bam"
+        "result/{BaseName}/{BamStatsParentDir}/{BaseName}.bam"
     output:
-        "result/{BaseName}/{BamStatsParentDir}/{BaseName}samtools.flagstats.txt"
+        "result/{BaseName}/{BamStatsParentDir}/{BaseName}.samtools.flagstats.txt"
+    benchmark:
+        "result/{BaseName}/{BamStatsParentDir}/{BaseName}.samtools.flagstats.benchmark"
     params:
         extra_params = config["samtools"]["flagstat"]["extra_params"] or ""
     threads: 8

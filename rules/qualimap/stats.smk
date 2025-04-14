@@ -9,6 +9,8 @@ rule qualimap:
         multiext("result/{BaseName}/{QualimapParentDir}/qualimap/",
                  "{BaseName}.qualimap.pdf",
                  "qualimapReport.html")
+    benchmark:
+        "result/{BaseName}/{QualimapParentDir}/qualimap/{BaseName}.qualimap.benchmark"
     params:
         extra_params = config["qualimap"]["extra_params"] or ""
     threads: 8

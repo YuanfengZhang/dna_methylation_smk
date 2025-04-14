@@ -154,6 +154,8 @@ rule last_align:
     output:
         bam          = "result/{BaseName}/{AlignParentDir}/last/{BaseName}.bam",
         bai          = "result/{BaseName}/{AlignParentDir}/last/{BaseName}.bam.bai"
+    benchmark:
+        "result/{BaseName}/{AlignParentDir}/last/{BaseName}.align.benchmark"
     params:
         bisf_db      = lambda wildcards: config["ref"]["last"][wildcards.BaseName.split('_')[1]]["BISF"],
         bisr_db      = lambda wildcards: config["ref"]["last"][wildcards.BaseName.split('_')[1]]["BISR"],

@@ -37,6 +37,8 @@ rule hisat2_align:
     output:
         bam          = "result/{BaseName}/{AlignParentDir}/hisat2/{BaseName}.bam",
         bai          = "result/{BaseName}/{AlignParentDir}/hisat2/{BaseName}.bam.bai"
+    benchmark:
+        "result/{BaseName}/{AlignParentDir}/hisat2/{BaseName}.align.benchmark"
     params:
         ref          = lambda wildcards: config["ref"]["hisat2"][wildcards.BaseName.split('_')[1]],
         extra_params = config["hisat2"]["align"]["extra_params"] or ""

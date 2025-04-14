@@ -15,6 +15,8 @@ rule biscuit_qc:
                  ".biscuit.mapq_table.txt",
                  ".biscuit.strand_table.txt",
                  ".biscuit.totalReadConversionRate.txt")
+    benchmark:
+        "result/{BaseName}/{BamStatsParentDir}/{BaseName}.biscuit.qc.benchmark"
     params:
         ref          = lambda wildcards: config["ref"]["biscuit"][wildcards.BaseName.split('_')[1]],
         qc_params    = config["biscuit"]["qc"]["extra_params"] or ""
@@ -57,6 +59,8 @@ rule biscuit_bsstrand:
         "result/{BaseName}/{BamStatsParentDir}/{BaseName}.bam"
     output:
         "result/{BaseName}/{BamStatsParentDir}/{BaseName}.biscuit.bsstrand.txt"
+    benchmark:
+        "result/{BaseName}/{BamStatsParentDir}/{BaseName}.biscuit.bsstrand.benchmark"
     params:
         ref             = lambda wildcards: config["ref"]["biscuit"][wildcards.BaseName.split('_')[1]],
         bsstrand_params = if config["biscuit"]["bsstrand"]["extra_params"] or ""
@@ -76,6 +80,8 @@ rule biscuit_cinread:
     output:
         ("result/{BaseName}/{BamStatsParentDir}/"
          "{BaseName}.biscuit.cinread.txt")
+    benchmark:
+        "result/{BaseName}/{BamStatsParentDir}/{BaseName}.biscuit.cinread.benchmark"
     params:
         ref            = lambda wildcards: config["ref"]["biscuit"][wildcards.BaseName.split('_')[1]],
         cinread_params = if config["biscuit"]["cinread"]["extra_params"] or ""

@@ -7,6 +7,8 @@ rule bam2nuc:
         "result/{BaseName}/{StatsParentDir}/{BaseName}.bam"
     output:
         "result/{BaseName}/{StatsParentDir}/{BaseName}.bam2nuc.txt"
+    benchmark:
+        "result/{BaseName}/{StatsParentDir}/{BaseName}.bam2nuc.benchmark"
     params:
         ref          = lambda wildcards: config["ref"]["bismark-bowtie2"][wildcards.BaseName.split('_')[1]],
         extra_params = config["bismark"]["bam2nuc"]["extra_params"] or ""

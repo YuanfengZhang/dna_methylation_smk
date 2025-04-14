@@ -40,6 +40,8 @@ rule msuite2_bowtie2:
         "result/{BaseName}/{AlignParentDir}/msuite2-bowtie2/{BaseName}.bam.bai",
         "result/{BaseName}/{AlignParentDir}/msuite2-bowtie2/{BaseName}.msuite2.bedgraph.gz",
         "result/{BaseName}/{AlignParentDir}/msuite2-bowtie2/Msuite2.report/index.html"
+    benchmark:
+        "result/{BaseName}/{AlignParentDir}/msuite2-bowtie2/{BaseName}.align.benchmark"
     params:
         label        = lambda wildcards: get_ref_label(wildcards.BaseName),
         platform     = lambda wildcards: get_platform_param(wildcards.BaseName),
@@ -77,6 +79,8 @@ rule msuite2_hisat2:
         "result/{BaseName}/{AlignParentDir}/msuite2-hisat2/{BaseName}.bam.bai",
         "result/{BaseName}/{AlignParentDir}/msuite2-hisat2/{BaseName}.msuite2.bedgraph.gz",
         "result/{BaseName}/{AlignParentDir}/msuite2-hisat2/Msuite2.report/index.html"
+    benchmark:
+        "result/{BaseName}/{AlignParentDir}/msuite2-bowtie2/{BaseName}.align.benchmark"
     params:
         label        = lambda wildcards: get_ref_label(wildcards.BaseName),
         platform     = lambda wildcards: get_platform_param(wildcards.BaseName),

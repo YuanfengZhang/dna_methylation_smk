@@ -10,6 +10,8 @@ rule astair_count:
                  "/astair/{BaseName}",
                  ".astair.mods.gz",
                  ".astair.stats")
+    benchmark:
+        "result/{BaseName}/{CountParentDir}/astair/{BaseName}.count.benchmark"
     params:
         ref          = lambda wildcards: config["ref"]["astair"][wildcards.BaseName.split('_')[1]],
         method       = lambda wildcards: config["astair"]["method"][wildcards.BaseName.split('_')[0]],

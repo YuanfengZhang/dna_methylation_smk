@@ -10,7 +10,9 @@ rule fq2tsv:
         r1           = "result/{BaseName}/{AlignParentDir}/{BaseName}.R1.fq.gz",
         r2           = "result/{BaseName}/{AlignParentDir}/{BaseName}.R2.fq.gz"
     output:
-        'result/{BaseName}/{AlignParentDir}/fame/{BaseName}.bedgraph.zst'    
+        'result/{BaseName}/{AlignParentDir}/fame/{BaseName}.bedgraph.zst'
+    benchmark:
+        "result/{BaseName}/{AlignParentDir}/fame/{BaseName}.count.benchmark"
     params:
         ref          = lambda wildcards: config["ref"]["fame"][wildcards.BaseName.split('_')[1]],
         extra_params = config["fame"]["extra_params"] or ""

@@ -12,8 +12,8 @@ bsmapz \
     -o /mnt/eqa/zhangyuanfeng/methylation/dna_methylation_smk/test/align/bsmapz.bam \
     -p 16
 
-! It's has to be done in the input dir since long file paths cause
-! **.bam.tmp.bam*** buffer overflow detected ***: terminated
+! It's has to be done in the input dir since long file paths cause the following error:
+!    **.bam.tmp.bam*** buffer overflow detected ***: terminated
 ! see https://github.com/zyndagj/BSMAPz/issues/19
 """
 
@@ -36,6 +36,8 @@ rule bsmapz_align:
     output:
         bam           = "result/{BaseName}/{AlignParentDir}/bsmapz/{BaseName}.bam",
         bai           = "result/{BaseName}/{AlignParentDir}/bsmapz/{BaseName}.bam.bai"
+    benchmark:
+        "result/{BaseName}/{AlignParentDir}/bsmapz/{BaseName}.align.benchmark"
     params:
         ref           = lambda wildcards: config["ref"]["bsmapz"][wildcards.BaseName.split('_')[1]],
         method_params = lambda wildcards: retrieve_method_params(wildcards),

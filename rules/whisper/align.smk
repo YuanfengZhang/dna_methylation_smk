@@ -21,6 +21,8 @@ rule whisper_align:
     output:
         bam          = "result/{BaseName}/{AlignParentDir}/whisper/{BaseName}.bam",
         bai          = "result/{BaseName}/{AlignParentDir}/whisper/{BaseName}.bam.bai"
+    benchmark:
+        "result/{BaseName}/{AlignParentDir}/whisper/{BaseName}.align.benchmark"
     params:
         ref          = lambda wildcards: config["ref"]["whisper"][wildcards.BaseName.split('_')[1]],
         extra_params = config["whisper"]["align"]["extra_params"] or ""

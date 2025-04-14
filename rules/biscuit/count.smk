@@ -7,6 +7,8 @@ rule biscuit_count:
         "result/{BaseName}/{CountParentDir}/{BaseName}.bam"
     output:
         "result/{BaseName}/{CountParentDir}/biscuit/{BaseName}.epibed.gz"
+    benchmark:
+        "result/{BaseName}/{CountParentDir}/biscuit/{BaseName}.count.benchmark"
     params:
         ref            = lambda wildcards: config["ref"]["biscuit"][wildcards.BaseName.split('_')[1]],
         pileup_params  = config["biscuit"]["pileup"]["extra_params"] or "",

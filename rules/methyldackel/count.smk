@@ -7,6 +7,8 @@ rule methyldackel_count:
         "result/{BaseName}/{CountParentDir}/{BaseName}.bam"
     output:
         "result/{BaseName}/{CountParentDir}/methyldackel/{BaseName}.bedgraph"
+    benchmark:
+        "result/{BaseName}/{CountParentDir}/methyldackel/{BaseName}.count.benchmark"
     params:
         ref          = lambda wildcards: config["ref"]["bwa-mem"][wildcards.BaseName.split('_')[1]],
         mode         = lambda wildcards: "-mCtoT" if wildcards.BaseName.split('_')[0] == "PS" else "",
@@ -32,6 +34,8 @@ rule methyldackel_merge_context:
     output:
         "result/{BaseName}/{CountParentDir}/methyldackel/{BaseName}.bedgraph.gz",
         "result/{BaseName}/{CountParentDir}/methyldackel/{BaseName}.merged.bedgraph.gz"
+    benchmark:
+        "result/{BaseName}/{CountParentDir}/methyldackel/{BaseName}.merge.benchmark"
     params:
         ref          = lambda wildcards: config["ref"]["bwa-mem"][wildcards.BaseName.split('_')[1]],
         extra_params = config["methyldackel"]["count"]["extra_params"] or ""

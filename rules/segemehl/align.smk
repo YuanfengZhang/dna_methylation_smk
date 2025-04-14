@@ -30,6 +30,8 @@ rule segemehl_align:
     output:
         bam          = "result/{BaseName}/{AlignParentDir}/segemehl/{BaseName}.bam",
         bai          = "result/{BaseName}/{AlignParentDir}/segemehl/{BaseName}.bam.bai"
+    benchmark:
+        "result/{BaseName}/{AlignParentDir}/segemehl/{BaseName}.align.benchmark"
     params:
         ref          = lambda wildcards: config["ref"]["segemehl"][wildcards.BaseName.split('_')[1]],
         method_param = lambda wildcards: retrieve_method_param(wildcards),

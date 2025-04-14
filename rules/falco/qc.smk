@@ -11,6 +11,8 @@ rule falco:
                  ".R1.falco.html", ".R2.falco.html",
                  ".R1.falco.data.txt", ".R2.falco.data.txt",
                  ".R1.falco.summary", ".R2.falco.summary")
+    benchmark:
+        "result/{BaseName}/{ReportParentDir}/{BaseName}.falco.benchmark"
     params:
         extra_params  = config["falco"]["extra_params"] or ""
     threads: 8

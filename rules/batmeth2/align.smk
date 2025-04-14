@@ -29,6 +29,8 @@ rule batmeth2_align:
     output:
         bam          = "result/{BaseName}/{AlignParentDir}/batmeth2/{BaseName}.bam",
         bai          = "result/{BaseName}/{AlignParentDir}/batmeth2/{BaseName}.bam.bai"
+    benchmark:
+        "result/{BaseName}/{AlignParentDir}/batmeth2/{BaseName}.align.benchmark"
     params:
         ref          = lambda wildcards: retrieve_batmeth2_ref(wildcards,
                                                                config),

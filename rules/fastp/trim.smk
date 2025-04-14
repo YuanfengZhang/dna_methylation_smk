@@ -13,6 +13,8 @@ rule fastp:
         r2           = "result/{BaseName}/fastp/{BaseName}.R2.fq.gz",
         qc_html      = "result/{BaseName}/fastp/{BaseName}.fastp.html",
         qc_json      = "result/{BaseName}/fastp/{BaseName}.fastp.json"
+    benchmark:
+        "result/{BaseName}/fastp/{BaseName}.trim.benchmark"
     params:
         extra_params = config["fastp"]["extra_params"] or ""
     threads: 8

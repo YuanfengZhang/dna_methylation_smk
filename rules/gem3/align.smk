@@ -33,6 +33,8 @@ rule gem3_align:
     output:
         bam          = "result/{BaseName}/{AlignParentDir}/gem3/{BaseName}.bam",
         bai          = "result/{BaseName}/{AlignParentDir}/gem3/{BaseName}.bam.bai"
+    benchmark:
+        "result/{BaseName}/{AlignParentDir}/gem3/{BaseName}.align.benchmark"
     params:
         ref          = lambda wildcards: retrieve_gem3_ref(wildcards,
                                                            config),

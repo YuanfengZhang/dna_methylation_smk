@@ -9,6 +9,8 @@ rule samtools_dedup:
         bam            = "result/{BaseName}/{DedupParentDir}/samtools/{BaseName}.bam",
         bai            = "result/{BaseName}/{DedupParentDir}/samtools/{BaseName}.bam.bai",
         stats          = "result/{BaseName}/{DedupParentDir}/samtools/{BaseName}.dup.stats"
+    benchmark:
+        "result/{BaseName}/{DedupParentDir}/samtools/{BaseName}.dedup.benchmark"
     params:
         fixmate_params = config["samtools"]["fixmate"]["extra_params"] or "",
         mkdup_params   = config["samtools"]["mkdup"]["extra_params"] or ""

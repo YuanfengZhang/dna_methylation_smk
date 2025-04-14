@@ -9,6 +9,8 @@ rule biscuit_align:
     output:
         bam          = "result/{BaseName}/{AlignParentDir}/biscuit/{BaseName}.bam",
         bai          = "result/{BaseName}/{AlignParentDir}/biscuit/{BaseName}.bam.bai"
+    benchmark:
+        "result/{BaseName}/{AlignParentDir}/biscuit/{BaseName}.align.benchmark"
     params:
         ref          = lambda wildcards: config["ref"]["biscuit"][wildcards.BaseName.split('_')[1]],
         extra_params = config["biscuit"]["align"]["extra_params"] or ""

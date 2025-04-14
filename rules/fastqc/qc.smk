@@ -9,6 +9,8 @@ rule fastqc:
     output:
         r1_html      = "result/{BaseName}/{ReportParentDir}/{BaseName}.R1.fastqc.html",
         r2_html      = "result/{BaseName}/{ReportParentDir}/{BaseName}.R2.fastqc.html"
+    benchmark:
+        "result/{BaseName}/{ReportParentDir}/{BaseName}.fastqc.benchmark"
     params:
         extra_params = config["fastqc"]["extra_params"] or ""
     threads: 8

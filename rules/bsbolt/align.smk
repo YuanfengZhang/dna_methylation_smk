@@ -11,7 +11,7 @@ bsbolt Align \
     -UN -OT 8 -t 8
 """
 # ! the bsbolt requires outdated libcrypto.so.1.1 with is incompatible with samtools.
-
+# ! That's why the bsbolt align and post-align are separated.
 
 rule bsbolt_align:
     input:
@@ -19,6 +19,8 @@ rule bsbolt_align:
         r2           = "result/{BaseName}/{AlignParentDir}/{BaseName}.R2.fq.gz",
     output:
         bam          = "result/{BaseName}/{AlignParentDir}/bsbolt/tmp_{BaseName}.bam"
+    benchmark:
+        "result/{BaseName}/{AlignParentDir}/bsbolt/{BaseName}.align.benchmark"
     params:
         ref          = lambda wildcards: config["ref"]["bsbolt"][wildcards.BaseName.split('_')[1]],
         extra_params = config["bsbolt"]["align"]["extra_params"] or ""
@@ -47,6 +49,8 @@ rule bsbolt_post_align:
     output:
         bam          = "result/{BaseName}/{AlignParentDir}/bsbolt/{BaseName}.bam",
         bai          = "result/{BaseName}/{AlignParentDir}/bsbolt/{BaseName}.bam.bai"
+    benchmark:
+        "result/{BaseName}/{AlignParentDir}/bsbolt/{BaseName}.post_align.benchmark"
     params:
         ref          = lambda wildcards: config["ref"]["bsbolt"][wildcards.BaseName.split('_')[1]],
         extra_params = config["bsbolt"]["align"]["extra_params"] or ""

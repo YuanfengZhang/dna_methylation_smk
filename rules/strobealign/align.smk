@@ -23,6 +23,8 @@ rule strobealign:
     output:
         bam          = "result/{BaseName}/{AlignParentDir}/strobealign/{BaseName}.bam",
         bai          = "result/{BaseName}/{AlignParentDir}/strobealign/{BaseName}.bam.bai"
+    benchmark:
+        "result/{BaseName}/{AlignParentDir}/strobealign/{BaseName}.align.benchmark"
     params:
         ref          = lambda wildcards: config["ref"]["strobealign"][wildcards.BaseName.split('_')[1]],
         extra_params = config["strobealign"]["align"]["extra_params"] or ""

@@ -18,6 +18,8 @@ rule aryana_align:
     output:
         bam          = "result/{BaseName}/{AlignParentDir}/aryana/{BaseName}.bam",
         bai          = "result/{BaseName}/{AlignParentDir}/aryana/{BaseName}.bam.bai"
+    benchmark:
+        "result/{BaseName}/{AlignParentDir}/aryana/{BaseName}.align.benchmark"
     params:
         ref          = lambda wildcards: config["ref"]["aryana"][wildcards.BaseName.split('_')[1]],
         extra_params = config["aryana"]["align"]["extra_params"] or ""
