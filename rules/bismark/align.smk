@@ -36,8 +36,8 @@ rule bismark_bowtie2:
 
         cd result/{wildcards.BaseName}/{wildcards.AlignParentDir}/bismark-bowtie2
 
-        LIB=$(echo "{wildcards.BaseName}" | cut -d'_' -f1)
-        PLATFORM=$(echo "{wildcards.BaseName}" | cut -d'_' -f4)
+        LIB=$(echo "{wildcards.BaseName}" | cut -d _ -f1 | cut -c 1-2)
+        PLATFORM=$(echo "{wildcards.BaseName}" | cut -d _ -f1)
         SAMPLE=$(echo "{wildcards.BaseName}" | cut -d'_' -f2-3)
 
         samtools sort \
@@ -86,8 +86,8 @@ rule bismark_hisat2:
 
         cd result/{wildcards.BaseName}/{wildcards.AlignParentDir}/bismark-hisat2
 
-        LIB=$(echo "{wildcards.BaseName}" | cut -d'_' -f1)
-        PLATFORM=$(echo "{wildcards.BaseName}" | cut -d'_' -f4)
+        LIB=$(echo "{wildcards.BaseName}" | cut -d _ -f1 | cut -c 1-2)
+        PLATFORM=$(echo "{wildcards.BaseName}" | cut -d _ -f1)
         SAMPLE=$(echo "{wildcards.BaseName}" | cut -d'_' -f2-3)
 
         samtools sort \

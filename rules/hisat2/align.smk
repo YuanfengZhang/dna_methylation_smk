@@ -14,19 +14,6 @@ hisat2 -x /hot_warm_data/ref/quartet/DNA/custom_genome/BL/hisat2/BL \
     --rg PU:unit1 \
     --rg LB:lib1 \
     -t -p 16
-hisat-3n \
-    --index /hot_warm_data/ref/quartet/DNA/custom_genome/BL/hisat-3n/BL_c2t \
-    -q \
-    -1 /mnt/eqa/zhangyuanfeng/methylation/dna_methylation_smk/input/BS_HF_1_MX.R1.fq.gz \
-    -2 /mnt/eqa/zhangyuanfeng/methylation/dna_methylation_smk/input/BS_HF_1_MX.R2.fq.gz \
-    -S /mnt/eqa/zhangyuanfeng/methylation/dna_methylation_smk/test/align/hisat3n.sam \
-    --base-change C,T --sensitive \
-    --rg-id ID:1 \
-    --rg SM:sample1 \
-    --rg PL:ILLUMINA \
-    --rg PU:unit1 \
-    --rg LB:lib1 \
-    -t -p 16
 """
 
 
@@ -47,8 +34,8 @@ rule hisat2_align:
         "../samtools/conda.yaml"
     shell:
         dedent("""
-        LIB=$(echo "{wildcards.BaseName}" | cut -d'_' -f1)
-        PLATFORM=$(echo "{wildcards.BaseName}" | cut -d'_' -f4)
+        LIB=$(echo "{wildcards.BaseName}" | cut -d _ -f1 | cut -c 1-2)
+        PLATFORM=$(echo "{wildcards.BaseName}" | cut -d _ -f1)
         SAMPLE=$(echo "{wildcards.BaseName}" | cut -d'_' -f2-3)
 
         resources/hisat2/hisat2 \

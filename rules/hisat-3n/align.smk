@@ -3,6 +3,10 @@ from textwrap import dedent
 
 
 """
+git clone https://github.com/DaehwanKimLab/hisat2.git hisat-3n
+cd hisat-3n
+git checkout -b hisat-3n origin/hisat-3n
+make
 time hisat-3n-build \
     ./BL.fa ./BL_c2t \
     --base-change C,T \
@@ -28,14 +32,14 @@ hisat-3n \
 """
 
 def retrieve_hisat3n_ref(wildcards, config):
-    if wildcards.BaseName.split('_')[0] == 'PS':
+    if wildcards.BaseName.split('_')[0][: 2] == 'PS':
         return config["ref"]["hisat-3n"][wildcards.BaseName.split('_')[1]]["t2c"]
     else:
         return config["ref"]["hisat-3n"][wildcards.BaseName.split('_')[1]]["c2t"]
 
 
 def retrieve_base_change(wildcards):
-    if wildcards.BaseName.split('_')[0] == 'PS':
+    if wildcards.BaseName.split('_')[0][: 2] == 'PS':
         return "T,C"
     else:
         return "C,T"
@@ -60,8 +64,8 @@ rule hisat3n_align:
         "../samtools/conda.yaml"
     shell:
         dedent("""
-        LIB=$(echo "{wildcards.BaseName}" | cut -d'_' -f1)
-        PLATFORM=$(echo "{wildcards.BaseName}" | cut -d'_' -f4)
+        LIB=$(echo "{wildcards.BaseName}" | cut -d _ -f1 | cut -c 1-2)
+        PLATFORM=$(echo "{wildcards.BaseName}" | cut -d _ -f1)
         SAMPLE=$(echo "{wildcards.BaseName}" | cut -d'_' -f2-3)
 
         resources/hisat-3n/hisat-3n \

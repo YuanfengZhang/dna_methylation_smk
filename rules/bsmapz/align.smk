@@ -20,7 +20,7 @@ bsmapz \
 
 def retrieve_method_params(wildcards, three: bool = False):
     to_return = ""
-    if wildcards.BaseName.split('_')[0] == "RR":
+    if wildcards.BaseName.split('_')[0][: 2] == "RR":
         to_return += "-s 12"
 
     if three:
@@ -47,8 +47,8 @@ rule bsmapz_align:
         "conda.yaml"
     shell:
         dedent("""
-        LIB=$(echo "{wildcards.BaseName}" | cut -d'_' -f1)
-        PLATFORM=$(echo "{wildcards.BaseName}" | cut -d'_' -f4)
+        LIB=$(echo "{wildcards.BaseName}" | cut -d _ -f1 | cut -c 1-2)
+        PLATFORM=$(echo "{wildcards.BaseName}" | cut -d _ -f1)
         SAMPLE=$(echo "{wildcards.BaseName}" | cut -d'_' -f2-3)
 
         cd result/{wildcards.BaseName}/{wildcards.AlignParentDir}

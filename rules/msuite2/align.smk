@@ -18,17 +18,15 @@ def get_method_param(BaseName) -> str:
                   'RR': '-3 -m BS',
                   'TB': '-3 -m BS',
                   'PS': '-4 -m TAPS'}
-    return method_map.get(BaseName.split('_')[0], '-3 -m BS')
+    return method_map.get(BaseName.split('_')[0][: 2], '-3 -m BS')
 
 
 def get_platform_param(BaseName) -> str:
-    platform_map = {'Biochain': 'illumina', 'GENESEEQ': 'illumina',
-                    'MGI': 'bgi', 'HaploX': 'illumina',
-                    'FDU': 'bgi', 'HIT': 'bgi',
-                    'singlera': 'illumina', 'IPM-GBA': 'bgi',
-                    'FAHJLU': 'bgi', 'FAHZZU': 'bgi', 'Geneplus': 'bgi',
-                    'SnT': 'bgi', 'iGeneTech': 'bgi'}
-    return platform_map.get(BaseName.split('_')[3], 'illumina')
+    platform_map = {'BS1': 'bgi', 'BS2': 'illumina', 'BS3': 'illumina', 'BS4': 'illumina',
+                    'EM1': 'illumina', 'EM2': 'bgi', 'EM3': 'bgi', 'EM4': 'bgi',
+                    'PS1': 'bgi', 'PS2': 'bgi', 'PS3': 'bgi',
+                    'RR1': 'bgi', 'TB1': 'bgi'}
+    return platform_map.get(BaseName.split('_')[0], 'illumina')
 
 
 rule msuite2_bowtie2:
@@ -48,7 +46,7 @@ rule msuite2_bowtie2:
         method_param = lambda wildcards: get_method_param(wildcards.BaseName),
         ref          = lambda wildcards: config["ref"]["msuite2"][wildcards.BaseName.split('_')[1]],
         extra_params = config["msuite2"]["extra_params"]
-                        if config["msuite2"]["extra_params"] or ""
+                       if config["msuite2"]["extra_params"] else ""
     threads: 8
     conda:
         "conda.yaml"
@@ -86,7 +84,8 @@ rule msuite2_hisat2:
         platform     = lambda wildcards: get_platform_param(wildcards.BaseName),
         method_param = lambda wildcards: get_method_param(wildcards.BaseName),
         ref          = lambda wildcards: config["ref"]["msuite2"][wildcards.BaseName.split('_')[1]],
-        extra_params = config["msuite2"]["extra_params"] or ""
+        extra_params = config["msuite2"]["extra_params"]
+                       if config["msuite2"]["extra_params"] else ""
     threads: 8
     conda:
         "conda.yaml"

@@ -1,7 +1,8 @@
 configfile: "config/runtime_config.yaml"
 from textwrap import dedent
 """
-prepare_genomes.sh BL.fa BL.cgi.bed ./aryana
+pycoMeth CGI_Finder -f BL.fa -b BL.cgi.bed
+prepare_genomes.sh BL.fa BL.cgi.bed ./aryana .
 aryana_bs \
     /hot_warm_data/ref/quartet/DNA/custom_genome/BL/aryana/BL.fa \
     /hot_warm_data/ref/quartet/DNA/custom_genome/BL/aryana/aryana \
@@ -28,8 +29,8 @@ rule aryana_align:
         "../samtools/conda.yaml"
     shell:
         dedent("""
-        LIB=$(echo "{wildcards.BaseName}" | cut -d'_' -f1)
-        PLATFORM=$(echo "{wildcards.BaseName}" | cut -d'_' -f4)
+        LIB=$(echo "{wildcards.BaseName}" | cut -d _ -f1 | cut -c 1-2)
+        PLATFORM=$(echo "{wildcards.BaseName}" | cut -d _ -f1)
         SAMPLE=$(echo "{wildcards.BaseName}" | cut -d'_' -f2-3)
 
         parent_dir="result/{wildcards.BaseName}/{wildcards.AlignParentDir}"

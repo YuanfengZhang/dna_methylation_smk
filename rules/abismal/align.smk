@@ -1,6 +1,21 @@
 configfile: "config/runtime_config.yaml"
 from textwrap import dedent
 """
+#! create a conda env containing liblzma and samtools first
+CONDA_PREFIX=$(which samtools | sed 's/bin\/samtools//')
+export CPPFLAGS="$CPPFLAGS -I$CONDA_PREFIX/include"
+export LDFLAGS="$CPPFLAGS -L$CONDA_PREFIX/lib"
+export PKG_CONFIG_PATH=$CONDA_PREFIX/lib/pkgconfig
+export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
+
+wget https://github.com/smithlabcode/abismal/releases/download/v3.2.4/abismal-3.2.4.tar.gz
+tar -zxvf abismal-3.2.4.tar.gz
+cd abismal-3.2.4
+mkdir build && cd build
+../configure --prefix=/where/you/want/abismal
+make -j 4
+make install
+
 abismalidx ./BL.fa BL.abismal_index
 export LD_LIBRARY_PATH=/home/zhangyuanfeng/mambaforge/envs/genomic_tools/lib:$LD_LIBRARY_PATH
 abismal \
@@ -28,8 +43,8 @@ rule abismal_align:
         "../samtools/conda.yaml"
     shell:
         dedent("""
-        LIB=$(echo "{wildcards.BaseName}" | cut -d'_' -f1)
-        PLATFORM=$(echo "{wildcards.BaseName}" | cut -d'_' -f4)
+        LIB=$(echo "{wildcards.BaseName}" | cut -d _ -f1 | cut -c 1-2)
+        PLATFORM=$(echo "{wildcards.BaseName}" | cut -d _ -f1)
         SAMPLE=$(echo "{wildcards.BaseName}" | cut -d'_' -f2-3)
 
         CONDA_LIB=$(which samtools | sed 's/bin\/samtools/lib/')

@@ -17,7 +17,7 @@ resources/segemehl-0.3.4/segemehl.x \
 
 
 def retrieve_method_param(wildcards):
-    if wildcards.BaseName.split('_')[0] in ('PS', 'NP'):
+    if wildcards.BaseName.split('_')[0][: 2] in ('PS', 'NP'):
         return ""
     else:
         return "-F 2"
@@ -41,8 +41,8 @@ rule segemehl_align:
         "../samtools/conda.yaml"
     shell:
         dedent("""
-        LIB=$(echo "{wildcards.BaseName}" | cut -d'_' -f1)
-        PLATFORM=$(echo "{wildcards.BaseName}" | cut -d'_' -f4)
+        LIB=$(echo "{wildcards.BaseName}" | cut -d _ -f1 | cut -c 1-2)
+        PLATFORM=$(echo "{wildcards.BaseName}" | cut -d _ -f1)
         SAMPLE=$(echo "{wildcards.BaseName}" | cut -d'_' -f2-3)
 
         resources/segemehl-0.3.4/segemehl.x \

@@ -30,7 +30,7 @@ rule biscuit_qc:
             {params.ref} \
             {wildcards.BaseName}.bam \
             {wildcards.BaseName} {params.qc_params}
-        
+
         mv \
             {wildcards.BaseName}_CpGRetentionByReadPos.txt\
             {wildcards.BaseName}.biscuit.CpGRetentionByReadPos.txt

@@ -15,7 +15,7 @@ BatMeth2 align \
 
 
 def retrieve_batmeth2_ref(wildcards, config):
-    match wildcards.BaseName.split('_')[0]:
+    match wildcards.BaseName.split('_')[0][: 2]:
         case 'RR':
             return config["ref"]["batmeth2"]["RRBS"][wildcards.BaseName.split('_')[1]]
         case _:
@@ -40,8 +40,8 @@ rule batmeth2_align:
         "conda.yaml"
     shell:
         dedent("""
-        LIB=$(echo "{wildcards.BaseName}" | cut -d'_' -f1)
-        PLATFORM=$(echo "{wildcards.BaseName}" | cut -d'_' -f4)
+        LIB=$(echo "{wildcards.BaseName}" | cut -d _ -f1 | cut -c 1-2)
+        PLATFORM=$(echo "{wildcards.BaseName}" | cut -d _ -f1)
         SAMPLE=$(echo "{wildcards.BaseName}" | cut -d'_' -f2-3)
         
         resources/BatMeth2/bin/BatMeth2 align \

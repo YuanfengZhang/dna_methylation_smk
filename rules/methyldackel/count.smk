@@ -11,7 +11,7 @@ rule methyldackel_count:
         "result/{BaseName}/{CountParentDir}/methyldackel/{BaseName}.count.benchmark"
     params:
         ref          = lambda wildcards: config["ref"]["bwa-mem"][wildcards.BaseName.split('_')[1]],
-        mode         = lambda wildcards: "-mCtoT" if wildcards.BaseName.split('_')[0] == "PS" else "",
+        mode         = lambda wildcards: "-mCtoT" if wildcards.BaseName.split('_')[0][: 2] == "PS" else "",
         extra_params = config["methyldackel"]["count"]["extra_params"] or ""
     threads: 8
     conda:

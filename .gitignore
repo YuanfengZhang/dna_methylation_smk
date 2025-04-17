@@ -90,7 +90,9 @@ test/
 test/.snakemake/
 resources/dbsnp/
 resources/hpg_methyl/
+resources/FAME
 resources/FAME/
+resources/Msuite2
 resources/Msuite2/
 resources/bsgenova/
 resources/abismal/
@@ -206,3 +208,4 @@ pyrightConfig.json
 .swp
 cspell.json
 .qodo
+rules/bitmapperbs/micromamba-linux-64

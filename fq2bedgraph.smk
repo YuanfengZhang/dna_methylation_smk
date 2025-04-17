@@ -1,6 +1,6 @@
 configfile: "config/runtime_config.yaml"
 wildcard_constraints:
-    BaseName=r"[A-Z]{2}_[A-Z]{2}_\d_[A-Za-z-]+"
+    BaseName=r"[A-Z]{2}\d_[A-Z]{2}_\d"
 
 
 from utils.sample_sheet_parser import (fq2bedgraph_file_ls,

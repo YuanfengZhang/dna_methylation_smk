@@ -30,7 +30,7 @@ PIPELINE_CODING: Dict[str, Dict[str, str]] = {
         'bio-seq-zip': '6', 'trie-dedup': '7', 'ngs-reads-treatment': '8'
     },
     'CALIBRATOR': {
-        'no-pre-calibrate': '@', 'no-calibrate': '0', 'gatk-calibrate': '1', 'care': '2',
+        'no-pre-calibrate': '@', 'no-calibrate': '0', 'gatk-cali': '1', 'care': '2',
         'sequencerr': '3', 'reckoner2': '4', 'bfc': '5'
     },
     'COUNTER': {
@@ -618,7 +618,8 @@ def pipeline_decode(pipeline_code: str,
 
 def read_fq2bedgraph_sheet(csv_path: Path,
                            pipeline_coding: Dict = PIPELINE_CODING) -> pd.DataFrame:  # type: ignore
-    query_string = ('FNAME.notna() and TRIMMER.notna() and '
+    query_string = ('FNAME.notna() and '
+                    '(TRIMMER.notna() | TRIMMER.isin(@pipeline_coding["TRIMMER"].keys())) and '
                     '(FASTQCER.isna() | FASTQCER.isin(@pipeline_coding["FASTQCER"].keys())) and '
                     '(ALIGNER.isna() | ALIGNER.isin(@pipeline_coding["ALIGNER"].keys())) and '
                     '(DEDUPER.isna() | DEDUPER.isin(@pipeline_coding["DEDUPER"].keys())) and '
@@ -626,17 +627,37 @@ def read_fq2bedgraph_sheet(csv_path: Path,
                     '(COUNTER.isna() | COUNTER.isin(@pipeline_coding["COUNTER"].keys())) and '
                     '(STATS.isna() | STATS.isin([True, False]))')
 
+    input_df: pd.DataFrame
     f2b_df: pd.DataFrame
-    f2b_df = (pd.read_csv(csv_path, comment='#',
-                          dtype={'FNAME': 'str', 'TRIMMER': 'str',
-                                 'FASTQCER': 'str', 'ALIGNER': 'str',
-                                 'DEDUPER': 'str', 'CALIBRATOR': 'str',
-                                 'COUNTER': 'str', 'STATS': 'boolean'})
-              .dropna(subset=['FNAME', 'TRIMMER'])
-              .query(query_string, engine='python'))  # ! LEGALITY CHECK HERE BEFORE INITIALIZATION. NoneType IS LEGAL.
+
+    input_df = (pd.read_csv(csv_path, comment='#',
+                            dtype={'FNAME': 'str', 'TRIMMER': 'str',
+                                   'FASTQCER': 'str', 'ALIGNER': 'str',
+                                   'DEDUPER': 'str', 'CALIBRATOR': 'str',
+                                   'COUNTER': 'str', 'STATS': 'boolean'}))
+
+    f2b_df = (input_df.dropna(subset=['FNAME', 'TRIMMER'])
+                      .query(query_string, engine='python'))
+    # !LEGALITY CHECK HERE BEFORE INITIALIZATION. NoneType IS LEGAL.
 
     if f2b_df.empty:
-        raise ValueError('No valid rows found in the sheet.')
+        wrong_dict = {j: [i for i in input_df[j].unique()
+                          if i and i not in pipeline_coding[j].keys()]
+                      for j in ['FASTQCER', 'TRIMMER', 'ALIGNER',
+                                'DEDUPER', 'CALIBRATOR', 'COUNTER']}
+        wrong_message = 'No valid rows found in the sheet. Diagnosis:'
+        for category, wrong_ls in wrong_dict.items():
+            if wrong_ls:
+                wrong_message += (f'\nwrong {category}:\n{wrong_ls}\n'
+                                  f'avaliable:\n{pipeline_coding[category].keys()}')
+            else:
+                wrong_message += f'{category} fine'
+
+        if wrong_message == 'No valid rows found in the sheet. Diagnosis:':
+            wrong_message += ('all fine: FASTQCER, TRIMMER, ALIGNER, DEDUPER, CALIBRATOR, COUNTER'
+                              'check TRIMMER or STATS.')
+
+        raise ValueError(wrong_message)
 
     return f2b_df.replace(np.nan, None)
 
@@ -682,7 +703,7 @@ def dev_fq2bedgraph_tool_ls(df: pd.DataFrame) -> Dict[str, List[str] | List[Lite
     tool_chain_set: Set[PipelineModule] = {
         tool
         for _, row in df.iterrows()
-        for tool in Fq2BedGraphRun(row=row, root_dir=Path.cwd() / 'result').ModuleChain
+        for tool in Fq2BedGraphRun(row=row, root_dir=Path('result')).ModuleChain
     }
 
     return ({

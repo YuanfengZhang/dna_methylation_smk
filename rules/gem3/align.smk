@@ -20,7 +20,7 @@ samtools sort \
 
 
 def retrieve_gem3_ref(wildcards, config):
-    if wildcards.BaseName.split('_')[0] == 'PS':
+    if wildcards.BaseName.split('_')[0][: 2] == 'PS':
         return config["ref"]["gem3"]["original"][wildcards.BaseName.split('_')[1]]
     else:
         return config["ref"]["gem3"]["bisulfite"][wildcards.BaseName.split('_')[1]]
@@ -44,8 +44,8 @@ rule gem3_align:
         "../samtools/conda.yaml"
     shell:
         dedent("""
-        LIB=$(echo "{wildcards.BaseName}" | cut -d'_' -f1)
-        PLATFORM=$(echo "{wildcards.BaseName}" | cut -d'_' -f4)
+        LIB=$(echo "{wildcards.BaseName}" | cut -d _ -f1 | cut -c 1-2)
+        PLATFORM=$(echo "{wildcards.BaseName}" | cut -d _ -f1)
         SAMPLE=$(echo "{wildcards.BaseName}" | cut -d'_' -f2-3)
 
         resources/gem3-mapper/bin/gem-mapper \
