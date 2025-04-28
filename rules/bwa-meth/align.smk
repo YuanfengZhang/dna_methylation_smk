@@ -22,14 +22,14 @@ rule bwameth_align:
         LIB=$(echo "{wildcards.BaseName}" | cut -d _ -f1 | cut -c 1-2)
         PLATFORM=$(echo "{wildcards.BaseName}" | cut -d _ -f1)
         SAMPLE=$(echo "{wildcards.BaseName}" | cut -d'_' -f2-3)
-        bwameth.py \
-            --read-group "@RG\\tID:{wildcards.BaseName}\\tSM:${{SAMPLE}}\\tPL:${{PLATFORM}}\\tLB:${{LIB}}" \
-            --threads {threads} \
-            --reference {params.ref} {params.extra_params} \
-            {input.r1} {input.r2} |\
-        mbuffer -m 4G -q |\
-        samtools sort \
-            -O bam,level=9 -@ {threads} \
+        bwameth.py \\
+            --read-group "@RG\\tID:{wildcards.BaseName}\\tSM:${{SAMPLE}}\\tPL:${{PLATFORM}}\\tLB:${{LIB}}" \\
+            --threads {threads} \\
+            --reference {params.ref} {params.extra_params} \\
+            {input.r1} {input.r2} |\\
+        mbuffer -m 4G -q |\\
+        samtools sort \\
+            -O bam,level=9 -@ {threads} \\
             -o {output.bam} -
 
         samtools index -@ {threads} {output.bam} || echo "suppress non-zero exit"

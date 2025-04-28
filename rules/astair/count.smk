@@ -22,17 +22,17 @@ rule astair_count:
     shell:
         dedent("""
         cd result/{wildcards.BaseName}/{wildcards.CountParentDir}
-        astair call \
-            -i {wildcards.BaseName}.bam \
-            --reference {params.ref} \
-            -co CpG -ni . -d astair -t {threads} \
+        astair call \\
+            -i {wildcards.BaseName}.bam \\
+            --reference {params.ref} \\
+            -co CpG -ni . -d astair -t {threads} \\
             --method {params.method} {params.extra_params}
         cd astair
-        mv \
-            {wildcards.BaseName}_{params.method}_CpG.mods \
+        mv \\
+            {wildcards.BaseName}_{params.method}_CpG.mods \\
             {wildcards.BaseName}.astair.mods
         pigz --best {wildcards.BaseName}.astair.mods
-        mv \
-            {wildcards.BaseName}_{params.method}_CpG.stats \
+        mv \\
+            {wildcards.BaseName}_{params.method}_CpG.stats \\
             {wildcards.BaseName}.astair.stats
         """)

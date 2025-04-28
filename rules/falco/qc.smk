@@ -20,9 +20,9 @@ rule falco:
         "conda.yaml"
     shell:
         dedent("""
-        falco \
-            --threads {threads} \
-            {input.r1} {input.r2} \
+        falco \\
+            --threads {threads} \\
+            {input.r1} {input.r2} \\
             -bisulfite {params.extra_params}
         cd result/{wildcards.BaseName}/{wildcards.ReportParentDir}
 

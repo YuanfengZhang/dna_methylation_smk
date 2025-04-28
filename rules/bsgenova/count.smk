@@ -19,11 +19,11 @@ rule bsgenova_count:
         "conda.yaml"
     shell:
         dedent("""
-        python resources/bsgenova/bsextractor.py \
-            -b {input} \
-            -g {params.ref} \
-            --output-atcgmap {output.atcgmap} \
-            --output-cgmap {output.cgmap} \
-            --output-bed {output.bedgz} \
+        python resources/bsgenova/bsextractor.py \\
+            -b {input} \\
+            -g {params.ref} \\
+            --output-atcgmap {output.atcgmap} \\
+            --output-cgmap {output.cgmap} \\
+            --output-bed {output.bedgz} \\
             --threads {threads} {params.extra_params} 
         """)

@@ -48,13 +48,13 @@ rule gem3_align:
         PLATFORM=$(echo "{wildcards.BaseName}" | cut -d _ -f1)
         SAMPLE=$(echo "{wildcards.BaseName}" | cut -d'_' -f2-3)
 
-        resources/gem3-mapper/bin/gem-mapper \
-            -I {params.ref} -1 {input.r1} -2 {input.r2} \
-            -r "@RG\\tID:{wildcards.BaseName}\\tSM:${{SAMPLE}}\\tPL:${{PLATFORM}}\\tLB:${{LIB}}" \
-            -p -z {params.extra_params} \
-            -t {threads} |\
-        samtools sort \
-            --output-fmt bam,level=9 \
+        resources/gem3-mapper/bin/gem-mapper \\
+            -I {params.ref} -1 {input.r1} -2 {input.r2} \\
+            -r "@RG\\tID:{wildcards.BaseName}\\tSM:${{SAMPLE}}\\tPL:${{PLATFORM}}\\tLB:${{LIB}}" \\
+            -p -z {params.extra_params} \\
+            -t {threads} |\\
+        samtools sort \\
+            --output-fmt bam,level=9 \\
             -@ {threads} -o {output.bam} -
         samtools index -@ {threads} {output.bam} || echo "suppress non-zero exit"
         """)

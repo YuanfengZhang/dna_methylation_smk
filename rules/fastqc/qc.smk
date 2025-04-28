@@ -18,9 +18,8 @@ rule fastqc:
         "conda.yaml"
     shell:
         dedent("""
-        fastqc \
-            {params.extra_params} \
-            --threads {threads} \
-            -o result/{wildcards.BaseName}/{wildcards.ReportParentDir} \
+        fastqc {params.extra_params} \\
+            --threads {threads} \\
+            -o result/{wildcards.BaseName}/{wildcards.ReportParentDir} \\
             {input.r1} {input.r2}
         """)

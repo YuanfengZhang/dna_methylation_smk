@@ -19,8 +19,8 @@ rule methyldackel_mbias:
     shell:
         dedent("""
         cd result/{wildcards.BaseName}/{wildcards.BamStatsParentDir}
-        MethylDackel mbias \
-            {params.ref} {wildcards.BaseName}.bam \
-            ./{wildcards.BaseName}.methydackel_mbias \
+        MethylDackel mbias \\
+            {params.ref} {wildcards.BaseName}.bam \\
+            ./{wildcards.BaseName}.methydackel_mbias \\
             -@ {threads} {params.extra_params}
         """)

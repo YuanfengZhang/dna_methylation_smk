@@ -19,13 +19,13 @@ rule fq2tsv:
     threads: 8
     shell:
         dedent("""
-        resources/FAME/FAME \
-            -r1 {input.r1} -r2 {input.r2} \
-            --load_index {params.ref} {params.extra_params} \
+        resources/FAME/FAME \\
+            -r1 {input.r1} -r2 {input.r2} \\
+            --load_index {params.ref} {params.extra_params} \\
             -o result/{wildcards.BaseName}/{wildcards.AlignParentDir}/fame/{wildcards.BaseName}
-        POLARS_MAX_THREADS={threads} python rules/fame/format.py \
-            --input result/{wildcards.BaseName}/{wildcards.AlignParentDir}/fame/{wildcards.BaseName}_cpg.tsv \
-            --output {output} \
+        POLARS_MAX_THREADS={threads} python rules/fame/format.py \\
+            --input result/{wildcards.BaseName}/{wildcards.AlignParentDir}/fame/{wildcards.BaseName}_cpg.tsv \\
+            --output {output} \\
             --threads {threads}
         #rm result/{wildcards.BaseName}/{wildcards.AlignParentDir}/fame/{wildcards.BaseName}_cpg.tsv
         """)

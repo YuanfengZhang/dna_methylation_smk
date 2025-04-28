@@ -24,13 +24,13 @@ rule bwa_meme:
         LIB=$(echo "{wildcards.BaseName}" | cut -d _ -f1 | cut -c 1-2)
         PLATFORM=$(echo "{wildcards.BaseName}" | cut -d _ -f1)
         SAMPLE=$(echo "{wildcards.BaseName}" | cut -d'_' -f2-3)
-        bwa-meme mem \
-            -7 -Y -K 100000000 -t {threads} \
-            -R "@RG\\tID:{wildcards.BaseName}\\tSM:${{SAMPLE}}\\tPL:${{PLATFORM}}\\tLB:${{LIB}}" \
-            {params.ref} {input.r1} {input.r2} |\
-        mbuffer -m 4G -q |\
-        samtools sort \
-            --output-fmt bam,level=9 \
+        bwa-meme mem \\
+            -7 -Y -K 100000000 -t {threads} \\
+            -R "@RG\\tID:{wildcards.BaseName}\\tSM:${{SAMPLE}}\\tPL:${{PLATFORM}}\\tLB:${{LIB}}" \\
+            {params.ref} {input.r1} {input.r2} |\\
+        mbuffer -m 4G -q |\\
+        samtools sort \\
+            --output-fmt bam,level=9 \\
             -@ {threads} - >{output.bam}
         
         samtools index -@ {threads} {output.bam} || echo "suppress non-zero exit"

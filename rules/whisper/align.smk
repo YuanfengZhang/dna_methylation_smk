@@ -39,20 +39,20 @@ rule whisper_align:
 
         mkdir "${{whisper_dir}}/whisper_tmp"
 
-        resources/Whisper/src/whisper -rp \
-            -t {threads} {params.extra_params} \
-            -out ${{whisper_dir}}/whisper \
-            -temp "${{whisper_dir}}/whisper_tmp" \
+        resources/Whisper/src/whisper -rp \\
+            -t {threads} {params.extra_params} \\
+            -out ${{whisper_dir}}/whisper \\
+            -temp "${{whisper_dir}}/whisper_tmp" \\
             {params.ref} {input.r1} {input.r2}
 
-        samtools sort \
-            --output-fmt bam,level=9 \
-            -@ {threads} \
-            ${{whisper_dir}}/whisper.bam |\
-        samtools addreplacerg - \
-            -r "@RG\\tID:{wildcards.BaseName}\\tSM:${{SAMPLE}}\\tPL:${{PLATFORM}}\\tLB:${{LIB}}" \
-            --output-fmt bam,level=9 \
-            -@ {threads} \
+        samtools sort \\
+            --output-fmt bam,level=9 \\
+            -@ {threads} \\
+            ${{whisper_dir}}/whisper.bam |\\
+        samtools addreplacerg - \\
+            -r "@RG\\tID:{wildcards.BaseName}\\tSM:${{SAMPLE}}\\tPL:${{PLATFORM}}\\tLB:${{LIB}}" \\
+            --output-fmt bam,level=9 \\
+            -@ {threads} \\
             -o {output.bam}
 
         samtools index -@ {threads} {output.bam} || echo "suppress non-zero exit"

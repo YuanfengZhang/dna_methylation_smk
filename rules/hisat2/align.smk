@@ -38,16 +38,16 @@ rule hisat2_align:
         PLATFORM=$(echo "{wildcards.BaseName}" | cut -d _ -f1)
         SAMPLE=$(echo "{wildcards.BaseName}" | cut -d'_' -f2-3)
 
-        resources/hisat2/hisat2 \
-            -x {params.ref} -1 {input.r1} -2 {input.r2} \
-            --rg-id ID:{wildcards.BaseName} \
-            --rg SM:${{SAMPLE}} \
-            --rg PL:${{PLATFORM}}\
-            --rg LB:${{LIB}} \
-            -p {threads} {params.extra_params} |\
-        mbuffer -m 4G -q |\
-        samtools sort \
-            --output-fmt bam,level=9 \
+        resources/hisat2/hisat2 \\
+            -x {params.ref} -1 {input.r1} -2 {input.r2} \\
+            --rg-id ID:{wildcards.BaseName} \\
+            --rg SM:${{SAMPLE}} \\
+            --rg PL:${{PLATFORM}}\\
+            --rg LB:${{LIB}} \\
+            -p {threads} {params.extra_params} |\\
+        mbuffer -m 4G -q |\\
+        samtools sort \\
+            --output-fmt bam,level=9 \\
             -@ {threads} -o {output.bam} -
         samtools index -@ {threads} {output.bam} || echo "suppress non-zero exit"
         """)

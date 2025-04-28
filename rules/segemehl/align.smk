@@ -45,14 +45,14 @@ rule segemehl_align:
         PLATFORM=$(echo "{wildcards.BaseName}" | cut -d _ -f1)
         SAMPLE=$(echo "{wildcards.BaseName}" | cut -d'_' -f2-3)
 
-        resources/segemehl-0.3.4/segemehl.x \
-            {params.ref} -q {input.r1} -p {input.r2} \
-            -t {threads} {params.method_param} {params.extra_params} |\
-        mbuffer -m 4G -q |\
-        samtools sort -@ {threads} - |\
-        samtools addreplacerg \
-            -r "@RG\\tID:{wildcards.BaseName}\\tSM:${{SAMPLE}}\\tPL:${{PLATFORM}}\\tLB:${{LIB}}" \
-            --output-fmt bam,level=9 \
+        resources/segemehl-0.3.4/segemehl.x \\
+            {params.ref} -q {input.r1} -p {input.r2} \\
+            -t {threads} {params.method_param} {params.extra_params} |\\
+        mbuffer -m 4G -q |\\
+        samtools sort -@ {threads} - |\\
+        samtools addreplacerg \\
+            -r "@RG\\tID:{wildcards.BaseName}\\tSM:${{SAMPLE}}\\tPL:${{PLATFORM}}\\tLB:${{LIB}}" \\
+            --output-fmt bam,level=9 \\
             -@ {threads} -o {output.bam} -
 
         samtools index -@ {threads} {output.bam} || echo "suppress non-zero exit"

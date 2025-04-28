@@ -22,10 +22,10 @@ rule fastp:
         "conda.yaml"
     shell:
         dedent("""
-        fastp \
-            -i {input.r1} -I {input.r2} \
-            -o {output.r1} -O {output.r2} \
-            -h {output.qc_html} -j {output.qc_json} \
-            -w {threads} \
+        fastp \\
+            -i {input.r1} -I {input.r2} \\
+            -o {output.r1} -O {output.r2} \\
+            -h {output.qc_html} -j {output.qc_json} \\
+            -w {threads} \\
             {params.extra_params}
         """)

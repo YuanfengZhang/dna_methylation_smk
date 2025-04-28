@@ -24,34 +24,34 @@ rule gatk_bqsr:
         "conda.yaml"
     shell:
         dedent("""
-        gatk \
-            --java-options "-Xmx20g -XX:ParallelGCThreads={threads}"\
-            BaseRecalibrator \
-            -I {input} -O {output.before_table} \
-            -R {params.ref} --known-sites {params.snp_vcf} \
+        gatk \\
+            --java-options "-Xmx20g -XX:ParallelGCThreads={threads}"\\
+            BaseRecalibrator \\
+            -I {input} -O {output.before_table} \\
+            -R {params.ref} --known-sites {params.snp_vcf} \\
             {params.bqsr_params}
 
-        gatk \
-            --java-options "-Xmx20g -XX:ParallelGCThreads={threads}"\
-            ApplyBQSR \
-            -I {input} -O {output.bam} \
-            -R {params.ref} \
-            --bqsr-recal-file {output.before_table} \
+        gatk \\
+            --java-options "-Xmx20g -XX:ParallelGCThreads={threads}"\\
+            ApplyBQSR \\
+            -I {input} -O {output.bam} \\
+            -R {params.ref} \\
+            --bqsr-recal-file {output.before_table} \\
             {params.apply_params}
         
-        gatk \
-            --java-options "-Xmx20g -XX:ParallelGCThreads={threads}"\
-            BaseRecalibrator \
-            -I {output.bam} -O {output.after_table} \
-            -R {params.ref} --known-sites {params.snp_vcf} \
+        gatk \\
+            --java-options "-Xmx20g -XX:ParallelGCThreads={threads}"\\
+            BaseRecalibrator \\
+            -I {output.bam} -O {output.after_table} \\
+            -R {params.ref} --known-sites {params.snp_vcf} \\
             {params.bqsr_params}
         
-        gatk \
-            --java-options "-Xmx20g -XX:ParallelGCThreads={threads}" \
-            AnalyzeCovariates \
-            -before {output.before_table} \
-            -after {output.after_table} \
-            -csv {output.pdf} \
+        gatk \\
+            --java-options "-Xmx20g -XX:ParallelGCThreads={threads}" \\
+            AnalyzeCovariates \\
+            -before {output.before_table} \\
+            -after {output.after_table} \\
+            -csv {output.pdf} \\
             {params.cov_params}
         
         samtools index  -@ {threads} {output.bam} || echo "suppress non-zero exit"

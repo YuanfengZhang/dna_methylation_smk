@@ -20,13 +20,13 @@ rule biscuit_count:
         dedent("""
         cd result/{wildcards.BaseName}/{wildcards.CountParentDir}
         mkdir -p biscuit
-        biscuit pileup \
-            -@ {threads} -o biscuit/{wildcards.BaseName}.vcf \
-            {params.ref} {wildcards.BaseName}.bam {params.pileup_params} |\
+        biscuit pileup \\
+            -@ {threads} -o biscuit/{wildcards.BaseName}.vcf \\
+            {params.ref} {wildcards.BaseName}.bam {params.pileup_params} |\\
         bgzip -@ {threads} -o biscuit/{wildcards.BaseName}.vcf.gz
         tabix -p vcf biscuit/{wildcards.BaseName}.vcf.gz
-        biscuit vcf2bed \
-            -e {params.vcf2bed_params} biscuit/{wildcards.BaseName}.vcf |\
+        biscuit vcf2bed \\
+            -e {params.vcf2bed_params} biscuit/{wildcards.BaseName}.vcf |\\
         pigz --best > biscuit/{wildcards.BaseName}.epibed.gz
 
         rm biscuit/{wildcards.BaseName}.vcf.gz

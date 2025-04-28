@@ -29,9 +29,9 @@ rule bismark_bowtie2:
     shell:
         dedent("""
         bismark \
-            -p {threads} --bam \
-            --output_dir result/{wildcards.BaseName}/{wildcards.AlignParentDir}/bismark-bowtie2 \
-            --genome_folder {params.ref} \
+            -p {threads} --bam \\
+            --output_dir result/{wildcards.BaseName}/{wildcards.AlignParentDir}/bismark-bowtie2 \\
+            --genome_folder {params.ref} \\
             -1 {input.r1} -2 {input.r2} {params.extra_params}
 
         cd result/{wildcards.BaseName}/{wildcards.AlignParentDir}/bismark-bowtie2
@@ -40,19 +40,19 @@ rule bismark_bowtie2:
         PLATFORM=$(echo "{wildcards.BaseName}" | cut -d _ -f1)
         SAMPLE=$(echo "{wildcards.BaseName}" | cut -d'_' -f2-3)
 
-        samtools sort \
-            {wildcards.BaseName}.R1_bismark_bt2_pe.bam \
-            -@ {threads} \
-            -m 4G |\
-        samtools addreplacerg - \
-            -r "@RG\\tID:{wildcards.BaseName}\\tSM:${{SAMPLE}}\\tPL:${{PLATFORM}}\\tLB:${{LIB}}" \
-            --output-fmt bam,level=9 \
+        samtools sort \\
+            {wildcards.BaseName}.R1_bismark_bt2_pe.bam \\
+            -@ {threads} \\
+            -m 4G |\\
+        samtools addreplacerg - \\
+            -r "@RG\\tID:{wildcards.BaseName}\\tSM:${{SAMPLE}}\\tPL:${{PLATFORM}}\\tLB:${{LIB}}" \\
+            --output-fmt bam,level=9 \\
             -@ {threads} -o {wildcards.BaseName}.bam
 
         samtools index -@ {threads} {wildcards.BaseName}.bam || echo "suppress non-zero exit"
 
-        mv \
-            {wildcards.BaseName}.R1_bismark_bt2_PE_report.txt \
+        mv \\
+            {wildcards.BaseName}.R1_bismark_bt2_PE_report.txt \\
             {wildcards.BaseName}.align.report
 
         rm {wildcards.BaseName}.R1_bismark_bt2_pe.bam
@@ -79,9 +79,9 @@ rule bismark_hisat2:
     shell:
         dedent("""
         bismark \
-            -p {threads} --bam --hisat2 \
-            --output_dir result/{wildcards.BaseName}/{wildcards.AlignParentDir}/bismark-hisat2 \
-            --genome_folder {params.ref} \
+            -p {threads} --bam --hisat2 \\
+            --output_dir result/{wildcards.BaseName}/{wildcards.AlignParentDir}/bismark-hisat2 \\
+            --genome_folder {params.ref} \\
             -1 {input.r1} -2 {input.r2} {params.extra_params}
 
         cd result/{wildcards.BaseName}/{wildcards.AlignParentDir}/bismark-hisat2
@@ -90,18 +90,18 @@ rule bismark_hisat2:
         PLATFORM=$(echo "{wildcards.BaseName}" | cut -d _ -f1)
         SAMPLE=$(echo "{wildcards.BaseName}" | cut -d'_' -f2-3)
 
-        samtools sort \
-            {wildcards.BaseName}.R1_bismark_bt2_pe.bam \
-            -m 4G |\
-        samtools addreplacerg - \
-            -r "@RG\\tID:{wildcards.BaseName}\\tSM:${{SAMPLE}}\\tPL:${{PLATFORM}}\\tLB:${{LIB}}" \
-            --output-fmt bam,level=9 \
+        samtools sort \\
+            {wildcards.BaseName}.R1_bismark_bt2_pe.bam \\
+            -m 4G |\\
+        samtools addreplacerg - \\
+            -r "@RG\\tID:{wildcards.BaseName}\\tSM:${{SAMPLE}}\\tPL:${{PLATFORM}}\\tLB:${{LIB}}" \\
+            --output-fmt bam,level=9 \\
             -@ {threads} -o {wildcards.BaseName}.bam
 
         samtools index -@ {threads} {wildcards.BaseName}.bam || echo "suppress non-zero exit"
 
-        mv \
-            {wildcards.BaseName}.R1_bismark_bt2_PE_report.txt \
+        mv \\
+            {wildcards.BaseName}.R1_bismark_bt2_PE_report.txt \\
             {wildcards.BaseName}.align.report
 
         rm {wildcards.BaseName}.R1_bismark_bt2_pe.bam

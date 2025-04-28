@@ -56,12 +56,12 @@ rule msuite2_bowtie2:
 
         [ -L "resources/Msuite2/index/{params.label}" ] || ln -s {params.ref} "$(pwd)/resources/Msuite2/index/{params.label}"
         rm -rf result/{wildcards.BaseName}/{wildcards.AlignParentDir}/msuite2-bowtie2
-        resources/Msuite2/msuite2 \
-            -x {params.label} -k {params.platform} \
-            {params.method_param} \
-            -1 {input.r1} -2 {input.r2} \
-            -o ${{output_dir}} \
-            --aligner bowtie2 \
+        resources/Msuite2/msuite2 \\
+            -x {params.label} -k {params.platform} \\
+            {params.method_param} \\
+            -1 {input.r1} -2 {input.r2} \\
+            -o ${{output_dir}} \\
+            --aligner bowtie2 \\
             -p {threads} {params.extra_params}
         make -C "${{output_dir}}"
 
@@ -95,12 +95,12 @@ rule msuite2_hisat2:
 
         [ -L "resources/Msuite2/index/{params.label}" ] || ln -s {params.ref} "$(pwd)/resources/Msuite2/index/{params.label}"
         rm -rf result/{wildcards.BaseName}/{wildcards.AlignParentDir}/msuite2-hisat2
-        resources/Msuite2/msuite2 \
-            -x {params.label} -k {params.platform} \
-            {params.method_param} \
-            -1 {input.r1} -2 {input.r2} \
-            -o ${{output_dir}} \
-            --aligner hisat2 \
+        resources/Msuite2/msuite2 \\
+            -x {params.label} -k {params.platform} \\
+            {params.method_param} \\
+            -1 {input.r1} -2 {input.r2} \\
+            -o ${{output_dir}} \\
+            --aligner hisat2 \\
             -p {threads} {params.extra_params}
         make -C ${{output_dir}}
 

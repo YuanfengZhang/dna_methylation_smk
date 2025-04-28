@@ -23,10 +23,10 @@ rule qualimap:
             rm -rf qualimap
         fi
 
-        qualimap bamqc \
-            -bam {wildcards.BaseName}.bam \
-            -outdir qualimap \
-            -outfile {wildcards.BaseName}.qualimap.pdf \
-            -outformat PDF:HTML \
+        qualimap bamqc \\
+            -bam {wildcards.BaseName}.bam \\
+            -outdir qualimap \\
+            -outfile {wildcards.BaseName}.qualimap.pdf \\
+            -outformat PDF:HTML \\
             -nt {threads} {params.extra_params}
         """)

@@ -26,31 +26,31 @@ rule biscuit_qc:
     shell:
         dedent("""
         cd result/{wildcards.BaseName}/{wildcards.BamStatsParentDir}
-        biscuit qc \
-            {params.ref} \
-            {wildcards.BaseName}.bam \
+        biscuit qc \\
+            {params.ref} \\
+            {wildcards.BaseName}.bam \\
             {wildcards.BaseName} {params.qc_params}
 
-        mv \
-            {wildcards.BaseName}_CpGRetentionByReadPos.txt\
+        mv \\
+            {wildcards.BaseName}_CpGRetentionByReadPos.txt \\
             {wildcards.BaseName}.biscuit.CpGRetentionByReadPos.txt
-        mv \
-            {wildcards.BaseName}_CpHRetentionByReadPos.txt\
+        mv \\
+            {wildcards.BaseName}_CpHRetentionByReadPos.txt \\
             {wildcards.BaseName}.biscuit.CpHRetentionByReadPos.txt
-        mv \
-            {wildcards.BaseName}_dup_report.txt\
+        mv \\
+            {wildcards.BaseName}_dup_report.txt \\
             {wildcards.BaseName}.biscuit.dup_report.txt
-        mv \
-            {wildcards.BaseName}_isize_table.txt\
+        mv \\
+            {wildcards.BaseName}_isize_table.txt \\
             {wildcards.BaseName}.biscuit.isize_table.txt
-        mv \
-            {wildcards.BaseName}_mapq_table.txt\
+        mv \\
+            {wildcards.BaseName}_mapq_table.txt \\
             {wildcards.BaseName}.biscuit.mapq_table.txt
-        mv \
-            {wildcards.BaseName}_strand_table.txt\
+        mv \\
+            {wildcards.BaseName}_strand_table.txt \\
             {wildcards.BaseName}.biscuit.strand_table.txt
-        mv \
-            {wildcards.BaseName}_totalReadConversionRate.txt\
+        mv \\
+            {wildcards.BaseName}_totalReadConversionRate.txt \\
             {wildcards.BaseName}.biscuit.totalReadConversionRate.txt
         """)
 
@@ -70,7 +70,7 @@ rule biscuit_bsstrand:
     shell:
         dedent("""
         cd result/{wildcards.BaseName}/{wildcards.BamStatsParentDir}
-        biscuit bsstrand \
+        biscuit bsstrand \\
             {params.ref} {wildcards.BaseName}.bam {params.bsstrand_params} > {wildcards.BaseName}.biscuit.bsstrand.txt 2>&1
         """)
 
@@ -91,7 +91,7 @@ rule biscuit_cinread:
     shell:
         dedent("""
         cd result/{wildcards.BaseName}/{wildcards.BamStatsParentDir}
-        biscuit cinread \
-            {params.ref} {wildcards.BaseName}.bam {params.cinread_params}\
+        biscuit cinread \\
+            {params.ref} {wildcards.BaseName}.bam {params.cinread_params}\\
             -o {wildcards.BaseName}.biscuit.cinread.txt
         """)

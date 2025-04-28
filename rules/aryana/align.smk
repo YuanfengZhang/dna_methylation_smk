@@ -35,25 +35,25 @@ rule aryana_align:
 
         parent_dir="result/{wildcards.BaseName}/{wildcards.AlignParentDir}"
 
-        seqtk mergepe \
-            ${{parent_dir}}/{wildcards.BaseName}.R1.fq.gz \
-            ${{parent_dir}}/{wildcards.BaseName}.R2.fq.gz \
+        seqtk mergepe \\
+            ${{parent_dir}}/{wildcards.BaseName}.R1.fq.gz \\
+            ${{parent_dir}}/{wildcards.BaseName}.R2.fq.gz \\
             >${{parent_dir}}/{wildcards.BaseName}.fq
 
-        resources/aryana/aryana_bs \
-            {params.ref} \
-            ${{parent_dir}}/{wildcards.BaseName}.fq \
-            ${{parent_dir}}/aryana/{wildcards.BaseName} \
+        resources/aryana/aryana_bs \\
+            {params.ref} \\
+            ${{parent_dir}}/{wildcards.BaseName}.fq \\
+            ${{parent_dir}}/aryana/{wildcards.BaseName} \\
             ar='-p {threads}'
 
-        samtools sort -@ {threads} ${{parent_dir}}/aryana/{wildcards.BaseName}.sam |\
-        samtools addreplacerg \
-            -r "@RG\\tID:{wildcards.BaseName}\\tSM:${{SAMPLE}}\\tPL:${{PLATFORM}}\\tLB:${{LIB}}" \
-            --output-fmt bam,level=9 \
+        samtools sort -@ {threads} ${{parent_dir}}/aryana/{wildcards.BaseName}.sam |\\
+        samtools addreplacerg \\
+            -r "@RG\\tID:{wildcards.BaseName}\\tSM:${{SAMPLE}}\\tPL:${{PLATFORM}}\\tLB:${{LIB}}" \\
+            --output-fmt bam,level=9 \\
             -@ {threads} -o  ${{parent_dir}}/aryana/{wildcards.BaseName}.bam -
 
-        samtools index \
-            -@ {threads} \
+        samtools index \\
+            -@ {threads} \\
             ${{parent_dir}}/aryana/{wildcards.BaseName}.bam || echo "suppress non-zero exit"
 
         rm ${{parent_dir}}/{wildcards.BaseName}.fq ${{parent_dir}}/aryana/{wildcards.BaseName}.sam

@@ -38,18 +38,18 @@ rule pufferfish_align:
 
         pufferfish_dir="result/{wildcards.BaseName}/{wildcards.AlignParentDir}/pufferfish"
 
-        resources/pufferfish/build/src/pufferfish align \
-            -i {params.ref} --mate1 {input.r1}  --mate2 {input.r2} \
-            -o ${{pufferfish_dir}}/pufferfish.sam \
+        resources/pufferfish/build/src/pufferfish align \\
+            -i {params.ref} --mate1 {input.r1}  --mate2 {input.r2} \\
+            -o ${{pufferfish_dir}}/pufferfish.sam \\
             --threads {threads} {params.extra_params}
-        samtools sort \
-            --output-fmt bam,level=9 \
-            -@ {threads} \
-            ${{pufferfish_dir}}/pufferfish.sam |\
-        samtools addreplacerg - \
-            -r "@RG\\tID:{wildcards.BaseName}\\tSM:${{SAMPLE}}\\tPL:${{PLATFORM}}\\tLB:${{LIB}}" \
-            --output-fmt bam,level=9 \
-            -@ {threads} \
+        samtools sort \\
+            --output-fmt bam,level=9 \\
+            -@ {threads} \\
+            ${{pufferfish_dir}}/pufferfish.sam |\\
+        samtools addreplacerg - \\
+            -r "@RG\\tID:{wildcards.BaseName}\\tSM:${{SAMPLE}}\\tPL:${{PLATFORM}}\\tLB:${{LIB}}" \\
+            --output-fmt bam,level=9 \\
+            -@ {threads} \\
             -o {output.bam}
 
         samtools index -@ {threads} {output.bam} || echo "suppress non-zero exit"

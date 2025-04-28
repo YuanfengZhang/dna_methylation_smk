@@ -25,17 +25,17 @@ rule biscuit_align:
 
         cd result/{wildcards.BaseName}/{wildcards.AlignParentDir}
         mkdir -p biscuit
-        biscuit align \
-            -@ {threads} \
-            -C -V -Y {params.extra_params} \
-            {params.ref} \
-            {wildcards.BaseName}.R1.fq.gz \
-            {wildcards.BaseName}.R2.fq.gz |\
-        mbuffer -m 4G -q |\
-        samtools sort - |\
-        samtools addreplacerg - \
-            -r "@RG\\tID:{wildcards.BaseName}\\tSM:${{SAMPLE}}\\tPL:${{PLATFORM}}\\tLB:${{LIB}}" \
-            --output-fmt bam,level=9 \
+        biscuit align \\
+            -@ {threads} \\
+            -C -V -Y {params.extra_params} \\
+            {params.ref} \\
+            {wildcards.BaseName}.R1.fq.gz \\
+            {wildcards.BaseName}.R2.fq.gz |\\
+        mbuffer -m 4G -q |\\
+        samtools sort - |\\
+        samtools addreplacerg - \\
+            -r "@RG\\tID:{wildcards.BaseName}\\tSM:${{SAMPLE}}\\tPL:${{PLATFORM}}\\tLB:${{LIB}}" \\
+            --output-fmt bam,level=9 \\
             -@ {threads} -o biscuit/{wildcards.BaseName}.bam
 
         samtools index -@ {threads} biscuit/{wildcards.BaseName}.bam || echo "suppress non-zero exit"

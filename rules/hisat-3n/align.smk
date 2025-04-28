@@ -68,18 +68,18 @@ rule hisat3n_align:
         PLATFORM=$(echo "{wildcards.BaseName}" | cut -d _ -f1)
         SAMPLE=$(echo "{wildcards.BaseName}" | cut -d'_' -f2-3)
 
-        resources/hisat-3n/hisat-3n \
-            --index {params.ref} \
-            -q -1 {input.r1} -2 {input.r2} \
-            --base-change {params.base_change} \
-            --rg-id ID:{wildcards.BaseName} \
-            --rg SM:${{SAMPLE}} \
-            --rg PL:${{PLATFORM}}\
-            --rg LB:${{LIB}} \
-            -p {threads} {params.extra_params} |\
-        mbuffer -m 4G -q |\
-        samtools sort \
-            --output-fmt bam,level=9 \
+        resources/hisat-3n/hisat-3n \\
+            --index {params.ref} \\
+            -q -1 {input.r1} -2 {input.r2} \\
+            --base-change {params.base_change} \\
+            --rg-id ID:{wildcards.BaseName} \\
+            --rg SM:${{SAMPLE}} \\
+            --rg PL:${{PLATFORM}}\\
+            --rg LB:${{LIB}} \\
+            -p {threads} {params.extra_params} |\\
+        mbuffer -m 4G -q |\\
+        samtools sort \\
+            --output-fmt bam,level=9 \\
             -@ {threads} -o {output.bam} -
         samtools index -@ {threads} {output.bam} || echo "suppress non-zero exit"
         """)

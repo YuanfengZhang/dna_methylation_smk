@@ -37,16 +37,16 @@ rule strobealign:
         PLATFORM=$(echo "{wildcards.BaseName}" | cut -d _ -f1)
         SAMPLE=$(echo "{wildcards.BaseName}" | cut -d'_' -f2-3)
 
-        strobealign \
-            {params.ref} {input.r1} {input.r2} \
-            --use-index -t {threads} {params.extra_params} \
-            --rg-id ID:{wildcards.BaseName}  \
-            --rg SM:${{SAMPLE}} \
-            --rg PL:${{PLATFORM}} \
-            --rg LB:${{LIB}} |\
-        mbuffer -m 4G -q |\
-        samtools sort - \
-            --output-fmt bam,level=9 \
+        strobealign \\
+            {params.ref} {input.r1} {input.r2} \\
+            --use-index -t {threads} {params.extra_params} \\
+            --rg-id ID:{wildcards.BaseName}  \\
+            --rg SM:${{SAMPLE}} \\
+            --rg PL:${{PLATFORM}} \\
+            --rg LB:${{LIB}} |\\
+        mbuffer -m 4G -q |\\
+        samtools sort - \\
+            --output-fmt bam,level=9 \\
             -@ {threads} > {output.bam}
 
         samtools index -@ {threads} {output.bam} || echo "suppress non-zero exit"

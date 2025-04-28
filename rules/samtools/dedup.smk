@@ -19,16 +19,16 @@ rule samtools_dedup:
         "conda.yaml"
     shell:
         dedent("""
-        samtools sort \
-            -@ {threads} -n \
-            -m 4G {input} |\
-        samtools fixmate \
-            -cmM -@ {threads} {params.fixmate_params} \
-            - - |\
-        samtools sort \
-            -@ {threads} -m 4G |\
-        samtools markdup \
-            -@ {threads} -f {output.stats} {params.mkdup_params} \
+        samtools sort \\
+            -@ {threads} -n \\
+            -m 4G {input} |\\
+        samtools fixmate \\
+            -cmM -@ {threads} {params.fixmate_params} \\
+            - - |\\
+        samtools sort \\
+            -@ {threads} -m 4G |\\
+        samtools markdup \\
+            -@ {threads} -f {output.stats} {params.mkdup_params} \\
             - {output.bam}
         samtools index -@ {threads} {output.bam} || echo "suppress non-zero exit"
         """)

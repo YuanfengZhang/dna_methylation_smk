@@ -2,7 +2,7 @@ configfile: "config/runtime_config.yaml"
 from textwrap import dedent
 """
 bsbolt Index -G ./BL.fa -DB .
-bsbolt Align \
+bsbolt Align \\
     -F1 /mnt/eqa/zhangyuanfeng/methylation/dna_methylation_smk/input/BS_HF_1_MX.R1.fq.gz \
     -F2 /mnt/eqa/zhangyuanfeng/methylation/dna_methylation_smk/input/BS_HF_1_MX.R2.fq.gz \
     -O /mnt/eqa/zhangyuanfeng/methylation/dna_methylation_smk/test/align/BS_HF_1_MX \
@@ -35,11 +35,11 @@ rule bsbolt_align:
         PLATFORM=$(echo "{wildcards.BaseName}" | cut -d _ -f1)
         SAMPLE=$(echo "{wildcards.BaseName}" | cut -d'_' -f2-3)
 
-        bsbolt Align \
-            -F1 {input.r1} -F2 {input.r2} \
-            -O ${{target_dir}}/tmp_{wildcards.BaseName} \
-            -DB {params.ref} \
-            -R "@RG\\tID:{wildcards.BaseName}\\tSM:${{SAMPLE}}\\tPL:${{PLATFORM}}\\tLB:${{LIB}}" \
+        bsbolt Align \\
+            -F1 {input.r1} -F2 {input.r2} \\
+            -O ${{target_dir}}/tmp_{wildcards.BaseName} \\
+            -DB {params.ref} \\
+            -R "@RG\\tID:{wildcards.BaseName}\\tSM:${{SAMPLE}}\\tPL:${{PLATFORM}}\\tLB:${{LIB}}" \\
             -UN -OT {threads} -t {threads}
         """)
 
@@ -61,8 +61,8 @@ rule bsbolt_post_align:
         dedent("""
         target_dir="result/{wildcards.BaseName}/{wildcards.AlignParentDir}/bsbolt"
 
-        samtools sort \
-            --output-fmt bam,level=9 \
+        samtools sort \\
+            --output-fmt bam,level=9 \\
             -@ 12 {input} -o {output.bam}
 
         samtools index -@ {threads} {output.bam} || echo "suppress non-zero exit"

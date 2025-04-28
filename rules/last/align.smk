@@ -175,129 +175,154 @@ rule last_align:
 
         mkdir -p $last_dir
 
-        fastq-interleave \
-            {input.r1} {input.r2} \
+        fastq-interleave \\
+            {input.r1} {input.r2} \\
             > ${{last_dir}}/{wildcards.BaseName}.fq
-        
-        seqtk sample \
-            ${{last_dir}}/{wildcards.BaseName}.fq \
-            20000 \
+
+        seqtk sample \\
+            ${{last_dir}}/{wildcards.BaseName}.fq \\
+            20000 \\
             > ${{last_dir}}/{wildcards.BaseName}_20000.fq
         
-        lastal \
-            -Q1 -D 1000 -i 1 \
-            {params.bisf_db} \
-            ${{last_dir}}/{wildcards.BaseName}_20000.fq |\
-        last-pair-probs -e > \
-            ${{last_dir}}/{wildcards.BaseName}.BISF.probs
-        BISF_M=$(grep \
-                    "estimated mean distance" \
-                    ${{last_dir}}/{wildcards.BaseName}.BISF.probs |\
-                    awk -F': ' '{{print $2}}')
-        BISF_S=$(grep \
-                    "estimated standard deviation" \
-                    ${{last_dir}}/{wildcards.BaseName}.BISF.probs |\
-                    awk -F': ' '{{print $2}}')
+        case "${LIB}" in
+            BS|EM|RR)
+                lastal \\
+                    -Q1 -D 1000 -i 1 \\
+                    {params.bisf_db} \\
+                    ${{last_dir}}/{wildcards.BaseName}_20000.fq |\\
+                last-pair-probs -e > \\
+                    ${{last_dir}}/{wildcards.BaseName}.BISF.probs
+                BISF_M=$(grep \\
+                            "estimated mean distance" \
+                            ${{last_dir}}/{wildcards.BaseName}.BISF.probs |\\
+                            awk -F': ' '{{print $2}}')
+                BISF_S=$(grep \\
+                            "estimated standard deviation" \\
+                            ${{last_dir}}/{wildcards.BaseName}.BISF.probs |\\
+                            awk -F': ' '{{print $2}}')
+                lastal \\
+                    -Q1 -D 1000 -i 1 \\
+                    {params.bisr_db} \\
+                    ${{last_dir}}/{wildcards.BaseName}_20000.fq |\\
+                last-pair-probs -e > \\
+                    ${{last_dir}}/{wildcards.BaseName}.BISR.probs
+                BISR_M=$(grep \\
+                            "estimated mean distance" \\
+                            ${{last_dir}}/{wildcards.BaseName}.BISR.probs |\\
+                            awk -F': ' '{{print $2}}')
+                BISR_S=$(grep \\
+                            "estimated standard deviation" \\
+                            ${{last_dir}}/{wildcards.BaseName}.BISR.probs |\\
+                            awk -F': ' '{{print $2}}')
+                ;;
+            *)
+                ;;
+        esac
 
-        lastal \
-            -Q1 -D 1000 -i 1 \
-            {params.bisr_db} \
-            ${{last_dir}}/{wildcards.BaseName}_20000.fq |\
-        last-pair-probs -e > \
-            ${{last_dir}}/{wildcards.BaseName}.BISR.probs
-        BISR_M=$(grep \
-                    "estimated mean distance" \
-                    ${{last_dir}}/{wildcards.BaseName}.BISR.probs |\
-                    awk -F': ' '{{print $2}}')
-        BISR_S=$(grep \
-                    "estimated standard deviation" \
-                    ${{last_dir}}/{wildcards.BaseName}.BISR.probs |\
-                    awk -F': ' '{{print $2}}')
-
-        lastal \
-            -Q1 -D 1000 -i 1 \
-            {params.near_db} \
-            ${{last_dir}}/{wildcards.BaseName}_20000.fq |\
-        last-pair-probs -e > \
+        lastal \\
+            -Q1 -D 1000 -i 1 \\
+            {params.near_db} \\
+            ${{last_dir}}/{wildcards.BaseName}_20000.fq |\\
+        last-pair-probs -e > \\
             ${{last_dir}}/{wildcards.BaseName}.NEAR.probs
-        NEAR_M=$(grep \
-                    "estimated mean distance" \
-                    ${{last_dir}}/{wildcards.BaseName}.NEAR.probs |\
+        NEAR_M=$(grep \\
+                    "estimated mean distance" \\
+                    ${{last_dir}}/{wildcards.BaseName}.NEAR.probs |\\
                     awk -F': ' '{{print $2}}')
-        NEAR_S=$(grep \
-                    "estimated standard deviation" \
-                    ${{last_dir}}/{wildcards.BaseName}.NEAR.probs |\
+        NEAR_S=$(grep \\
+                    "estimated standard deviation" \\
+                    ${{last_dir}}/{wildcards.BaseName}.NEAR.probs |\\
                     awk -F': ' '{{print $2}}')
 
-        last-train \
-            --sample-number 20000 -P {threads} -X 1 -Q1 \
-            {params.bisf_db} ${{last_dir}}/{wildcards.BaseName}.fq \
-            > ${{last_dir}}/{wildcards.BaseName}.BISF.train
-        last-train \
-            --sample-number 20000 -P {threads} -X 1 -Q1 \
-            {params.bisr_db} ${{last_dir}}/{wildcards.BaseName}.fq \
-            > ${{last_dir}}/{wildcards.BaseName}.BISR.train
-        last-train \
-            --sample-number 20000 -P {threads} -X 1 -Q1 \
-            {params.near_db} ${{last_dir}}/{wildcards.BaseName}.fq \
+        case "${LIB}" in
+            BS|EM|RR)
+                last-train \\
+                    --sample-number 20000 -P {threads} -X 1 -Q1 \\
+                    {params.bisf_db} ${{last_dir}}/{wildcards.BaseName}.fq \\
+                    > ${{last_dir}}/{wildcards.BaseName}.BISF.train
+                last-train \\
+                    --sample-number 20000 -P {threads} -X 1 -Q1 \\
+                    {params.bisr_db} ${{last_dir}}/{wildcards.BaseName}.fq \\
+                    > ${{last_dir}}/{wildcards.BaseName}.BISR.train
+                ;;
+            *)
+                ;;
+        esac
+
+        last-train \\
+            --sample-number 20000 -P {threads} -X 1 -Q1 \\
+            {params.near_db} ${{last_dir}}/{wildcards.BaseName}.fq \\
             > ${{last_dir}}/{wildcards.BaseName}.NEAR.train
-        
-        parallel \
-            --gnu \
-            --pipe \
-            -L64 -j{threads} \
-            "lastal \
-            -Q1 -i1 -C 2 \
-            -p ${{last_dir}}/{wildcards.BaseName}.BISF.train {params.bisf_db} |\
-            last-split -m 0.9 -d 2 -n -fMAF+ |\
-            resources/last-split-pe/src/last-split-pe \
-            -f ${{BISF_M}} -s ${{BISF_S}} " \
-            < ${{last_dir}}/{wildcards.BaseName}.fq \
-            > ${{last_dir}}/{wildcards.BaseName}.BISF.sam
 
-        parallel \
-            --gnu \
-            --pipe \
-            -L64 -j{threads} \
-            "lastal \
-            -Q1 -i1 -C 2 \
-            -p ${{last_dir}}/{wildcards.BaseName}.BISR.train {params.bisr_db} |\
-            last-split -m 0.9 -d 2 -n -fMAF+ |\
-            resources/last-split-pe/src/last-split-pe \
-            -f ${{BISR_M}} -s ${{BISR_S}} " \
-            < ${{last_dir}}/{wildcards.BaseName}.fq \
-            > ${{last_dir}}/{wildcards.BaseName}.BISR.sam
+        case "${LIB}" in
+            BS|EM|RR)
+                parallel \\
+                    --gnu \\
+                    --pipe \\
+                    -L64 -j{threads} \\
+                    "lastal \\
+                    -Q1 -i1 -C 2 \\
+                    -p ${{last_dir}}/{wildcards.BaseName}.BISF.train {params.bisf_db} |\\
+                    last-split -m 0.9 -d 2 -n -fMAF+ |\\
+                    resources/last-split-pe/src/last-split-pe \\
+                    -f ${{BISF_M}} -s ${{BISF_S}} " \\
+                    < ${{last_dir}}/{wildcards.BaseName}.fq \\
+                    > ${{last_dir}}/{wildcards.BaseName}.BISF.sam
 
-        parallel \
-            --gnu \
-            --pipe \
-            -L64 -j{threads} \
-            "lastal \
-            -Q1 -i1 -C 2 \
-            -p ${{last_dir}}/{wildcards.BaseName}.NEAR.train {params.near_db} |\
-            last-split -m 0.9 -d 2 -n -fMAF+ |\
-            resources/last-split-pe/src/last-split-pe \
-            -f ${{NEAR_M}} -s ${{NEAR_S}} " \
-            < ${{last_dir}}/{wildcards.BaseName}.fq \
+                parallel \\
+                    --gnu \\
+                    --pipe \\
+                    -L64 -j{threads} \\
+                    "lastal \\
+                    -Q1 -i1 -C 2 \\
+                    -p ${{last_dir}}/{wildcards.BaseName}.BISR.train {params.bisr_db} |\\
+                    last-split -m 0.9 -d 2 -n -fMAF+ |\\
+                    resources/last-split-pe/src/last-split-pe \\
+                    -f ${{BISR_M}} -s ${{BISR_S}} " \\
+                    < ${{last_dir}}/{wildcards.BaseName}.fq \\
+                    > ${{last_dir}}/{wildcards.BaseName}.BISR.sam
+                ;;
+            *)
+                ;;
+        esac
+
+        parallel \\
+            --gnu \\
+            --pipe \\
+            -L64 -j{threads} \\
+            "lastal \\
+            -Q1 -i1 -C 2 \\
+            -p ${{last_dir}}/{wildcards.BaseName}.NEAR.train {params.near_db} |\\
+            last-split -m 0.9 -d 2 -n -fMAF+ |\\
+            resources/last-split-pe/src/last-split-pe \\
+            -f ${{NEAR_M}} -s ${{NEAR_S}} " \\
+            < ${{last_dir}}/{wildcards.BaseName}.fq \\
             > ${{last_dir}}/{wildcards.BaseName}.NEAR.sam
         
-        python \
-            resources/last-split-pe/scripts/printSamHeader.py \
-            {params.ref} \
+        python \\
+            resources/last-split-pe/scripts/printSamHeader.py \\
+            {params.ref} \\
             > ${{last_dir}}/header.sam
+        case "${LIB}" in
+            BS|EM|RR)
+                python \\
+                    rules/last/merge.py \
+                    --bisf ${{last_dir}}/{wildcards.BaseName}.BISF.sam \\
+                    --bisr ${{last_dir}}/{wildcards.BaseName}.BISR.sam \\
+                    --near ${{last_dir}}/{wildcards.BaseName}.NEAR.sam \\\
+                    --sam_tmp ${{last_dir}}/sam.tmp
+                ;;
+            *)
+                mv ${{last_dir}}/{wildcards.BaseName}.NEAR.sam \\
+                    ${{last_dir}}/sam.tmp
+                ;;
+        esac
 
-        python \
-            rules/last/merge.py \
-            --bisf ${{last_dir}}/{wildcards.BaseName}.BISF.sam \
-            --bisr ${{last_dir}}/{wildcards.BaseName}.BISR.sam \
-            --near ${{last_dir}}/{wildcards.BaseName}.NEAR.sam \
-            --sam_tmp ${{last_dir}}/sam.tmp
-
-        cat ${{last_dir}}/header.sam ${{last_dir}}/sam.tmp |\
-        samtools sort -@ {threads} - |\
-        samtools addreplacerg - \
-            -r "@RG\\tID:{wildcards.BaseName}\\tSM:${{SAMPLE}}\\tPL:${{PLATFORM}}\\tLB:${{LIB}}" \
-            --output-fmt bam,level=9 \
+        cat ${{last_dir}}/header.sam ${{last_dir}}/sam.tmp |\\
+        samtools sort -@ {threads} - |\\
+        samtools addreplacerg - \\
+            -r "@RG\\tID:{wildcards.BaseName}\\tSM:${{SAMPLE}}\\tPL:${{PLATFORM}}\\tLB:${{LIB}}" \\
+            --output-fmt bam,level=9 \\
             -@ {threads} -o {output.bam}
         samtools index -@ {threads} {output.bam} || echo "suppress non-zero exit"
 

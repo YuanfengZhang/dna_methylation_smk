@@ -18,12 +18,12 @@ rule bam2nuc:
     shell:
         dedent("""
         cd result/{wildcards.BaseName}/{wildcards.StatsParentDir}
-        bam2nuc \
-            {wildcards.BaseName}.bam \
-            --dir . \
-            --genome_folder {params.ref} \
+        bam2nuc \\
+            {wildcards.BaseName}.bam \\
+            --dir . \\
+            --genome_folder {params.ref} \\
             {params.extra_params}
-        mv \
-            {wildcards.BaseName}.nucleotide_stats.txt \
+        mv \\
+            {wildcards.BaseName}.nucleotide_stats.txt \\
             {wildcards.BaseName}.bam2nuc.txt
         """)

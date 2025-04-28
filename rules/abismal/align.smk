@@ -47,20 +47,20 @@ rule abismal_align:
         PLATFORM=$(echo "{wildcards.BaseName}" | cut -d _ -f1)
         SAMPLE=$(echo "{wildcards.BaseName}" | cut -d'_' -f2-3)
 
-        CONDA_LIB=$(which samtools | sed 's/bin\/samtools/lib/')
+        CONDA_LIB=$(which samtools | sed 's/bin\\/samtools/lib/')
         export LD_LIBRARY_PATH=$CONDA_LIB:$LD_LIBRARY_PATH
         export LD_PRELOAD=$CONDA_LIB/libhts.so.3
 
-        resources/abismal/bin/abismal \
-            -i {params.ref} \
-            -o {output.bam}.tmp \
-            -t 16 -B {params.extra_params} \
+        resources/abismal/bin/abismal \\
+            -i {params.ref} \\
+            -o {output.bam}.tmp \\
+            -t 16 -B {params.extra_params} \\
             {input.r1} {input.r2}
 
-        samtools sort -@ {threads} {output.bam}.tmp |\
-        samtools addreplacerg \
-            -r "@RG\\tID:{wildcards.BaseName}\\tSM:${{SAMPLE}}\\tPL:${{PLATFORM}}\\tLB:${{LIB}}" \
-            --output-fmt bam,level=9 \
+        samtools sort -@ {threads} {output.bam}.tmp |\\
+        samtools addreplacerg \\
+            -r "@RG\\tID:{wildcards.BaseName}\\tSM:${{SAMPLE}}\\tPL:${{PLATFORM}}\\tLB:${{LIB}}" \\
+            --output-fmt bam,level=9 \\
             -@ {threads} -o {output.bam} -
 
         samtools index -@ {threads} {output.bam} || echo "suppress non-zero exit"

@@ -18,13 +18,13 @@ rule gatk_dedup:
         "conda.yaml"
     shell:
         dedent("""
-        gatk \
-            --java-options "-Xmx20g -XX:ParallelGCThreads={threads}" \
-            MarkDuplicates \
-            -I {input} \
-            -O {output.bam} \
-            -M {output.metrics} \
-            --ASSUME_SORT_ORDER coordinate \
+        gatk \\
+            --java-options "-Xmx20g -XX:ParallelGCThreads={threads}" \\
+            MarkDuplicates \\
+            -I {input} \\
+            -O {output.bam} \\
+            -M {output.metrics} \\
+            --ASSUME_SORT_ORDER coordinate \\
             {params.extra_params}
 
         samtools index -@ {threads} {output.bam} || echo "suppress non-zero exit"

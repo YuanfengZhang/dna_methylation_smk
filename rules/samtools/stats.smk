@@ -18,11 +18,11 @@ rule samtools_stats:
         "conda.yaml"
     shell:
         dedent("""
-        samtools stats {input} \
-            -d \
-            -r {params.ref} \
-            -@ {threads} \
-            {params.extra_params} \
+        samtools stats {input} \\
+            -d \\
+            -r {params.ref} \\
+            -@ {threads} \\
+            {params.extra_params} \\
             > {output}
         """)
 
@@ -40,9 +40,9 @@ rule samtools_flagstat:
         "conda.yaml"
     shell:
         dedent("""
-        samtools flagstat \
-            -@ {threads} \
-            -O tsv \
+        samtools flagstat \\
+            -@ {threads} \\
+            -O tsv \\
             {input} > {output}
         """
 )

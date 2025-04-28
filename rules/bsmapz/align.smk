@@ -5,7 +5,7 @@ from textwrap import dedent
 """
 ! The length of lines in the .fa is limited to 70 else malloc error pops.
 ! seqtk seq -l 70 BL.fa > BL/bsmapz/BL.fa
-bsmapz \
+bsmapz \\
     -a /mnt/eqa/zhangyuanfeng/methylation/dna_methylation_smk/input/BS_HF_1_MX.R1.fq.gz \
     -b /mnt/eqa/zhangyuanfeng/methylation/dna_methylation_smk/input/BS_HF_1_MX.R2.fq.gz \
     -d /hot_warm_data/ref/quartet/DNA/custom_genome/BL/bsmapz/BL.fa \
@@ -55,20 +55,20 @@ rule bsmapz_align:
         
         ln -sf {params.ref} $(pwd)/ref.fa
 
-        bsmapz \
-            -a {wildcards.BaseName}.R1.fq.gz \
-            -b {wildcards.BaseName}.R2.fq.gz -d ref.fa \
-            -p {threads} {params.extra_params} |\
-        mbuffer -m 4G -q |\
-        samtools sort -@ {threads} - |\
-        mbuffer -m 4G -q |\
-        samtools addreplacerg \
-            -r "@RG\\tID:{wildcards.BaseName}\\tSM:${{SAMPLE}}\\tPL:${{PLATFORM}}\\tLB:${{LIB}}" \
-            --output-fmt bam,level=9 \
+        bsmapz \\
+            -a {wildcards.BaseName}.R1.fq.gz \\
+            -b {wildcards.BaseName}.R2.fq.gz -d ref.fa \\
+            -p {threads} {params.extra_params} |\\
+        mbuffer -m 4G -q |\\
+        samtools sort -@ {threads} - |\\
+        mbuffer -m 4G -q |\\
+        samtools addreplacerg \\
+            -r "@RG\\tID:{wildcards.BaseName}\\tSM:${{SAMPLE}}\\tPL:${{PLATFORM}}\\tLB:${{LIB}}" \\
+            --output-fmt bam,level=9 \\
             -@ {threads} -o bsmapz/{wildcards.BaseName}.bam -
 
-        samtools index \
-            -@ {threads} \
+        samtools index \\
+            -@ {threads} \\
             bsmapz/{wildcards.BaseName}.bam || echo "suppress non-zero exit"
 
         rm ref.fa

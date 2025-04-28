@@ -19,12 +19,12 @@ rule methyldackel_count:
     shell:
         dedent("""
         cd result/{wildcards.BaseName}/{wildcards.CountParentDir}
-        MethylDackel extract \
-            {params.ref} {wildcards.BaseName}.bam \
-            -o methyldackel/{wildcards.BaseName} \
+        MethylDackel extract \\
+            {params.ref} {wildcards.BaseName}.bam \\
+            -o methyldackel/{wildcards.BaseName} \\
             -@ {threads} {params.mode} {params.extra_params}
-        mv \
-            methyldackel/{wildcards.BaseName}_CpG.bedGraph \
+        mv \\
+            methyldackel/{wildcards.BaseName}_CpG.bedGraph \\
             methyldackel/{wildcards.BaseName}.bedgraph
         """)
 
@@ -45,8 +45,8 @@ rule methyldackel_merge_context:
     shell:
         dedent("""
         cd result/{wildcards.BaseName}/{wildcards.CountParentDir}/methyldackel
-        MethylDackel mergeContext \
-            {params.ref} {wildcards.BaseName}.bedgraph \
+        MethylDackel mergeContext \\
+            {params.ref} {wildcards.BaseName}.bedgraph \\
             -o {wildcards.BaseName}.merged.bedgraph {params.extra_params}
         
         sed -i '1d' *.bedgraph

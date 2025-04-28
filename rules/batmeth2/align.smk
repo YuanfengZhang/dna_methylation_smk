@@ -44,16 +44,16 @@ rule batmeth2_align:
         PLATFORM=$(echo "{wildcards.BaseName}" | cut -d _ -f1)
         SAMPLE=$(echo "{wildcards.BaseName}" | cut -d'_' -f2-3)
         
-        resources/BatMeth2/bin/BatMeth2 align \
-            -1 {input.r1} -2 {input.r2} \
-            -g {params.ref} -p {threads} \
-            -O result/{wildcards.BaseName}/{wildcards.AlignParentDir}/batmeth2 \
+        resources/BatMeth2/bin/BatMeth2 align \\
+            -1 {input.r1} -2 {input.r2} \\
+            -g {params.ref} -p {threads} \\
+            -O result/{wildcards.BaseName}/{wildcards.AlignParentDir}/batmeth2 \\
             -o {wildcards.BaseName}
         
-        samtools addreplacerg \
-            result/{wildcards.BaseName}/{wildcards.AlignParentDir}/batmeth2/{wildcards.BaseName}.sort.bam \
-            -r "@RG\\tID:{wildcards.BaseName}\\tSM:${{SAMPLE}}\\tPL:${{PLATFORM}}\\tLB:${{LIB}}" \
-            --output-fmt bam,level=9 \
+        samtools addreplacerg \\
+            result/{wildcards.BaseName}/{wildcards.AlignParentDir}/batmeth2/{wildcards.BaseName}.sort.bam \\
+            -r "@RG\\tID:{wildcards.BaseName}\\tSM:${{SAMPLE}}\\tPL:${{PLATFORM}}\\tLB:${{LIB}}" \\
+            --output-fmt bam,level=9 \\
             -@ {threads} -o {output.bam}
 
         samtools index -@ {threads} {output.bam} || echo "suppress non-zero exit"

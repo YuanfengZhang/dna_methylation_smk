@@ -19,22 +19,22 @@ rule bismark_dedup:
     shell:
         dedent("""
         cd result/{wildcards.BaseName}/{wildcards.DedupParentDir}
-        samtools \
-            sort -n \
-            -@ {threads} \
-            -o bismark-dedup/{wildcards.BaseName}.sort_n_tmp.bam \
+        samtools \\
+            sort -n \\
+            -@ {threads} \\
+            -o bismark-dedup/{wildcards.BaseName}.sort_n_tmp.bam \\
             {wildcards.BaseName}.bam
         cd bismark-dedup
-        deduplicate_bismark \
-            --paired --bam \
-            --outfile {wildcards.BaseName} \
-            --output_dir . \
-            {wildcards.BaseName}.sort_n_tmp.bam \
+        deduplicate_bismark \\
+            --paired --bam \\
+            --outfile {wildcards.BaseName} \\
+            --output_dir . \\
+            {wildcards.BaseName}.sort_n_tmp.bam \\
             {params.extra_params}
         
-        samtools sort -@ {threads} \
-            -O bam,level=9 \
-            -o {wildcards.BaseName}.bam \
+        samtools sort -@ {threads} \\
+            -O bam,level=9 \\
+            -o {wildcards.BaseName}.bam \\
             {wildcards.BaseName}.deduplicated.bam
 
         samtools index -@ {threads} {wildcards.BaseName}.bam || echo "suppress non-zero exit"
