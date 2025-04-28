@@ -33,11 +33,15 @@ if tool_dict["ALIGNER"]:
 
 if tool_dict["DEDUPER"]:
     for tool in tool_dict["DEDUPER"]:
-        if tool != 'no-dedup':
-            if tool == 'gatk-dedup':
+        match tool:
+            case 'no-dedup':
+                pass
+            case 'gatk-dedup':
                 include: "rules/gatk/dedup.smk"
-            else:
-                include: f"rules/{tool}/dedup.smk"
+            case 'bismark-dedup':
+                include: "rules/bismark/dedup.smk"
+            case _:
+                 include: f"rules/{tool}/dedup.smk"
 
 if tool_dict["COUNTER"]:
     for tool in tool_dict["COUNTER"]:

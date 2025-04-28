@@ -6,7 +6,7 @@ rule bismark_dedup:
     input:
         "result/{BaseName}/{DedupParentDir}/{BaseName}.bam"
     output:
-        multiext("result/{BaseName}/{DedupParentDir}/bismark/{BaseName}",
+        multiext("result/{BaseName}/{DedupParentDir}/bismark-dedup/{BaseName}",
                  ".bam",
                  ".bam.bai")
     benchmark:
@@ -22,9 +22,9 @@ rule bismark_dedup:
         samtools \
             sort -n \
             -@ {threads} \
-            -o bismark/{wildcards.BaseName}.sort_n_tmp.bam \
+            -o bismark-dedup/{wildcards.BaseName}.sort_n_tmp.bam \
             {wildcards.BaseName}.bam
-        cd bismark
+        cd bismark-dedup
         deduplicate_bismark \
             --paired --bam \
             --outfile {wildcards.BaseName} \

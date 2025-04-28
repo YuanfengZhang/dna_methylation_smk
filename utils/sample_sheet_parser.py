@@ -25,7 +25,7 @@ PIPELINE_CODING: Dict[str, Dict[str, str]] = {
         'last': 'M'
     },
     'DEDUPER': {
-        'no-dedup': '0', 'bismark': '1', 'gatk-dedup': '2',  # .../gatk/gatk/... will cause ambiguity.
+        'no-dedup': '0', 'bismark-dedup': '1', 'gatk-dedup': '2',  # .../gatk/gatk/... will cause ambiguity.
         'samtools': '3', 'sambamba': '4', 'nubeam-dedup': '5',
         'bio-seq-zip': '6', 'trie-dedup': '7', 'ngs-reads-treatment': '8'
     },
@@ -229,7 +229,7 @@ class Aligner(PipelineModule):
 class DeDuper(PipelineModule):
     EXT_MAPPING = {
         'no-dedup': ['.bam', '.bam.bai'],
-        'bismark': ['.bam', '.bam.bai'],
+        'bismark-dedup': ['.bam', '.bam.bai'],
         'gatk-dedup': ['.bam', '.bam.bai', '.dedup.metrics'],
         'samtools': ['.bam', '.bam.bai', '.dup.stats'],
         'sambamba': ['.bam', '.bam.bai'],
