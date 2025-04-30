@@ -1,0 +1,11 @@
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - bioconda::samtools>=1.21
+  - bioconda:: bwa
+  - bioconda::seqtk
+  - bioconda::seqkit
+  - bioconda::mbuffer
+  - conda-forge::liblzma

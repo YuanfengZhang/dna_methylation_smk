@@ -184,7 +184,7 @@ rule last_align:
             20000 \\
             > ${{last_dir}}/{wildcards.BaseName}_20000.fq
         
-        case "${LIB}" in
+        case "$LIB" in
             BS|EM|RR)
                 lastal \\
                     -Q1 -D 1000 -i 1 \\
@@ -234,7 +234,7 @@ rule last_align:
                     ${{last_dir}}/{wildcards.BaseName}.NEAR.probs |\\
                     awk -F': ' '{{print $2}}')
 
-        case "${LIB}" in
+        case "$LIB" in
             BS|EM|RR)
                 last-train \\
                     --sample-number 20000 -P {threads} -X 1 -Q1 \\
@@ -254,7 +254,7 @@ rule last_align:
             {params.near_db} ${{last_dir}}/{wildcards.BaseName}.fq \\
             > ${{last_dir}}/{wildcards.BaseName}.NEAR.train
 
-        case "${LIB}" in
+        case "$LIB" in
             BS|EM|RR)
                 parallel \\
                     --gnu \\
@@ -303,7 +303,7 @@ rule last_align:
             resources/last-split-pe/scripts/printSamHeader.py \\
             {params.ref} \\
             > ${{last_dir}}/header.sam
-        case "${LIB}" in
+        case "$LIB" in
             BS|EM|RR)
                 python \\
                     rules/last/merge.py \

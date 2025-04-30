@@ -1,5 +1,13 @@
 # bismark (aligner) 和 gatk (deduper) 不兼容
 # BS/EM 不能使用astair, 会报错
-FNAME,TRIMMER,QC_REPORTER,ALIGNER,DEDUPER,RECALIBRATE,COUNTER,STATS
-BS_HF_1_MX,trim-galore,falco,bwa-meth,gatk,False,methyldackel,True
-PS_HF_1_MX,fastp,falco,bwa-meme,gatk,False,astair,True
+FNAME,TRIMMER,FASTQCER,ALIGNER,DEDUPER,CALIBRATOR,COUNTER,STATS
+# PS_HF_1_MX,trim-galore,falco,bwa-meme,no-dedup,no-calibrate,astair,False
+# BS_HF_1_MX,trim-galore,falco,bwa-meth,no-dedup,no-calibrate,biscuit,False
+# BS_HF_1_MX,trim-galore,falco,bismark-bowtie2,bismark,no-calibrate,bismark,False
+# BS_HF_1_MX,trim-galore,falco,bwa-meth,no-dedup,no-calibrate,bsgenova,False
+# BS_HF_1_MX,trim-galore,falco,bwa-meth,,,fame,False
+# BS_HF_1_MX,trim-galore,falco,bwa-meth,no-dedup,no-calibrate,methyldackel,False
+# BS_HF_1_MX,trim-galore,falco,msuite2-bowtie2,,,,False
+# EM_HF_1_IPM,trim-galore,falco,bismark-bowtie2,bismark,no-calibrate,bismark,False
+#EM_HF_1_IPM,trim-galore,falco,whisper,,,,False
+BS1_D6_1,trim-galore,fastqc,batmeth2,,,,False
