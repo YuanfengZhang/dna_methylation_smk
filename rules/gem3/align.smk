@@ -41,7 +41,7 @@ rule gem3_align:
         extra_params = config["gem3"]["align"]["extra_params"] or ""
     threads: 8
     conda:
-        "../samtools/conda.yaml"
+        "conda.yaml"
     shell:
         dedent("""
         LIB=$(echo "{wildcards.BaseName}" | cut -d _ -f1 | cut -c 1-2)
