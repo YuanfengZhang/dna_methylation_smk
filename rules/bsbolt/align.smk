@@ -9,9 +9,14 @@ bsbolt Align \\
     -DB /hot_warm_data/ref/quartet/DNA/custom_genome/BL/BSBolt2 \
     -R "@RG ID:1\tSM:sample1\tPL:ILLUMINA\tPU:unit1\tLB:lib1" \
     -UN -OT 8 -t 8
-"""
+
 # ! the bsbolt requires outdated libcrypto.so.1.1 with is incompatible with samtools.
 # ! That's why the bsbolt align and post-align are separated.
+
+# ! bsbolt won't work within docker image and job system, but only with host machine.
+# ! Somethings is written wrong in the Externel/BWA folder.
+# ! See also: https://github.com/NuttyLogic/BSBolt/issues/158
+"""
 
 rule bsbolt_align:
     input:
@@ -34,6 +39,8 @@ rule bsbolt_align:
         LIB=$(echo "{wildcards.BaseName}" | cut -d _ -f1 | cut -c 1-2)
         PLATFORM=$(echo "{wildcards.BaseName}" | cut -d _ -f1)
         SAMPLE=$(echo "{wildcards.BaseName}" | cut -d'_' -f2-3)
+
+        mkdir -p ${{target_dir}}/tmp_{wildcards.BaseName}
 
         bsbolt Align \\
             -F1 {input.r1} -F2 {input.r2} \\
@@ -66,4 +73,6 @@ rule bsbolt_post_align:
             -@ 12 {input} -o {output.bam}
 
         samtools index -@ {threads} {output.bam} || echo "suppress non-zero exit"
+
+        rm -rf $target_dir/tmp_{wildcards.BaseName}
         """)

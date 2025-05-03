@@ -2,14 +2,14 @@ from abc import ABC, abstractmethod
 from argparse import ArgumentParser, Namespace
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List, Literal, LiteralString, Optional, Tuple, Set, Union
+from typing import Any, Literal, LiteralString
 import numpy as np
 import pandas as pd
 
 # ! To get rid of spelling issues,
 # ! only lower case names and hyphen-minus (-) are allowed.
 # ! Also, headers only contain upper case letters and underscore (_) to distinguish.
-PIPELINE_CODING: Dict[str, Dict[str, str]] = {
+PIPELINE_CODING: dict[str, dict[str, str]] = {
     'TRIMMER': {
         'no-trim': '0', 'fastp': '1', 'trim-galore': '2'
     },
@@ -45,13 +45,13 @@ PIPELINE_CODING: Dict[str, Dict[str, str]] = {
     'BAMSTATIST': {'1': '1'}
 }
 
-rev_pipeline_coding: Dict[str, Dict[str, str]] = {k: {v: k for k, v in v.items()} for k, v in PIPELINE_CODING.items()}
+rev_pipeline_coding: dict[str, dict[str, str]] = {k: {v: k for k, v in v.items()} for k, v in PIPELINE_CODING.items()}
 
-ENCODING_ORDER: List[str] = ['TRIMMER', 'DEDUPER', 'CALIBRATOR',
+ENCODING_ORDER: list[str] = ['TRIMMER', 'DEDUPER', 'CALIBRATOR',
                              'ALIGNER', 'DEDUPER', 'CALIBRATOR', 'COUNTER',]
 
-DEDUPER_BEFORE_ALIGNMENT: Set[str] = {'nubeam-dedup', 'bio-seq-zip', 'trie-dedup', 'ngs-reads-treatment'}
-CALIBRATOR_BEFORE_ALIGNMENT: Set[str] = {'care', 'sequencerr', 'reckoner2', 'bfc'}
+DEDUPER_BEFORE_ALIGNMENT: set[str] = {'nubeam-dedup', 'bio-seq-zip', 'trie-dedup', 'ngs-reads-treatment'}
+CALIBRATOR_BEFORE_ALIGNMENT: set[str] = {'care', 'sequencerr', 'reckoner2', 'bfc'}
 
 
 @dataclass
@@ -63,15 +63,15 @@ class PipelineContext:
     deduped: bool = False
     calibrated: bool = False
     counted: bool = False
-    trace: List[str] = field(default_factory=list)
+    trace: list[str] = field(default_factory=list)  # type: ignore
 
     def update(self,
-               parent_dir: Optional[Path] = None,
-               trimmed: Optional[bool] = None,
-               aligned: Optional[bool] = None,
-               deduped: Optional[bool] = None,
-               calibrated: Optional[bool] = None,
-               counted: Optional[bool] = None) -> 'PipelineContext':
+               parent_dir: Path | None = None,
+               trimmed: bool | None = None,
+               aligned: bool | None = None,
+               deduped: bool | None = None,
+               calibrated: bool | None = None,
+               counted: bool | None = None) -> 'PipelineContext':
         if sum(1 for attr in [trimmed, aligned, deduped, calibrated, counted] if attr is not None) > 1:
             raise ValueError('Only one operation at a time.')
 
@@ -121,7 +121,7 @@ class PipelineModule(ABC):
     def tool(self) -> str:
         pass
 
-    def __eq__(self, other):
+    def __eq__(self, other):  # type: ignore
         if isinstance(other, self.__class__):
             return self.tool == other.tool
         else:
@@ -134,13 +134,13 @@ class PipelineModule(ABC):
         return hash((type(self), self.tool))
 
     @abstractmethod
-    def files(self, context: PipelineContext) -> Tuple[List[Path], PipelineContext]:
+    def files(self, context: PipelineContext) -> tuple[list[Path], PipelineContext]:
         pass
 
 
 class Trimmer(PipelineModule):
     # ! YEAH, the file names spawn here.
-    EXT_MAPPING: Dict[str, List[str]] = {
+    EXT_MAPPING: dict[str, list[str]] = {
         'fastp': ['.R1.fq.gz', '.R2.fq.gz',
                   '.fastp.json', '.fastp.html'],
         'trim-galore': ['.R1.fq.gz', '.R2.fq.gz',
@@ -165,7 +165,7 @@ class Trimmer(PipelineModule):
         else:
             return super().__str__()
 
-    def files(self, context: PipelineContext) -> Tuple[List[Path], PipelineContext]:
+    def files(self, context: PipelineContext) -> tuple[list[Path], PipelineContext]:
         return ([context.parent_dir / self.tool / f'{context.fname}{ext}'
                  for ext in self.EXT_MAPPING[self.tool]],
                 context.update(parent_dir=context.parent_dir / self.tool,
@@ -173,7 +173,7 @@ class Trimmer(PipelineModule):
 
 
 class Fastqcer(PipelineModule):
-    EXT_MAPPING: Dict[str, List[str]] = {
+    EXT_MAPPING: dict[str, list[str]] = {
         'fastqc': ['.R1.fastqc.html', '.R2.fastqc.html'],
         'falco': ['.R1.falco.html', '.R2.falco.html']}
 
@@ -188,7 +188,7 @@ class Fastqcer(PipelineModule):
         return (f'{self.__class__.__name__}({self.tool})'
                 f' -> files: {self.EXT_MAPPING[self.tool]}')
 
-    def files(self, context: PipelineContext) -> Tuple[List[Path], PipelineContext]:
+    def files(self, context: PipelineContext) -> tuple[list[Path], PipelineContext]:
         return ([context.parent_dir / f'{context.fname}{ext}'
                  for ext in self.EXT_MAPPING[self.tool]],
                 context)
@@ -205,9 +205,9 @@ class Aligner(PipelineModule):
     def __repr__(self):
         return f'{self.__class__.__name__}({self.tool}) -> files: [.bam", ".bam.bai"]'
 
-    def files(self, context: PipelineContext) -> Tuple[List[Path], PipelineContext]:
+    def files(self, context: PipelineContext) -> tuple[list[Path], PipelineContext]:
         current_dir: Path
-        files: List[Path]
+        files: list[Path]
 
         if context.deduped and not context.calibrated:
             current_dir = context.parent_dir / 'no-pre-calibrate' / self.tool
@@ -255,7 +255,7 @@ class DeDuper(PipelineModule):
         else:
             return super().__str__()
 
-    def files(self, context: PipelineContext) -> Tuple[List[Path], PipelineContext]:
+    def files(self, context: PipelineContext) -> tuple[list[Path], PipelineContext]:
         return ([context.parent_dir / self.tool / f'{context.fname}{ext}'
                  for ext in self.EXT_MAPPING[self.tool]],
                 context.update(parent_dir=context.parent_dir / self.tool,
@@ -291,7 +291,7 @@ class Calibrator(PipelineModule):
         else:
             return super().__str__()
 
-    def files(self, context: PipelineContext) -> Tuple[List[Path], PipelineContext]:
+    def files(self, context: PipelineContext) -> tuple[list[Path], PipelineContext]:
         current_dir: Path
 
         if context.deduped and context.aligned and context.done_before('deduped',
@@ -334,7 +334,7 @@ class Counter(PipelineModule):
         return (f'{self.__class__.__name__}({self.tool}) '
                 f'-> files: {self.EXT_MAPPING[self.tool]}')
 
-    def files(self, context: PipelineContext) -> Tuple[List[Path], PipelineContext]:
+    def files(self, context: PipelineContext) -> tuple[list[Path], PipelineContext]:
         current_dir: Path
 
         if context.aligned:
@@ -375,7 +375,7 @@ class BAMStatist(PipelineModule):
 
     def __init__(self):
         self._tool: str = 'samtools,methydackel,biscuit,bismark,qualimap'
-        self.tool_list: List[str] | List[LiteralString] = self._tool.split(',')
+        self.tool_list: list[str] | list[LiteralString] = self._tool.split(',')
 
     @property
     def tool(self) -> str:
@@ -385,11 +385,11 @@ class BAMStatist(PipelineModule):
         return (f'{self.__class__.__name__}({self.tool})'
                 f' -> files: {self.EXT_TUPLE}')
 
-    def files(self, context: PipelineContext) -> Tuple[List[Path], PipelineContext]:
+    def files(self, context: PipelineContext) -> tuple[list[Path], PipelineContext]:
         fname: str = context.fname
         parent_dir: Path = context.parent_dir
 
-        files: List[Path]
+        files: list[Path]
         files = [
             parent_dir / f'{fname}{ext}'
             for ext in self.EXT_TUPLE
@@ -403,32 +403,37 @@ class BAMStatist(PipelineModule):
         return files, context
 
 
-RegisteredModule = Union[PipelineModule, EmptyModule]
-TrimmerOption = Union[Trimmer, EmptyModule]
-FastqcerOption = Union[Fastqcer, EmptyModule]
-AlignerOption = Union[Aligner, EmptyModule]
-DeDuperOption = Union[DeDuper, EmptyModule]
-CalibratorOption = Union[Calibrator, EmptyModule]
-CounterOption = Union[Counter, EmptyModule]
-BAMStatistOption = Union[BAMStatist, EmptyModule]
-CoreModule = Union[Trimmer, Aligner, DeDuper, Calibrator, Counter]
+RegisteredModule = PipelineModule | EmptyModule
+TrimmerOption = Trimmer | EmptyModule
+FastqcerOption = Fastqcer | EmptyModule
+AlignerOption = Aligner | EmptyModule
+DeDuperOption = DeDuper | EmptyModule
+CalibratorOption = Calibrator | EmptyModule
+CounterOption = Counter | EmptyModule
+BAMStatistOption = BAMStatist | EmptyModule
+CoreModule = Trimmer | Aligner | DeDuper | Calibrator | Counter
 
 
 class Fq2BedGraphRun:
-    def __init__(self, row: pd.Series,
+    def __init__(self, row: pd.Series,   # type: ignore
                  root_dir: Path):
-        self.row: pd.Series = row
-        self.BaseName: str = str(row['FNAME'])
-        self.Trimmer: Trimmer = Trimmer(str(row['TRIMMER']))
-        self.Fastqcer: FastqcerOption = (Fastqcer(str(row['FASTQCER'])) if self._vaild_str(row['FASTQCER'])
+        self.row: pd.Series = row  # type: ignore
+        self.BaseName: str = str(row['FNAME'])  # type: ignore
+        self.Trimmer: Trimmer = Trimmer(str(row['TRIMMER']))  # type: ignore
+        self.Fastqcer: FastqcerOption = (Fastqcer(str(row['FASTQCER']))  # type: ignore
+                                         if self._vaild_str(row['FASTQCER'])  # type: ignore
                                          else EmptyModule('Fastqcer'))
-        self.Aligner: AlignerOption = (Aligner(str(row['ALIGNER'])) if self._vaild_str(row['ALIGNER'])
+        self.Aligner: AlignerOption = (Aligner(str(row['ALIGNER']))  # type: ignore
+                                       if self._vaild_str(row['ALIGNER'])  # type: ignore
                                        else EmptyModule('Aligner'))
-        self.DeDuper: DeDuperOption = (DeDuper(str(row['DEDUPER'])) if self._vaild_str(row['DEDUPER'])
+        self.DeDuper: DeDuperOption = (DeDuper(str(row['DEDUPER']))  # type: ignore
+                                       if self._vaild_str(row['DEDUPER'])  # type: ignore
                                        else EmptyModule('DeDuper'))
-        self.Calibrator: CalibratorOption = (Calibrator(str(row['CALIBRATOR'])) if self._vaild_str(row['CALIBRATOR'])
+        self.Calibrator: CalibratorOption = (Calibrator(str(row['CALIBRATOR']))  # type: ignore
+                                             if self._vaild_str(row['CALIBRATOR'])  # type: ignore
                                              else EmptyModule('Calibrator'))
-        self.Counter: CounterOption = (Counter(str(row['COUNTER'])) if self._vaild_str(row['COUNTER'])
+        self.Counter: CounterOption = (Counter(str(row['COUNTER']))  # type: ignore
+                                       if self._vaild_str(row['COUNTER'])  # type: ignore
                                        else EmptyModule('Counter'))
         self.BAMStatist: BAMStatistOption = (BAMStatist()
                                              if self._vaild_str(row['STATS'])
@@ -439,7 +444,7 @@ class Fq2BedGraphRun:
         self.Code = self._chain_encode(pipeline_coding=PIPELINE_CODING)
 
     def __repr__(self):
-        return (f'{self.__class__.__name__} for {self.row["FNAME"]}\n'
+        return (f'{self.__class__.__name__} for {self.row["FNAME"]}\n'  # type: ignore
                 f'Trimmer: {self.Trimmer}\n'
                 f'QCReporter: {self.Fastqcer}\n'
                 f'Aligner: {self.Aligner}\n'
@@ -463,7 +468,7 @@ class Fq2BedGraphRun:
 
     @staticmethod
     def _order_check(module: RegisteredModule,
-                     pre_tools: Set[str]) -> Literal[-1, 0, 1]:
+                     pre_tools: set[str]) -> Literal[-1, 0, 1]:
         check_result = -1
         if isinstance(module, PipelineModule):
             if module.tool in pre_tools:
@@ -472,9 +477,9 @@ class Fq2BedGraphRun:
                 check_result = 0
         return check_result
 
-    def _tool_chain(self) -> List[PipelineModule]:
-        full_toolchain: List[RegisteredModule]
-        tool_chain: List[PipelineModule]
+    def _tool_chain(self) -> list[PipelineModule]:
+        full_toolchain: list[RegisteredModule]
+        tool_chain: list[PipelineModule]
 
         if isinstance(self.Counter, PipelineModule) and self.Counter.tool == 'fame':
             # fame only needs pre-dedup and pre-calibrate, so no-dedup and no-calibrate are illegal.
@@ -484,7 +489,7 @@ class Fq2BedGraphRun:
                 if isinstance(_m, EmptyModule):
                     pass
                 else:
-                    if _m.tool not in _l:
+                    if _m.tool not in _l:  # type: ignore
                         raise ValueError(f'{_m} not in {_l}')
                     else:
                         pass
@@ -525,8 +530,8 @@ class Fq2BedGraphRun:
                     break
         return tool_chain
 
-    def _files(self) -> List[Path]:
-        files: List[Path] = []
+    def _files(self) -> list[Path]:
+        files: list[Path] = []
         last_non_stat_files = []
         current_context: PipelineContext = PipelineContext(fname=self.BaseName,
                                                            parent_dir=self.ParentDir)
@@ -547,7 +552,7 @@ class Fq2BedGraphRun:
         current_context: PipelineContext = PipelineContext(fname=self.BaseName,
                                                            parent_dir=self.ParentDir)
         for module in self.ModuleChain:
-            (new_files,
+            (_,
              current_context) = module.files(context=current_context)
             if module.__class__.__name__ == module_type:
                 module_dir = current_context.parent_dir / module.tool
@@ -557,15 +562,15 @@ class Fq2BedGraphRun:
         return module_dir
 
     @staticmethod
-    def _code(module: RegisteredModule, coding_dict: Dict[str, Dict[str, str]]):
+    def _code(module: RegisteredModule, coding_dict: dict[str, dict[str, str]]):
         try:
             return coding_dict[module.__class__.__name__.upper()][module.tool]  # type: ignore
         except (KeyError, AttributeError, ValueError):
             return '?'
 
     def _pipeline_encode(self,
-                         pipeline_coding: Dict[str, Dict[str, str]] = PIPELINE_CODING,
-                         encoding_order: List[str] = ENCODING_ORDER) -> str:
+                         pipeline_coding: dict[str, dict[str, str]] = PIPELINE_CODING,
+                         encoding_order: list[str] = ENCODING_ORDER) -> str:
         # ! do not code the ModuleChain. Instead, code the final context.
         if isinstance(self.Counter, EmptyModule) and \
                 isinstance(self.Aligner, PipelineModule) and \
@@ -583,9 +588,9 @@ class Fq2BedGraphRun:
                        for dir_part, module_type in zip(counter_dir_parts, encoding_order))
 
     def _chain_encode(self,
-                      pipeline_coding: Dict[str, Dict[str, str]] = PIPELINE_CODING,
-                      encoding_order: List[str] = ENCODING_ORDER) -> str:
-        last_non_stat_files: List[Path] = []
+                      pipeline_coding: dict[str, dict[str, str]] = PIPELINE_CODING,
+                      encoding_order: list[str] = ENCODING_ORDER) -> str:
+        last_non_stat_files: list[Path] = []
         current_context: PipelineContext = PipelineContext(fname=self.BaseName,
                                                            parent_dir=self.ParentDir)
         for tool in self.ModuleChain:
@@ -603,8 +608,8 @@ class Fq2BedGraphRun:
 
 
 def pipeline_decode(pipeline_code: str,
-                    pipeline_decoding: Dict[str, Dict[str, str]] = PIPELINE_CODING,
-                    encoding_order: List[str] = ENCODING_ORDER) -> Path:
+                    pipeline_decoding: dict[str, dict[str, str]] = PIPELINE_CODING,
+                    encoding_order: list[str] = ENCODING_ORDER) -> Path:
     if '?' in pipeline_code and pipeline_code[3] not in ['2', '3']:  # msuit2-bowtie2 and msuit-hisat2
         raise ValueError('Invalid pipeline code.')
 
@@ -617,7 +622,7 @@ def pipeline_decode(pipeline_code: str,
 
 
 def read_fq2bedgraph_sheet(csv_path: Path,
-                           pipeline_coding: Dict = PIPELINE_CODING) -> pd.DataFrame:  # type: ignore
+                           pipeline_coding: dict = PIPELINE_CODING) -> pd.DataFrame:  # type: ignore
     query_string = ('FNAME.notna() and '
                     '(TRIMMER.notna() | TRIMMER.isin(@pipeline_coding["TRIMMER"].keys())) and '
                     '(FASTQCER.isna() | FASTQCER.isin(@pipeline_coding["FASTQCER"].keys())) and '
@@ -630,26 +635,26 @@ def read_fq2bedgraph_sheet(csv_path: Path,
     input_df: pd.DataFrame
     f2b_df: pd.DataFrame
 
-    input_df = (pd.read_csv(csv_path, comment='#',
+    input_df = (pd.read_csv(csv_path, comment='#',  # type: ignore
                             dtype={'FNAME': 'str', 'TRIMMER': 'str',
                                    'FASTQCER': 'str', 'ALIGNER': 'str',
                                    'DEDUPER': 'str', 'CALIBRATOR': 'str',
                                    'COUNTER': 'str', 'STATS': 'boolean'}))
 
-    f2b_df = (input_df.dropna(subset=['FNAME', 'TRIMMER'])
+    f2b_df = (input_df.dropna(subset=['FNAME', 'TRIMMER'])  # type: ignore
                       .query(query_string, engine='python'))
     # !LEGALITY CHECK HERE BEFORE INITIALIZATION. NoneType IS LEGAL.
 
     if f2b_df.empty:
-        wrong_dict = {j: [i for i in input_df[j].unique()
-                          if i and i not in pipeline_coding[j].keys()]
+        wrong_dict = {j: [i for i in input_df[j].unique()  # type: ignore
+                          if i and i not in pipeline_coding[j].keys()]  # type: ignore
                       for j in ['FASTQCER', 'TRIMMER', 'ALIGNER',
                                 'DEDUPER', 'CALIBRATOR', 'COUNTER']}
         wrong_message = 'No valid rows found in the sheet. Diagnosis:'
         for category, wrong_ls in wrong_dict.items():
             if wrong_ls:
                 wrong_message += (f'\nwrong {category}:\n{wrong_ls}\n'
-                                  f'avaliable:\n{pipeline_coding[category].keys()}')
+                                  f'avaliable:\n{pipeline_coding[category].keys()}')  # type: ignore
             else:
                 wrong_message += f'{category} fine'
 
@@ -659,31 +664,31 @@ def read_fq2bedgraph_sheet(csv_path: Path,
 
         raise ValueError(wrong_message)
 
-    return f2b_df.replace(np.nan, None)
+    return f2b_df.replace(np.nan, None)  # type: ignore
 
 
-def fq2bedgraph_file_ls(csv_path_str: str) -> List[str]:
+def fq2bedgraph_file_ls(csv_path_str: str) -> list[str]:
     df = read_fq2bedgraph_sheet(csv_path=Path(csv_path_str))
     return ([
         file.as_posix()
-        for _, row in df.iterrows()
+        for _, row in df.iterrows()  # type: ignore
         for file in Fq2BedGraphRun(row=row, root_dir=Path('result')).Files
     ])
 
 
-def dev_fq2bedgraph_file_ls(df: pd.DataFrame) -> List[str]:
+def dev_fq2bedgraph_file_ls(df: pd.DataFrame) -> list[str]:
     return ([
         file.relative_to(Path()).as_posix()
-        for _, row in df.iterrows()
+        for _, row in df.iterrows()  # type: ignore
         for file in Fq2BedGraphRun(row=row, root_dir=Path('result')).Files
     ])
 
 
-def fq2bedgraph_tool_ls(csv_path_str: str) -> Dict[str, List[str] | List[LiteralString]]:
+def fq2bedgraph_tool_ls(csv_path_str: str) -> dict[str, list[str] | list[LiteralString]]:
     df = read_fq2bedgraph_sheet(csv_path=Path(csv_path_str))
-    tool_chain_set: Set[PipelineModule] = {
+    tool_chain_set: set[PipelineModule] = {
         tool
-        for _, row in df.iterrows()
+        for _, row in df.iterrows()  # type: ignore
         for tool in Fq2BedGraphRun(row=row, root_dir=Path('result')).ModuleChain
     }
 
@@ -699,10 +704,10 @@ def fq2bedgraph_tool_ls(csv_path_str: str) -> Dict[str, List[str] | List[Literal
     })
 
 
-def dev_fq2bedgraph_tool_ls(df: pd.DataFrame) -> Dict[str, List[str] | List[LiteralString]]:
-    tool_chain_set: Set[PipelineModule] = {
+def dev_fq2bedgraph_tool_ls(df: pd.DataFrame) -> dict[str, list[str] | list[LiteralString]]:
+    tool_chain_set: set[PipelineModule] = {
         tool
-        for _, row in df.iterrows()
+        for _, row in df.iterrows()  # type: ignore
         for tool in Fq2BedGraphRun(row=row, root_dir=Path('result')).ModuleChain
     }
 
@@ -720,33 +725,33 @@ def dev_fq2bedgraph_tool_ls(df: pd.DataFrame) -> Dict[str, List[str] | List[Lite
 
 # TODO: 添加bedgraph2dm相关解析，输出编码后的文件和文件夹名
 class BedGraph2DMRun:
-    DM_OUTPUT_MAP: Dict[str, List[str]] = {
+    DM_OUTPUT_MAP: dict[str, list[str]] = {
         'methylsig': ['bedgraph.zst']
     }
 
-    def __init__(self, row: pd.Series, root_dir: Path):
+    def __init__(self, row: pd.Series, root_dir: Path):  # type: ignore
         for col in ('FASTQCER1', 'FASTQCER2', 'STATS1', 'STATS2'):
             row[col] = None
 
         self.A: Fq2BedGraphRun
         self.B: Fq2BedGraphRun
 
-        (self.A,
-         self.B) = [Fq2BedGraphRun(pd.Series({col.replace(suffix, ''): row[col]
-                                              for col in row.columns if col.endswith(suffix)}),
+        (self.A,  # type: ignore
+         self.B) = [Fq2BedGraphRun(pd.Series({col.replace(suffix, ''): row[col]  # type: ignore
+                                              for col in row.columns if col.endswith(suffix)}),  # type: ignore
                                    root_dir=Path('./result'))
                     for suffix in ('1', '2')]
-        self.DMer: str = str(row['DMER'])
-        self.Files: List[Path] = self._generate_output(root_dir=root_dir)
+        self.DMer: str = str(row['DMER'])  # type: ignore
+        self.Files: list[Path] = self._generate_output(root_dir=root_dir)  # type: ignore
 
-    def _generate_output(self, root_dir) -> List[Path]:
+    def _generate_output(self, root_dir: Path) -> list[Path]:
         # ! the work to generate input files for DM analysis is done in rule/{DMer}/prepare.smk
         return [root_dir / self.DMer / f'{self.A.BaseName}.{self.B.BaseName}' / f'{self.A.Code}.{self.B.Code}.{ext}'
                 for ext in self.DM_OUTPUT_MAP[self.DMer]]
 
 
 def read_bedgraph2dm_sheet(csv_path: Path,
-                           pipeline_coding: Dict = PIPELINE_CODING) -> pd.DataFrame:  # type: ignore
+                           pipeline_coding: dict = PIPELINE_CODING) -> pd.DataFrame:  # type: ignore
     query_string = ('FNAME1.notna() and TRIMMER1.notna() and '
                     'FNAME2.notna() and TRIMMER2.notna() and '
                     '(ALIGNER1.isna() | ALIGNER1.isin(@pipeline_coding["ALIGNER"].keys())) and '
@@ -760,7 +765,7 @@ def read_bedgraph2dm_sheet(csv_path: Path,
                     'DMER.isin(@pipeline_coding["DMER"].keys())')
 
     b2d_df: pd.DataFrame
-    b2d_df = (pd.read_csv(csv_path, comment='#',
+    b2d_df = (pd.read_csv(csv_path, comment='#',  # type: ignore
                           dtype={'FNAME1': 'str', 'TRIMMER1': 'str', 'ALIGNER1': 'str',
                                  'DEDUPER1': 'str', 'CALIBRATOR1': 'str', 'COUNTER1': 'str',
                                  'FNAME2': 'str', 'TRIMMER2': 'str', 'ALIGNER2': 'str',
@@ -772,22 +777,22 @@ def read_bedgraph2dm_sheet(csv_path: Path,
     if b2d_df.empty:
         raise ValueError('No valid rows found in the sheet.')
 
-    return b2d_df.replace(np.nan, None)
+    return b2d_df.replace(np.nan, None)  # type: ignore
 
 
-def bedgraph2dm_file_ls(csv_path_str: str) -> List[str]:
+def bedgraph2dm_file_ls(csv_path_str: str) -> list[str]:
     df = read_bedgraph2dm_sheet(csv_path=Path(csv_path_str))
     return ([
         file.relative_to(Path()).as_posix()
-        for _, row in df.iterrows()
+        for _, row in df.iterrows()  # type: ignore
         for file in BedGraph2DMRun(row=row, root_dir=Path.cwd() / 'result').Files
     ])
 
 
-def bedgraph2dm_tool_ls(csv_path_str: str) -> Set[str]:
+def bedgraph2dm_tool_ls(csv_path_str: str) -> set[str]:
     df = read_bedgraph2dm_sheet(csv_path=Path(csv_path_str))
     return ({
-        BedGraph2DMRun(row=row, root_dir=Path.cwd() / 'result').DMer for _, row in df.iterrows()
+        BedGraph2DMRun(row=row, root_dir=Path.cwd() / 'result').DMer for _, row in df.iterrows()  # type: ignore
     })
 
 # TODO: 添加新smk文件，解码文件夹和文件名，并运行差异甲基化分析

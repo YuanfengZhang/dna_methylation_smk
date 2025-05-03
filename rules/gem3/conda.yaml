@@ -4,7 +4,7 @@ channels:
   - defaults
 dependencies:
   - bioconda::samtools>=1.21
-  - bioconda:: bwa
+  - bioconda::bwa
   - bioconda::seqtk
   - bioconda::seqkit
   - bioconda::mbuffer
