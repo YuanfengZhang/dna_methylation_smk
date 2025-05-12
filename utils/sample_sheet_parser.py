@@ -15,14 +15,13 @@ PIPELINE_CODING: dict[str, dict[str, str]] = {
     },
     'ALIGNER': {
         'bismark-bowtie2': '0', 'bismark-hisat2': '1',
-        'msuite2-bowtie2': '2', 'msuite2-hisat2': '3',
+        'hisat2': '2', 'bowtie2': '3',
         'bwa-meth': '4', 'bwa-meme': '5', 'dnmtools': '6',
         'biscuit': '7', 'bsmapz': '8', 'batmeth2': '9',
         'bsbolt': 'A', 'abismal': 'B', 'hisat-3n': 'C',
         'bitmapperbs': 'D', 'whisper': 'E', 'pufferfish': 'F',
         'strobealign': 'G', 'aryana': 'H', 'gem3': 'I',
-        'hisat2': 'J', 'bowtie2': 'K', 'segemehl': 'L',
-        'last': 'M'
+        'segemehl': 'J', 'last': 'K'
     },
     'DEDUPER': {
         'no-dedup': '0', 'bismark-dedup': '1', 'gatk-dedup': '2',  # .../gatk/gatk/... will cause ambiguity.
@@ -35,9 +34,8 @@ PIPELINE_CODING: dict[str, dict[str, str]] = {
     },
     'COUNTER': {
         'bismark': '0', 'biscuit': '1', 'methyldackel': '2',
-        'dnmtools': '3', 'bs_seeker2': '4', 'astair': '5',
+        'dnmtools': '3', 'astair': '4', 'rastair': '5',
         'bsgenova': '6', 'fame': '7',
-        'msuite2-bowtie2': '8', 'msuite2-hisat2': '9'  # only for reverse coding.
     },
     'FASTQCER': {
         'fastqc': '0', 'falco': '1'  # actually FASTQCER and BAMSTATIST are not coded,
@@ -317,6 +315,8 @@ class Counter(PipelineModule):
                     '.bismark.cov.gz', '.splitting_report',
                     '.c2c.cov.gz', '.c2c.report.gz', '.c2c.summary'],
         'astair': ['.astair.mods.gz', '.astair.stats'],
+        'rastair': ['.rastair.mods.gz'],
+        'dnmtools': ['.dnmtools.gz', '.dnmtools.stats'],
         'methyldackel': ['.bedgraph.gz', '.merged.bedgraph.gz'],
         'biscuit': ['.epibed.gz'],
         'bsgenova': ['.ATCGmap.gz', '.CGmap.gz', '.bed.gz'],
