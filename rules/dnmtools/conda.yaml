@@ -1,0 +1,10 @@
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+
+dependencies:
+  - bioconda::dnmtools>=1.4.4
+  - conda-forge::pigz
+  - bioconda::samtools
+  - conda-forge::gawk

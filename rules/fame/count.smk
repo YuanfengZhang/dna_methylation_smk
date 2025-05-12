@@ -17,6 +17,7 @@ rule fq2tsv:
         ref          = lambda wildcards: config["ref"]["fame"][wildcards.BaseName.split('_')[1]],
         extra_params = config["fame"]["extra_params"] or ""
     threads: 8
+    conda: "../misc/polars.yaml"
     shell:
         dedent("""
         resources/FAME/FAME \\

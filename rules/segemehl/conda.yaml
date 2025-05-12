@@ -1,0 +1,10 @@
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - bioconda::segemehl>=0.3.4
+  - bioconda::samtools>=1.21
+  - bioconda::mbuffer
+  - conda-forge::liblzma
+  

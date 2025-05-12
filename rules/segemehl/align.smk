@@ -38,14 +38,14 @@ rule segemehl_align:
         extra_params = config["segemehl"]["align"]["extra_params"] or ""
     threads: 8
     conda:
-        "../samtools/conda.yaml"
+        "conda.yaml"
     shell:
         dedent("""
         LIB=$(echo "{wildcards.BaseName}" | cut -d _ -f1 | cut -c 1-2)
         PLATFORM=$(echo "{wildcards.BaseName}" | cut -d _ -f1)
         SAMPLE=$(echo "{wildcards.BaseName}" | cut -d'_' -f2-3)
 
-        resources/segemehl-0.3.4/segemehl.x \\
+        segemehl.x \\
             {params.ref} -q {input.r1} -p {input.r2} \\
             -t {threads} {params.method_param} {params.extra_params} |\\
         mbuffer -m 4G -q |\\

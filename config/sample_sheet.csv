@@ -9,5 +9,10 @@ FNAME,TRIMMER,FASTQCER,ALIGNER,DEDUPER,CALIBRATOR,COUNTER,STATS
 # BS_HF_1_MX,trim-galore,falco,bwa-meth,no-dedup,no-calibrate,methyldackel,False
 # BS_HF_1_MX,trim-galore,falco,msuite2-bowtie2,,,,False
 # EM_HF_1_IPM,trim-galore,falco,bismark-bowtie2,bismark,no-calibrate,bismark,False
-#EM_HF_1_IPM,trim-galore,falco,whisper,,,,False
-BS1_D6_1,trim-galore,fastqc,batmeth2,,,,False
+# EM_HF_1_IPM,trim-galore,falco,whisper,,,,False
+# BS1_D6_1,trim-galore,fastqc,bwa-meth,no-dedup,no-calibrate,methyldackel,False
+# BS1_D6_1,trim-galore,fastqc,bismark-hisat2,bismark-dedup,no-calibrate,bismark,False
+# EM3_HF_1,trim-galore,fastqc,bismark-hisat2,bismark-dedup,no-calibrate,bismark,False
+# EM3_HF_1,trim-galore,fastqc,pufferfish,samtools,no-calibrate,astair,False
+# EM3_HF_1,trim-galore,fastqc,segemehl,samtools,no-calibrate,astair,False
+BS1_D6_1,trim-galore,fastqc,segemehl,samtools,no-calibrate,rastair,False

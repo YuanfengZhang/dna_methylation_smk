@@ -43,7 +43,6 @@ rule pufferfish_align:
             -o ${{pufferfish_dir}}/pufferfish.sam \\
             --threads {threads} {params.extra_params}
         samtools sort \\
-            --output-fmt bam,level=9 \\
             -@ {threads} \\
             ${{pufferfish_dir}}/pufferfish.sam |\\
         samtools addreplacerg - \\

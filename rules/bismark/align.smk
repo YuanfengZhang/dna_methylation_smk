@@ -91,7 +91,7 @@ rule bismark_hisat2:
         SAMPLE=$(echo "{wildcards.BaseName}" | cut -d'_' -f2-3)
 
         samtools sort \\
-            {wildcards.BaseName}.R1_bismark_bt2_pe.bam \\
+            {wildcards.BaseName}.R1_bismark_hisat2_pe.bam \\
             -m 4G |\\
         samtools addreplacerg - \\
             -r "@RG\\tID:{wildcards.BaseName}\\tSM:${{SAMPLE}}\\tPL:${{PLATFORM}}\\tLB:${{LIB}}" \\
@@ -101,8 +101,8 @@ rule bismark_hisat2:
         samtools index -@ {threads} {wildcards.BaseName}.bam || echo "suppress non-zero exit"
 
         mv \\
-            {wildcards.BaseName}.R1_bismark_bt2_PE_report.txt \\
+            {wildcards.BaseName}.R1_bismark_hisat2_PE_report.txt \\
             {wildcards.BaseName}.align.report
 
-        rm {wildcards.BaseName}.R1_bismark_bt2_pe.bam
+        rm {wildcards.BaseName}.R1_bismark_hisat2_pe.bam
         """)
