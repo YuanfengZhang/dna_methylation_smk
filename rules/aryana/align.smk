@@ -54,7 +54,7 @@ rule aryana_align:
         samtools addreplacerg \\
             -r "@RG\\tID:{wildcards.BaseName}\\tSM:${{SAMPLE}}\\tPL:${{PLATFORM}}\\tLB:${{LIB}}" \\
             --output-fmt bam,level=9 \\
-            -@ {threads} -o  ${{parent_dir}}/aryana/{wildcards.BaseName}.bam -
+            -@ {threads} -o ${{parent_dir}}/aryana/{wildcards.BaseName}.bam -
 
         samtools index \\
             -@ {threads} \\

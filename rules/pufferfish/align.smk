@@ -39,7 +39,7 @@ rule pufferfish_align:
         pufferfish_dir="result/{wildcards.BaseName}/{wildcards.AlignParentDir}/pufferfish"
 
         resources/pufferfish/build/src/pufferfish align \\
-            -i {params.ref} --mate1 {input.r1}  --mate2 {input.r2} \\
+            -i {params.ref} --mate1 {input.r1} --mate2 {input.r2} \\
             -o ${{pufferfish_dir}}/pufferfish.sam \\
             --threads {threads} {params.extra_params}
         samtools sort \\

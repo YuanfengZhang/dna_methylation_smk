@@ -26,7 +26,7 @@ rule falco:
             -bisulfite {params.extra_params}
         cd result/{wildcards.BaseName}/{wildcards.ReportParentDir}
 
-        mv {wildcards.BaseName}.R1.fq.gz_fastqc_report.html  {wildcards.BaseName}.R1.falco.html
+        mv {wildcards.BaseName}.R1.fq.gz_fastqc_report.html {wildcards.BaseName}.R1.falco.html
         mv {wildcards.BaseName}.R2.fq.gz_fastqc_report.html {wildcards.BaseName}.R2.falco.html
         mv {wildcards.BaseName}.R1.fq.gz_fastqc_data.txt {wildcards.BaseName}.R1.falco.data.txt
         mv {wildcards.BaseName}.R2.fq.gz_fastqc_data.txt {wildcards.BaseName}.R2.falco.data.txt

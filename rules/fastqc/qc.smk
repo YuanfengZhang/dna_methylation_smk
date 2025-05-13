@@ -24,6 +24,6 @@ rule fastqc:
             {input.r1} {input.r2}
         
         cd result/{wildcards.BaseName}/{wildcards.ReportParentDir}
-        mv {wildcards.BaseName}.R1_fastqc.html  {wildcards.BaseName}.R1.fastqc.html
+        mv {wildcards.BaseName}.R1_fastqc.html {wildcards.BaseName}.R1.fastqc.html
         mv {wildcards.BaseName}.R2_fastqc.html {wildcards.BaseName}.R2.fastqc.html
         """)

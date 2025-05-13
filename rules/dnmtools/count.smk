@@ -2,12 +2,15 @@ configfile: "config/runtime_config.yaml"
 from textwrap import dedent
 
 
-# ! not working, See https://github.com/smithlabcode/dnmtools/issues/260
+# ! the latest released dnmtools cannot skip the reads with $3 (chromosome) that not in the ref.fa,
+# ! See https://github.com/smithlabcode/dnmtools/issues/260
+# ! The current solution is to use awk to get the legal records, run dnmtools count, and then remove it.
 
 rule dnmtools_count:
     input:
         "result/{BaseName}/{CountParentDir}/{BaseName}.bam"
     output:
+        temp("result/{BaseName}/{CountParentDir}/{BaseName}.mapped.sam"),
         temp("result/{BaseName}/{CountParentDir}/dnmtools/{BaseName}.dnmtools.tmp"),
         "result/{BaseName}/{CountParentDir}/dnmtools/{BaseName}.dnmtools.gz"
     benchmark:
@@ -22,20 +25,20 @@ rule dnmtools_count:
         dedent("""
         cd result/{wildcards.BaseName}/{wildcards.CountParentDir}
         mkdir -p dnmtools
-        if [ ! -f {wildcards.BaseName}.sorted.bam ]; then
-            samtools sort -@ {threads} -o {wildcards.BaseName}.sorted.bam {wildcards.BaseName}.bam
-            samtools index -@ {threads} {wildcards.BaseName}.sorted.bam
+        if [ ! -f {wildcards.BaseName}.mapped.sam ]; then
+            samtools view -h {wildcards.BaseName}.bam |\\
+            awk '$3 != "*"' > {wildcards.BaseName}.mapped.sam
         fi
         dnmtools counts \\
-            -c {params.ref} \\
-            -t {threads} {params.extra_params} \\
+            -c {params.ref} -t {threads} \\
+            -progress {params.extra_params} \\
             -o dnmtools/{wildcards.BaseName}.dnmtools.tmp \\
-            {wildcards.BaseName}.sorted.bam
+            {wildcards.BaseName}.mapped.sam
         cd dnmtools
 
         awk -F'\\t' '$6 > 4' \\
             {wildcards.BaseName}.dnmtools.tmp \\
-            | pigz  -p {threads} --best > {wildcards.BaseName}.dnmtools.gz
+            | pigz -p {threads} --best > {wildcards.BaseName}.dnmtools.gz
         """)
 
 

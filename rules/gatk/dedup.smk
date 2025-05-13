@@ -12,14 +12,15 @@ rule gatk_dedup:
     benchmark:
         "result/{BaseName}/{DedupParentDir}/gatk-dedup/{BaseName}.dedup.benchmark"
     params:
-        extra_params = config["gatk"]["dedup"]["extra_params"] or ""
+        max_mem      = config["gatk"]["max_mem"],
+        extra_params = config["gatk"]["dedup"]["extra_params"] or "",
     threads: 8
     conda:
         "conda.yaml"
     shell:
         dedent("""
         gatk \\
-            --java-options "-Xmx20g -XX:ParallelGCThreads={threads}" \\
+            --java-options "-Xmx-Xmx{params.max_mem}g -XX:ParallelGCThreads={threads}" \\
             MarkDuplicates \\
             -I {input} \\
             -O {output.bam} \\

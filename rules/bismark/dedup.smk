@@ -10,7 +10,7 @@ rule bismark_dedup:
                  ".bam",
                  ".bam.bai")
     benchmark:
-        "result/{BaseName}/{DedupParentDir}/bismark/{BaseName}.dedup.benchmark"
+        "result/{BaseName}/{DedupParentDir}/bismark-dedup/{BaseName}.dedup.benchmark"
     params:
         extra_params = config["bismark"]["dedup"]["extra_params"] or ""
     threads: 8

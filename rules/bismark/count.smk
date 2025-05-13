@@ -112,7 +112,7 @@ rule bismark_c2c will generate these files:
 
 rule bismark_c2c:
     input:
-        "result/{BaseName}/{CountParentDir}/{BaseName}/bismark/{BaseName}.bismark.cov.gz"
+        "result/{BaseName}/{CountParentDir}/bismark/{BaseName}.bismark.cov.gz"
     output:
         multiext("result/{BaseName}/{CountParentDir}"
                  "/bismark/{BaseName}",

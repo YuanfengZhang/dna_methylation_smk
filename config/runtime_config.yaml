@@ -496,6 +496,7 @@ fastqc:
   extra_params:
 
 gatk:
+  max_mem: 48
   cal_bqsr:
     snp_vcf: resources/dbsnp/common.dbsnp.vcf.gz
     extra_params:

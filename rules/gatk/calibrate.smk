@@ -16,23 +16,24 @@ rule gatk_bqsr:
     params:
         snp_vcf      = config["gatk"]["cal_bqsr"]["snp_vcf"],
         ref          = lambda wildcards: config["ref"]["bwa-mem"][wildcards.BaseName.split('_')[1]],
+        max_mem      = config["gatk"]["max_mem"],
         bqsr_params  = config["gatk"]["cal_bqsr"]["extra_params"] or "",
         apply_params = config["gatk"]["apply_bqsr"]["extra_params"] or "",
-        cov_params   = config["gatk"]["analyze_covariates"]["extra_params"] or "",
+        cov_params   = config["gatk"]["analyze_covariates"]["extra_params"] or ""
     threads: 8
     conda:
         "conda.yaml"
     shell:
         dedent("""
         gatk \\
-            --java-options "-Xmx20g -XX:ParallelGCThreads={threads}"\\
+            --java-options "-Xmx{params.max_mem}g -XX:ParallelGCThreads={threads}"\\
             BaseRecalibrator \\
             -I {input} -O {output.before_table} \\
             -R {params.ref} --known-sites {params.snp_vcf} \\
             {params.bqsr_params}
 
         gatk \\
-            --java-options "-Xmx20g -XX:ParallelGCThreads={threads}"\\
+            --java-options "-Xmx{params.max_mem}g -XX:ParallelGCThreads={threads}"\\
             ApplyBQSR \\
             -I {input} -O {output.bam} \\
             -R {params.ref} \\
@@ -40,19 +41,19 @@ rule gatk_bqsr:
             {params.apply_params}
         
         gatk \\
-            --java-options "-Xmx20g -XX:ParallelGCThreads={threads}"\\
+            --java-options "-Xmx{params.max_mem}g -XX:ParallelGCThreads={threads}"\\
             BaseRecalibrator \\
             -I {output.bam} -O {output.after_table} \\
             -R {params.ref} --known-sites {params.snp_vcf} \\
             {params.bqsr_params}
         
         gatk \\
-            --java-options "-Xmx20g -XX:ParallelGCThreads={threads}" \\
+            --java-options "-Xmx{params.max_mem}g -XX:ParallelGCThreads={threads}" \\
             AnalyzeCovariates \\
             -before {output.before_table} \\
             -after {output.after_table} \\
             -csv {output.pdf} \\
             {params.cov_params}
         
-        samtools index  -@ {threads} {output.bam} || echo "suppress non-zero exit"
+        samtools index -@ {threads} {output.bam} || echo "suppress non-zero exit"
         """)

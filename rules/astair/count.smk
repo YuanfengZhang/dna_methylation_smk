@@ -4,10 +4,10 @@ from textwrap import dedent
 
 def get_method_param(wildcards):
     match wildcards.BaseName.split('_')[0][: 2]:
-    case "PS":
-        return ""
-    case _:
-        return "--method CtoT"
+        case "PS":
+            return ""
+        case _:
+            return "--method CtoT"
 
 
 rule astair_count:

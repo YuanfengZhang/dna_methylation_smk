@@ -41,7 +41,7 @@ if tool_dict["DEDUPER"]:
             case 'bismark-dedup':
                 include: "rules/bismark/dedup.smk"
             case _:
-                 include: f"rules/{tool}/dedup.smk"
+                include: f"rules/{tool}/dedup.smk"
 
 if tool_dict["COUNTER"]:
     for tool in tool_dict["COUNTER"]:
