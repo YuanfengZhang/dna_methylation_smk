@@ -1,0 +1,7 @@
+channels:
+  - bioconda
+  - defaults
+dependencies:
+  - bioconda::dupsifter>=1.3.0.20241113
+  - bioconda::samtools>=1.21
+  - bioconda::mbuffer
