@@ -1,0 +1,7 @@
+channels:
+  - bioconda
+  - defaults
+dependencies:
+  - bioconda::sambamba>=1.0.1
+  - bioconda::samtools>=1.21
+  - bioconda::mbuffer

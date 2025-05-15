@@ -26,7 +26,8 @@ PIPELINE_CODING: dict[str, dict[str, str]] = {
     'DEDUPER': {
         'no-dedup': '0', 'bismark-dedup': '1', 'gatk-dedup': '2',  # .../gatk/gatk/... will cause ambiguity.
         'samtools': '3', 'sambamba': '4', 'nubeam-dedup': '5',
-        'bio-seq-zip': '6', 'trie-dedup': '7', 'ngs-reads-treatment': '8'
+        'bio-seq-zip': '6', 'trie-dedup': '7', 'ngs-reads-treatment': '8',
+        'dupsifter': '9', 'sambamba': 'A'
     },
     'CALIBRATOR': {
         'no-pre-calibrate': '@', 'no-calibrate': '0', 'gatk-cali': '1', 'care': '2',
@@ -234,7 +235,8 @@ class DeDuper(PipelineModule):
         'nubeam-dedup': ['.R1.fq.gz', '.R2.fq.gz'],
         'bio-seq-zip': ['.R1.fq.gz', '.R2.fq.gz'],
         'trie-dedup': ['.R1.fq.gz', '.R2.fq.gz'],
-        'ngs-reads-treatment': ['.R1.fq.gz', '.R2.fq.gz']
+        'ngs-reads-treatment': ['.R1.fq.gz', '.R2.fq.gz'],
+        'dupsifter': ['.bam', '.bam.bai', '.dupsifter.stat']
     }
 
     def __init__(self, deduper: str):

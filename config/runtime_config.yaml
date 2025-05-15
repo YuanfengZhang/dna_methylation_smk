@@ -183,6 +183,18 @@ ref:
     T2:
     T3:
     T4:
+  dupsifter:
+    D5:
+    D6: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/dupsifter/BL.fa
+    F7:
+    M8:
+    BC:
+    BL:
+    HF: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/dupsifter/BL.fa
+    T1:
+    T2:
+    T3:
+    T4:
   bwa-meth:
     D5:
     D6: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/bwa-meth/BL.fa
@@ -359,6 +371,18 @@ ref:
     T2:
     T3:
     T4:
+  sambamba:
+    D5:
+    D6: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/sambamba/BL.fa
+    F7:
+    M8:
+    BC:
+    BL:
+    HF: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/sambamba/BL.fa
+    T1:
+    T2:
+    T3:
+    T4:
   samtools:
     D5:
     D6: /hot_warm_data/ref/quartet/DNA/custom_genome/BL/bwa-mem/BL.fa
@@ -483,6 +507,10 @@ dnmtools:
   levels:
     extra_params:
 
+dupsifter:
+  dedup:
+    extra_params:
+
 falco:
   extra_params:
 
@@ -542,6 +570,13 @@ rastair:
   error_model: novaseq6000
   count:
     extra_params:
+
+sambamba:
+  dedup:
+    hash_table_size: 262144
+    overflow_list_size: 200000
+    sort_buffer_size: 128
+    extra_params: 
 
 samtools:
   fixmate:
