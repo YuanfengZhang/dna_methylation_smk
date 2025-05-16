@@ -10,7 +10,7 @@ rule sambamba_dedup:
     output:
         tmp_bam            = temp("result/{BaseName}/{DedupParentDir}/sambamba/tmp.bam"),
         bam                = "result/{BaseName}/{DedupParentDir}/sambamba/{BaseName}.bam",
-        bai                = "result/{BaseName}/{DedupParentDir}/sambamba/{BaseName}.bam.ba"
+        bai                = "result/{BaseName}/{DedupParentDir}/sambamba/{BaseName}.bam.bai"
     benchmark:
         "result/{BaseName}/{DedupParentDir}/sambamba/{BaseName}.dedup.benchmark"
     params:
