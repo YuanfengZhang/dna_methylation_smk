@@ -27,7 +27,7 @@ RUN apt-get update && \
     libbz2-dev liblzma-dev libdeflate-dev \
     autoconf pkg-config \
     software-properties-common dirmngr \
-    curl gnupg pigz zstd
+    curl gnupg pigz zstd texlive texinfo
 
 ARG CORES=4
 
