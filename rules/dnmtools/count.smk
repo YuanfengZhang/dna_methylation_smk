@@ -10,35 +10,34 @@ rule dnmtools_count:
     input:
         "result/{BaseName}/{CountParentDir}/{BaseName}.bam"
     output:
-        temp("result/{BaseName}/{CountParentDir}/{BaseName}.mapped.sam"),
-        temp("result/{BaseName}/{CountParentDir}/dnmtools/{BaseName}.dnmtools.tmp"),
-        "result/{BaseName}/{CountParentDir}/dnmtools/{BaseName}.dnmtools.gz"
+        temp_sam          = temp("result/{BaseName}/{CountParentDir}/dnmtools/{BaseName}.mapped.sam"),
+        temp_bedgraph     = temp("result/{BaseName}/{CountParentDir}/dnmtools/{BaseName}.dnmtools.tmp"),
+        bedgraph          = "result/{BaseName}/{CountParentDir}/dnmtools/{BaseName}.dnmtools.gz"
     benchmark:
         "result/{BaseName}/{CountParentDir}/dnmtools/{BaseName}.count.benchmark"
     params:
-        ref            = lambda wildcards: config["ref"]["bwa-mem"][wildcards.BaseName.split('_')[1]],
-        extra_params   = config["dnmtools"]["count"]["extra_params"] or ""
+        ref               = lambda wildcards: config["ref"]["bwa-mem"][wildcards.BaseName.split('_')[1]],
+        extra_params      = config["dnmtools"]["count"]["extra_params"] or ""
     threads: 16
     conda:
         "conda.yaml"
     shell:
         dedent("""
-        cd result/{wildcards.BaseName}/{wildcards.CountParentDir}
-        mkdir -p dnmtools
-        if [ ! -f {wildcards.BaseName}.mapped.sam ]; then
-            samtools view -h {wildcards.BaseName}.bam |\\
-            awk '$3 != "*"' > {wildcards.BaseName}.mapped.sam
+        dnmtools_dir="result/{wildcards.BaseName}/{wildcards.CountParentDir}/dnmtools"
+        mkdir -p "$dnmtools_dir"
+        if [ ! -f {output.temp_sam} ]; then
+            samtools view -h {input} |\\
+            awk '$3 != "*"' > {output.temp_sam}
         fi
         dnmtools counts \\
             -c {params.ref} -t {threads} \\
             -progress {params.extra_params} \\
-            -o dnmtools/{wildcards.BaseName}.dnmtools.tmp \\
-            {wildcards.BaseName}.mapped.sam
-        cd dnmtools
+            -o {output.temp_bedgraph} \\
+            {output.temp_sam}
 
         awk -F'\\t' '$6 > 4' \\
-            {wildcards.BaseName}.dnmtools.tmp \\
-            | pigz -p {threads} --best > {wildcards.BaseName}.dnmtools.gz
+            {output.temp_bedgraph} \\
+            | pigz -p {threads} --best > {output.bedgraph}
         """)
 
 

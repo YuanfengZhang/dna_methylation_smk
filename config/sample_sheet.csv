@@ -15,4 +15,5 @@ FNAME,TRIMMER,FASTQCER,ALIGNER,DEDUPER,CALIBRATOR,COUNTER,STATS
 # EM3_HF_1,trim-galore,fastqc,bismark-hisat2,bismark-dedup,no-calibrate,bismark,False
 # EM3_HF_1,trim-galore,fastqc,pufferfish,samtools,no-calibrate,astair,False
 # EM3_HF_1,trim-galore,fastqc,segemehl,samtools,no-calibrate,astair,False
-BS1_D6_1,trim-galore,fastqc,segemehl,samtools,no-calibrate,rastair,False
+# BS1_D6_1,trim-galore,fastqc,segemehl,samtools,no-calibrate,rastair,False
+EM3_HF_1,trim-galore,fastqc,bwa-meth,sambamba,no-calibrate,biscuit,False

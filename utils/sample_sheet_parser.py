@@ -236,6 +236,8 @@ class DeDuper(PipelineModule):
         'bio-seq-zip': ['.R1.fq.gz', '.R2.fq.gz'],
         'trie-dedup': ['.R1.fq.gz', '.R2.fq.gz'],
         'ngs-reads-treatment': ['.R1.fq.gz', '.R2.fq.gz'],
+        'dupsifter': ['.bam', '.bam.bai', '.dupsifter.stat'],
+        'gencore': ['.bam', '.bam.bai', '.gencore.json', 'gencore.html'],
         'minirmd': ['.R1.fq.gz', '.R2.fq.gz']
     }
 
