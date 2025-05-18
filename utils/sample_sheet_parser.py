@@ -26,7 +26,8 @@ PIPELINE_CODING: dict[str, dict[str, str]] = {
     'DEDUPER': {
         'no-dedup': '0', 'bismark-dedup': '1', 'gatk-dedup': '2',  # .../gatk/gatk/... will cause ambiguity.
         'samtools': '3', 'sambamba': '4', 'nubeam-dedup': '5',
-        'bio-seq-zip': '6', 'trie-dedup': '7', 'ngs-reads-treatment': '8'
+        'bio-seq-zip': '6', 'trie-dedup': '7', 'ngs-reads-treatment': '8',
+        'minirmd': 'C'
     },
     'CALIBRATOR': {
         'no-pre-calibrate': '@', 'no-calibrate': '0', 'gatk-cali': '1', 'care': '2',
@@ -48,7 +49,7 @@ rev_pipeline_coding: dict[str, dict[str, str]] = {k: {v: k for k, v in v.items()
 ENCODING_ORDER: list[str] = ['TRIMMER', 'DEDUPER', 'CALIBRATOR',
                              'ALIGNER', 'DEDUPER', 'CALIBRATOR', 'COUNTER',]
 
-DEDUPER_BEFORE_ALIGNMENT: set[str] = {'nubeam-dedup', 'bio-seq-zip', 'trie-dedup', 'ngs-reads-treatment'}
+DEDUPER_BEFORE_ALIGNMENT: set[str] = {'nubeam-dedup', 'bio-seq-zip', 'trie-dedup', 'ngs-reads-treatment', 'minirmd'}
 CALIBRATOR_BEFORE_ALIGNMENT: set[str] = {'care', 'sequencerr', 'reckoner2', 'bfc'}
 
 
@@ -234,7 +235,8 @@ class DeDuper(PipelineModule):
         'nubeam-dedup': ['.R1.fq.gz', '.R2.fq.gz'],
         'bio-seq-zip': ['.R1.fq.gz', '.R2.fq.gz'],
         'trie-dedup': ['.R1.fq.gz', '.R2.fq.gz'],
-        'ngs-reads-treatment': ['.R1.fq.gz', '.R2.fq.gz']
+        'ngs-reads-treatment': ['.R1.fq.gz', '.R2.fq.gz'],
+        'minirmd': ['.R1.fq.gz', '.R2.fq.gz']
     }
 
     def __init__(self, deduper: str):
@@ -294,7 +296,7 @@ class Calibrator(PipelineModule):
 
         if context.deduped and context.aligned and context.done_before('deduped',
                                                                        'aligned'):
-            current_dir = context.parent_dir / 'no-post-dedup' / self.tool
+            current_dir = context.parent_dir / 'no-dedup' / self.tool
 
         elif not context.deduped and not context.aligned:
             current_dir = context.parent_dir / 'no-pre-dedup' / self.tool
@@ -343,11 +345,11 @@ class Counter(PipelineModule):
                    context.done_before('deduped',
                                        'aligned')):
                 case (True, True):
-                    current_dir = context.parent_dir / 'no-pre-dedup' / 'no-pre-calibrate' / self.tool
-                case (False, True):
-                    current_dir = context.parent_dir / 'no-pre-calibrate' / self.tool
-                case _:
+                    current_dir = context.parent_dir / 'no-dedup' / 'no-calibrate' / self.tool
+                case (False, True) | (False, False):
                     current_dir = context.parent_dir / self.tool
+                case _:
+                    current_dir = context.parent_dir / 'no-calibrate' / self.tool
         else:  # FAME
             match (context.deduped, context.calibrated):
                 case (True, False):

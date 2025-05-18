@@ -526,6 +526,11 @@ methyldackel:
   mbias:
     extra_params:
 
+minirmd:
+  dedup:
+    mismatch_num: 0
+    extra_params:
+
 msuite2:
   extra_params:
 
