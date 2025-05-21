@@ -1,0 +1,6 @@
+channels:
+  - conda-forge
+  - defaults
+dependecies:
+  - conda-forge::openjdk>=17.0.0
+  - conda-forge::pigz>=2.8
