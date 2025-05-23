@@ -1,6 +1,7 @@
 configfile: "config/runtime_config.yaml"
 from textwrap import dedent
 
+# https://github.com/bioinformatics-polito/BioSeqZip
 
 rule BioSeqZip:
     input:
@@ -21,13 +22,13 @@ rule BioSeqZip:
         dedent("""
         export tmp_dir="result/{wildcards.BaseName}/{wildcards.DedupParentDir}/bio-seq-zip"
         mkdir -p ${{tmp_dir}}
-        resources/bioseqzip/build/apps/bioseqzip_collapse \\
+        resources/BioSeqZip/build/apps/bioseqzip_collapse \\
             -i {input.r1} \\
             -p {input.r2} \\
             -f fastq \\
             -o ${{tmp_dir}} \\
             -b {wildcards.BaseName} \\
-            --csv-report {params.extra_params}
+            --csv-report -v 4 {params.extra_params}
         mv \\
           ${{tmp_dir}}/{wildcards.BaseName}_1.fq \\
           ${{tmp_dir}}/{wildcards.BaseName}.R1.fq

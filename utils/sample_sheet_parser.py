@@ -233,7 +233,7 @@ class DeDuper(PipelineModule):
         'samtools': ['.bam', '.bam.bai', '.dup.stats'],
         'sambamba': ['.bam', '.bam.bai'],
         'nubeam-dedup': ['.R1.fq.gz', '.R2.fq.gz'],
-        'bio-seq-zip': ['.R1.fq.gz', '.R2.fq.gz'],
+        'bio-seq-zip': ['.R1.fq.gz', '.R2.fq.gz', '.bioseqzip.report'],
         'trie-dedup': ['.R1.fq.gz', '.R2.fq.gz'],
         'ngs-reads-treatment': ['.R1.fq.gz', '.R2.fq.gz'],
         'dupsifter': ['.bam', '.bam.bai', '.dupsifter.stat'],

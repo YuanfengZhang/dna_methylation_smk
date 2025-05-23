@@ -462,7 +462,9 @@ aryana:
 batmeth2:
   align:
     extra_params:
-
+bio-seq-zip:
+  dedup:
+    extra_params:
 biscuit:
   align:
     extra_params:
@@ -580,6 +582,15 @@ minirmd:
 msuite2:
   extra_params:
 
+ngs-reads-treatment:
+  dedup:
+    max_mem: 48
+    extra_params:
+
+nubeam-dedup:
+  dedup:
+    extra_params: -r 1
+
 pufferfish:
   align:
     extra_params: --allowSoftclip --allowOverhangSoftclip --genomicReads
@@ -618,6 +629,10 @@ segemehl:
 strobealign:
   align:
     extra_params: --mcs
+
+trie-dedup:
+  dedup:
+    extra_params:
 
 trim-galore:
   extra_params:

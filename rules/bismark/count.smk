@@ -112,7 +112,7 @@ rule bismark_c2c will generate these files:
 
 rule bismark_c2c:
     input:
-        "result/{BaseName}/{CountParentDir}/bismark/{BaseName}.bismark.cov.gz"
+        "result/{BaseName}/{CountParentDir}/{BaseName}.bam"
     output:
         multiext("result/{BaseName}/{CountParentDir}"
                  "/bismark/{BaseName}",
@@ -129,14 +129,14 @@ rule bismark_c2c:
         "conda.yaml"
     shell:
         dedent("""
-        cd result/{wildcards.BaseName}/{wildcards.CountParentDir}/bismark
+        export tmp_dir="result/{wildcards.BaseName}/{wildcards.CountParentDir}/bismark"
+        mkdir -p ${{tmp_dir}}/bismark
         coverage2cytosine \\
-            {wildcards.BaseName}.bismark.cov.gz \\
-            --output {wildcards.BaseName} \\
+            {input} \\
+            --output ${{tmp_dir}}/bismark/{wildcards.BaseName} \\
             --genome_folder {params.ref} \\
-            --merge_CpG --ff --zero_based --gzip \\
-            {params.extra_params}
-        cd bismark
+            --merge_CpG --ff --zero_based --gzip {params.extra_params}
+        cd ${{tmp_dir}}/bismark
         mv \\
             {wildcards.BaseName}.CpG_report.merged_CpG_evidence.cov.gz \\
             {wildcards.BaseName}.c2c.cov.gz

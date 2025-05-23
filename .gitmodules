@@ -39,3 +39,15 @@
 [submodule "resources/Whisper"]
     path = resources/Whisper
     url = https://github.com/refresh-bio/Whisper.git
+[submodule "resources/BioSeqZip"]
+    path = resources/BioSeqZip
+    url = https://github.com/bioinformatics-polito/BioSeqZip
+[submodule "resources/ngsreadstreatment"]
+    path = resources/ngsreadstreatment
+    url = https://github.com/allanverasce/ngsreadstreatment
+[submodule "resources/TrieDedup"]
+    path = resources/TrieDedup
+    url = https://github.com/lolrenceH/TrieDedup
+[submodule "resources/CARE"]
+    path = resources/CARE
+    url = https://github.com/fkallen/CARE

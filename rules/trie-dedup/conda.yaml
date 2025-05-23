@@ -5,4 +5,4 @@ channels:
 dependencies:
   - conda-forge::pandas>=2.2.3
   - bioconda::seqtk
-  - conda-forge::gzip>=1.14
+  - conda-forge::pigz

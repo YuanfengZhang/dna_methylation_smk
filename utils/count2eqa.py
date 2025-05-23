@@ -13,7 +13,8 @@ def main():
     parser.add_argument('-d', '--depth', dest='depth', type=int,
                         default=5, help='Minimum depth of every cytosine.')
     parser.add_argument('-c', '--counter', dest='counter', type=str,
-                        choices=['bismark', 'biscuit', 'methyldackel',
+                        choices=['bismark_c2c', 'bismark_cov',
+                                 'biscuit', 'methyldackel',
                                  'dnmtools', 'bs_seeker2', 'astair',
                                  'bsgenova', 'fame',
                                  'msuite2-bowtie2', 'msuite2-hisat2'],
@@ -58,13 +59,23 @@ def main():
                .select('#chr', 'start', 'end', 'unmod', 'mod', 'strand', 'beta', 'depth')
                .rename({'#chr': 'chrom', 'unmod': 'u', 'mod': 'm'})
                .sink_parquet(output_f, compression='lz4', sync_on_close='all'))
-        case 'bismark':  # c2c.cov.gz
+        case 'bismark_c2c':  # c2c.cov.gz
             (pl.scan_csv(input_f, separator='\t', has_header=False,
                          schema={'chrom': pl.String, 'start': pl.Int64, 'strand': pl.String,
                                  'm': pl.Int64, 'u': pl.Int64, 'd': pl.String, 't': pl.String,
                                  'q': pl.String, 'p': pl.String})
                .with_columns([(pl.col('start') + 1).alias('end'),
                               pl.sum_horizontal('m', 'u').alias('depth')])
+               .filter(pl.sum_horizontal('depth') >= depth)
+               .with_columns((100 * pl.col('m') / pl.col('depth')).alias('beta'))
+               .select('chrom', 'start', 'end', 'u', 'm', 'strand', 'beta', 'depth')
+               .sink_parquet(output_f, compression='lz4', sync_on_close='all'))
+        case 'bismark_cov':  # bismark.zero.cov
+            (pl.scan_csv(input_f, separator='\t', has_header=False,
+                         schema={'chrom': pl.String, 'start': pl.Int64, 'end': pl.String,
+                                 'l': pl.Float64, 'u': pl.Int64, 'm': pl.Int64})
+               .with_columns([pl.sum_horizontal('m', 'u').alias('depth'),
+                              pl.lit('+').alias('strand')])
                .filter(pl.sum_horizontal('depth') >= depth)
                .with_columns((100 * pl.col('m') / pl.col('depth')).alias('beta'))
                .select('chrom', 'start', 'end', 'u', 'm', 'strand', 'beta', 'depth')
