@@ -390,12 +390,8 @@ ref:
 abismal:
   align:
     extra_params:
+
 astair:
-  method:
-    BS: CtoT
-    EM: CtoT
-    RR: CtoT
-    PS: mCtoT
   align:
     extra_params:
   count:
@@ -404,11 +400,17 @@ astair:
     extra_params:
   mbias:
     extra_params:
+
 aryana:
   align:
     extra_params:
+
 batmeth2:
   align:
+    extra_params:
+
+bio-seq-zip:
+  dedup:
     extra_params:
 
 biscuit:
@@ -424,19 +426,7 @@ biscuit:
     extra_params:
   cinread:
     extra_params:
-bowtie2:
-  align:
-    extra_params: -t -q --sensitive
-bsbolt:
-  align:
-    extra_params:
 
-bsgenova:
-  count:
-    extra_params:
-bsmapz:
-  align:
-    extra_params: -w 100
 bismark:
   align_bowtie2:
     extra_params: --strandID
@@ -455,11 +445,42 @@ bitmapperbs:
   align:
     extra_params: --sensitive
 
+bowtie2:
+  align:
+    extra_params: -t -q --sensitive
+bsbolt:
+  align:
+    extra_params:
+
+bsgenova:
+  count:
+    extra_params:
+bsmapz:
+  align:
+    extra_params: -w 100
+
 bwa-meme:
   extra_params:
 
 bwa-meth:
   extra_params:
+
+care:
+  calibrate:
+    device: cpu
+    max_mem: 48
+    avg_cov: 30
+    extra_params:
+
+dnmtools:
+  count:
+    extra_params:
+  levels:
+    extra_params:
+
+dupsifter:
+  dedup:
+    extra_params:
 
 falco:
   extra_params:
@@ -474,6 +495,7 @@ fastqc:
   extra_params:
 
 gatk:
+  max_mem: 48
   cal_bqsr:
     snp_vcf: resources/dbsnp/common.dbsnp.vcf.gz
     extra_params:
@@ -486,6 +508,12 @@ gatk:
 gem3:
   align:
     extra_params:
+gencore:
+  dedup:
+    supporting_reads: 1
+    score_threshold: 6
+    ratio_threshold: 0.8
+    extra_params:
 hisat-3n:
   align:
     extra_params: --sensitive -t -q
@@ -497,21 +525,57 @@ last:
   align:
     extra_params:
 
+lighter:
+  calibrate:
+    extra_params:
+
 methyldackel:
   count:
     extra_params:
   mbias:
     extra_params:
 
+minirmd:
+  dedup:
+    mismatch_num: 0
+    extra_params:
+
 msuite2:
   extra_params:
 
+ngs-reads-treatment:
+  dedup:
+    max_mem: 48
+    extra_params:
+
+nubeam-dedup:
+  dedup:
+    extra_params: -r 1
+
 pufferfish:
   align:
-    extra_params: --allowSoftclip --allowOverhangSoftclip --writeQualities --genomicReads
+    extra_params: --allowSoftclip --allowOverhangSoftclip --genomicReads
 
 qualimap:
-  extra_params: --java-mem-size=40G
+  extra_params: --java-mem-size=80G
+
+rastair:
+  mapq: 1
+  base_quality: 10
+  error_model: novaseq6000
+  count:
+    extra_params:
+
+recokoner:
+  calibrate:
+    extra_params:
+
+sambamba:
+  dedup:
+    hash_table_size: 262144
+    overflow_list_size: 200000
+    sort_buffer_size: 128
+    extra_params: 
 
 samtools:
   fixmate:
@@ -530,6 +594,10 @@ segemehl:
 strobealign:
   align:
     extra_params: --mcs
+
+trie-dedup:
+  dedup:
+    extra_params:
 
 trim-galore:
   extra_params:
