@@ -13,9 +13,9 @@ def get_method_param(wildcards):
 def get_method_param2(wildcards):
     match wildcards.BaseName.split('_')[0][: 2]:
         case "PS":
-            return ""
+            return "_mCtoT"
         case _:
-            return "--method _CtoT"
+            return "_CtoT"
 
 
 rule astair_count:

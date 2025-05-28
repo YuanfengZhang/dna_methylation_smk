@@ -14,7 +14,7 @@ rule BioSeqZip:
     benchmark:
         "result/{BaseName}/{DedupParentDir}/bio-seq-zip/{BaseName}.dedup.benchmark"
     params:
-        extra_params = lambda wildcards: config["bio-seq-zip"]["dedup"]["extra_params"] or ""
+        extra_params = config["bio-seq-zip"]["dedup"]["extra_params"]
     threads: 8
     conda:
         "../biscuit/conda.yaml"

@@ -11,3 +11,7 @@ methylGrapher Main \
     -fq1 /mnt/eqa/zhangyuanfeng/methylation/dna_methylation_smk/input/BS_HF_1_MX.R1.fq.gz \
     -fq2 /mnt/eqa/zhangyuanfeng/methylation/dna_methylation_smk/input/BS_HF_1_MX.R2.fq.gz
 """
+
+# ! MethylGrapher is not included because the twlab/lxchel is still in progress.
+# ! Subject to significant changes without notice and lacking performance guarantees,
+# ! inclusion is temporarily deferred.

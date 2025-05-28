@@ -447,6 +447,7 @@ ref:
 abismal:
   align:
     extra_params:
+
 astair:
   align:
     extra_params:
@@ -456,15 +457,19 @@ astair:
     extra_params:
   mbias:
     extra_params:
+
 aryana:
   align:
     extra_params:
+
 batmeth2:
   align:
     extra_params:
+
 bio-seq-zip:
   dedup:
     extra_params:
+
 biscuit:
   align:
     extra_params:
@@ -478,19 +483,7 @@ biscuit:
     extra_params:
   cinread:
     extra_params:
-bowtie2:
-  align:
-    extra_params: -t -q --sensitive
-bsbolt:
-  align:
-    extra_params:
 
-bsgenova:
-  count:
-    extra_params:
-bsmapz:
-  align:
-    extra_params: -w 100
 bismark:
   align_bowtie2:
     extra_params: --strandID
@@ -509,11 +502,32 @@ bitmapperbs:
   align:
     extra_params: --sensitive
 
+bowtie2:
+  align:
+    extra_params: -t -q --sensitive
+bsbolt:
+  align:
+    extra_params:
+
+bsgenova:
+  count:
+    extra_params:
+bsmapz:
+  align:
+    extra_params: -w 100
+
 bwa-meme:
   extra_params:
 
 bwa-meth:
   extra_params:
+
+care:
+  calibrate:
+    device: cpu
+    max_mem: 48
+    avg_cov: 30
+    extra_params:
 
 dnmtools:
   count:
@@ -568,6 +582,10 @@ last:
   align:
     extra_params:
 
+lighter:
+  calibrate:
+    extra_params:
+
 methyldackel:
   count:
     extra_params:
@@ -603,6 +621,10 @@ rastair:
   base_quality: 10
   error_model: novaseq6000
   count:
+    extra_params:
+
+recokoner:
+  calibrate:
     extra_params:
 
 sambamba:

@@ -32,7 +32,8 @@ rule bismark_extractor:
                  "CpG_OB.txt.gz", "CpG_OT.txt.gz",
                  "bismark.cov.gz", "splitting_report",
                  "bismark.zero.cov", "M-bias.txt",
-                 "M-bias_R1.png", "M-bias_R2.png")
+                 "M-bias_R1.png", "M-bias_R2.png"),
+        sortn_sam     = temp("result/{BaseName}/{CountParentDir}/bismark/{BaseName}.sortn.sam")
     benchmark:
         "result/{BaseName}/{CountParentDir}/bismark/{BaseName}.extractor.benchmark"
     params:
@@ -43,20 +44,21 @@ rule bismark_extractor:
         "conda.yaml"
     shell:
         dedent("""
-        cd result/{wildcards.BaseName}/{wildcards.CountParentDir}
+        export tmp_dir="result/{wildcards.BaseName}/{wildcards.CountParentDir}"
+        mkdir -p ${{tmp_dir}}/bismark
         samtools sort \\
             -n -@ {threads} \\
-            -o {wildcards.BaseName}.sortn.bam \\
-            {wildcards.BaseName}.bam
+            -o {output.sortn_sam} \\
+            {input}
         bismark_methylation_extractor \\
-            {wildcards.BaseName}.sortn.bam \\
-            -o bismark \\
+            {output.sortn_sam} \\
+            -o ${{tmp_dir}}/bismark \\
             --genome_folder {params.ref} \\
             --gzip --bedGraph --cutoff 5 --zero_based --scaffolds \\
             --parallel {threads} --buffer_size 20G --ucsc \\
             --paired-end --no_header \\
             {params.extra_params}
-        cd bismark
+        cd ${{tmp_dir}}/bismark
         mv \\
             {wildcards.BaseName}.sortn.bedGraph.gz \\
             {wildcards.BaseName}.bedgraph.gz
@@ -112,7 +114,7 @@ rule bismark_c2c will generate these files:
 
 rule bismark_c2c:
     input:
-        "result/{BaseName}/{CountParentDir}/{BaseName}.bam"
+        "result/{BaseName}/{CountParentDir}/bismark/{BaseName}.sortn.sam"
     output:
         multiext("result/{BaseName}/{CountParentDir}"
                  "/bismark/{BaseName}",
@@ -130,7 +132,6 @@ rule bismark_c2c:
     shell:
         dedent("""
         export tmp_dir="result/{wildcards.BaseName}/{wildcards.CountParentDir}/bismark"
-        mkdir -p ${{tmp_dir}}/bismark
         coverage2cytosine \\
             {input} \\
             --output ${{tmp_dir}}/bismark/{wildcards.BaseName} \\

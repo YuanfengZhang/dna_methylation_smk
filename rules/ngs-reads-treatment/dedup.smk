@@ -14,7 +14,7 @@ rule ngs_reads_treatment:
     benchmark:
         "result/{BaseName}/{DedupParentDir}/ngs-reads-treatment/{BaseName}.dedup.benchmark"
     params:
-        max_mem       = lambda wildcards: config["ngs-reads-treatment"]["dedup"]["max_mem"],
+        max_mem       = config["ngs-reads-treatment"]["dedup"]["max_mem"],
         extra_params  = lambda wildcards: config["ngs-reads-treatment"]["dedup"]["extra_params"] or ""
     threads: 8
     conda:
