@@ -31,7 +31,7 @@ PIPELINE_CODING: dict[str, dict[str, str]] = {
     },
     'CALIBRATOR': {
         'no-pre-calibrate': '@', 'no-calibrate': '0', 'gatk-cali': '1', 'care': '2',
-        'sequencerr': '3', 'reckoner2': '4', 'bfc': '5'
+        'lighter': '3', 'reckoner': '4'
     },
     'COUNTER': {
         'bismark': '0', 'biscuit': '1', 'methyldackel': '2',
@@ -50,7 +50,7 @@ ENCODING_ORDER: list[str] = ['TRIMMER', 'DEDUPER', 'CALIBRATOR',
                              'ALIGNER', 'DEDUPER', 'CALIBRATOR', 'COUNTER',]
 
 DEDUPER_BEFORE_ALIGNMENT: set[str] = {'nubeam-dedup', 'bio-seq-zip', 'trie-dedup', 'ngs-reads-treatment', 'minirmd'}
-CALIBRATOR_BEFORE_ALIGNMENT: set[str] = {'care', 'sequencerr', 'reckoner2', 'bfc'}
+CALIBRATOR_BEFORE_ALIGNMENT: set[str] = {'bfc', 'care', 'lighter', 'reckoner', 'sequencerr'}
 
 
 @dataclass
@@ -267,13 +267,13 @@ class DeDuper(PipelineModule):
 class Calibrator(PipelineModule):
     EXT_MAPPING = {
         'no-calibrate': ['.bam', '.bam.bai'],
+        'care': ['.R1.fq.gz', '.R2.fq.gz'],
+        'lighter': ['.R1.fq.gz', '.R2.fq.gz'],
         'gatk-cali': ['.bam', '.bam.bai',
                       '.before.table', '.after.table',
                       '.AnalyzeCovariates.pdf'],
-        'care': ['.R1.fq.gz', '.R2.fq.gz'],
-        'sequencerr': ['.R1.fq.gz', '.R2.fq.gz'],
-        'reckoner2': ['.R1.fq.gz', '.R2.fq.gz'],
-        'bfc': ['.R1.fq.gz', '.R2.fq.gz']
+        'reckoner': ['.R1.fq.gz', '.R2.fq.gz'],
+        'sequencerr': ['.R1.fq.gz', '.R2.fq.gz']
     }
 
     def __init__(self, calibrator: str):

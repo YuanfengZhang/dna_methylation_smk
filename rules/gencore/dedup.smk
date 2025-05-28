@@ -13,10 +13,10 @@ rule gencore_dedup:
     benchmark:
         "result/{BaseName}/{DedupParentDir}/gencore/{BaseName}.dedup.benchmark"
     params:
-        ref              = lambda wildcards: config["ref"]["gencore"][wildcards.BaseName.split('_')[1]],
-        supporting_reads = lambda wildcards: config["gencore"]["dedup"]["supporting_reads"],
-        score_threshold  = lambda wildcards: config["gencore"]["dedup"]["score_threshold"], 
-        ratio_threshold  = lambda wildcards: config["gencore"]["dedup"]["ratio_threshold"], 
+        ref              = config["ref"]["gencore"][wildcards.BaseName.split('_')[1]],
+        supporting_reads = config["gencore"]["dedup"]["supporting_reads"],
+        score_threshold  = config["gencore"]["dedup"]["score_threshold"], 
+        ratio_threshold  = config["gencore"]["dedup"]["ratio_threshold"], 
         extra_params     = lambda wildcards: config["gencore"]["dedup"]["extra_params"] or ""
     threads: 8
     conda:

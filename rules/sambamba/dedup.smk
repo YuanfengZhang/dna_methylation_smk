@@ -14,11 +14,11 @@ rule sambamba_dedup:
     benchmark:
         "result/{BaseName}/{DedupParentDir}/sambamba/{BaseName}.dedup.benchmark"
     params:
-        ref                = lambda wildcards: config["ref"]["sambamba"][wildcards.BaseName.split('_')[1]],
-        hash_table_size    = lambda wildcards: config["sambamba"]["dedup"]["hash_table_size"],
-        overflow_list_size = lambda wildcards: config["sambamba"]["dedup"]["overflow_list_size"],
-        sort_buffer_size   = lambda wildcards: config["sambamba"]["dedup"]["sort_buffer_size"],
-        extra_params       = lambda wildcards: config["sambamba"]["dedup"]["extra_params"] or ""
+        ref                = config["ref"]["sambamba"][wildcards.BaseName.split('_')[1]],
+        hash_table_size    = config["sambamba"]["dedup"]["hash_table_size"],
+        overflow_list_size = config["sambamba"]["dedup"]["overflow_list_size"],
+        sort_buffer_size   = config["sambamba"]["dedup"]["sort_buffer_size"],
+        extra_params       = config["sambamba"]["dedup"]["extra_params"] or ""
     threads: 8
     conda:
         "conda.yaml"

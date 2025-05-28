@@ -44,8 +44,8 @@ def main():
     match args.counter:
         case 'astair':  # mod.gz
             (pl.scan_csv(input_f, separator='\t', has_header=True)
-               .filter(pl.col('TOTAL_DEPTH') >= depth)
                .with_columns(pl.sum_horizontal('UNMOD', 'MOD').alias('depth'))
+               .filter(pl.col('depth') >= depth)
                .with_columns((100 * pl.col('MOD') / pl.col('depth')).alias('beta'))
                .select('#CHROM', 'START', 'END', 'UNMOD', 'MOD', 'beta', 'depth')
                .rename({'#CHROM': 'chrom', 'START': 'start', 'END': 'end',

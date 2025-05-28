@@ -14,7 +14,7 @@ rule minirmd_dedup:
     benchmark:
         "result/{BaseName}/{DedupParentDir}/minirmd/{BaseName}.dedup.benchmark"
     params:
-        mismatch_num = lambda wildcards: config["minirmd"]["dedup"]["mismatch_num"],
+        mismatch_num = config["minirmd"]["dedup"]["mismatch_num"],
         extra_params = lambda wildcards: config["minirmd"]["dedup"]["extra_params"] or ""
     threads: 8
     conda:

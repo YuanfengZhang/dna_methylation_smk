@@ -4,8 +4,10 @@ from textwrap import dedent
 pycoMeth CGI_Finder -f BL.fa -b BL.cgi.bed
 prepare_genomes.sh BL.fa BL.cgi.bed ./aryana .
 
-!!! The builtin prepare_genomes.sh is troublesome.
-!!! It exits before finishing the bwa index, leading to truncated index files on cluster.
+# !!! The builtin prepare_genomes.sh is troublesome.
+# !!! It exits before finishing the bwa index, leading to truncated index files on cluster.
+
+# ! aryana_bs is extremely slow for whole genome methylation sequencing data.
 
 aryana_bs \
     /hot_warm_data/ref/quartet/DNA/custom_genome/BL/aryana/BL.fa \
@@ -28,7 +30,7 @@ rule aryana_align:
     params:
         ref          = lambda wildcards: config["ref"]["aryana"][wildcards.BaseName.split('_')[1]],
         extra_params = config["aryana"]["align"]["extra_params"] or ""
-    threads: 64
+    threads: 8
     conda:
         "../samtools/conda.yaml"
     shell:
