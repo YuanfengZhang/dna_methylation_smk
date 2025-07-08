@@ -131,7 +131,7 @@ rule bismark_c2c:
         "conda.yaml"
     shell:
         dedent("""
-        export tmp_dir="result/{wildcards.BaseName}/{wildcards.CountParentDir}/bismark"
+        export tmp_dir="result/{wildcards.BaseName}/{wildcards.CountParentDir}"
         coverage2cytosine \\
             {input} \\
             --output ${{tmp_dir}}/bismark/{wildcards.BaseName} \\

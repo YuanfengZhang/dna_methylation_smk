@@ -17,7 +17,7 @@ rule fastp:
         "result/{BaseName}/fastp/{BaseName}.trim.benchmark"
     params:
         extra_params = config["fastp"]["extra_params"] or ""
-    threads: 8
+    threads: 32
     conda:
         "conda.yaml"
     shell:

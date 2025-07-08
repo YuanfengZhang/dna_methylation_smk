@@ -27,7 +27,7 @@ rule pufferfish_align:
     params:
         ref          = lambda wildcards: config["ref"]["pufferfish"][wildcards.BaseName.split('_')[1]],
         extra_params = config["pufferfish"]["align"]["extra_params"] or ""
-    threads: 48
+    threads: 8
     conda:
         "../samtools/conda.yaml"
     shell:

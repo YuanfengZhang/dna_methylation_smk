@@ -13,7 +13,7 @@ rule gencore_dedup:
     benchmark:
         "result/{BaseName}/{DedupParentDir}/gencore/{BaseName}.dedup.benchmark"
     params:
-        ref              = config["ref"]["gencore"][wildcards.BaseName.split('_')[1]],
+        ref              = lambda wildcards: config["ref"]["gencore"][wildcards.BaseName.split('_')[1]],
         supporting_reads = config["gencore"]["dedup"]["supporting_reads"],
         score_threshold  = config["gencore"]["dedup"]["score_threshold"], 
         ratio_threshold  = config["gencore"]["dedup"]["ratio_threshold"], 

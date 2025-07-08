@@ -4,6 +4,6 @@ channels:
   - defaults
 dependencies:
   - bioconda::gencore>=0.17.2
-  - bioconda::samtools>=1.21
+  - bioconda::samtools>=1.22
   - bioconda::mbuffer
 

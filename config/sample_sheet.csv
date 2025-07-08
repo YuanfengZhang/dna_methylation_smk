@@ -1,19 +1,25 @@
-# bismark (aligner) 和 gatk (deduper) 不兼容
-# BS/EM 不能使用astair, 会报错
 FNAME,TRIMMER,FASTQCER,ALIGNER,DEDUPER,CALIBRATOR,COUNTER,STATS
-# PS_HF_1_MX,trim-galore,falco,bwa-meme,no-dedup,no-calibrate,astair,False
-# BS_HF_1_MX,trim-galore,falco,bwa-meth,no-dedup,no-calibrate,biscuit,False
-# BS_HF_1_MX,trim-galore,falco,bismark-bowtie2,bismark,no-calibrate,bismark,False
-# BS_HF_1_MX,trim-galore,falco,bwa-meth,no-dedup,no-calibrate,bsgenova,False
-# BS_HF_1_MX,trim-galore,falco,bwa-meth,,,fame,False
-# BS_HF_1_MX,trim-galore,falco,bwa-meth,no-dedup,no-calibrate,methyldackel,False
-# BS_HF_1_MX,trim-galore,falco,msuite2-bowtie2,,,,False
-# EM_HF_1_IPM,trim-galore,falco,bismark-bowtie2,bismark,no-calibrate,bismark,False
-# EM_HF_1_IPM,trim-galore,falco,whisper,,,,False
-# BS1_D6_1,trim-galore,fastqc,bwa-meth,no-dedup,no-calibrate,methyldackel,False
-# BS1_D6_1,trim-galore,fastqc,bismark-hisat2,bismark-dedup,no-calibrate,bismark,False
-# EM3_HF_1,trim-galore,fastqc,bismark-hisat2,bismark-dedup,no-calibrate,bismark,False
-# EM3_HF_1,trim-galore,fastqc,pufferfish,samtools,no-calibrate,astair,False
-# EM3_HF_1,trim-galore,fastqc,segemehl,samtools,no-calibrate,astair,False
-# BS1_D6_1,trim-galore,fastqc,segemehl,samtools,no-calibrate,rastair,False
-EM3_HF_1,trim-galore,fastqc,bwa-meth,sambamba,no-calibrate,biscuit,False
+EM3_HF_1,trim-galore,fastqc,bsmapz,samtools,no-calibrate,methyldackel,False
+EM3_HF_1,trim-galore,fastqc,bsmapz,samtools,no-calibrate,dnmtools,False
+EM3_HF_1,trim-galore,fastqc,bsmapz,samtools,no-calibrate,astair,False
+EM3_HF_1,trim-galore,fastqc,bsmapz,samtools,no-calibrate,bsgnova,False
+EM3_HF_1,trim-galore,fastqc,bwa-meth,samtools,no-calibrate,biscuit,False
+EM3_HF_1,trim-galore,fastqc,bwa-meth,samtools,no-calibrate,methyldackel,False
+EM3_HF_1,trim-galore,fastqc,bwa-meth,samtools,no-calibrate,dnmtools,False
+EM3_HF_1,trim-galore,fastqc,bwa-meth,samtools,no-calibrate,astair,False
+EM3_HF_1,trim-galore,fastqc,bwa-meth,samtools,no-calibrate,bsgnova,False
+PS3_D6_1,fastp,fastqc,gem3,samtools,no-calibrate,astair,False
+PS3_D6_1,fastp,fastqc,gem3,samtools,no-calibrate,rastair,False
+PS3_D6_1,fastp,fastqc,gem3,samtools,no-calibrate,biscuit,False
+PS3_D6_1,fastp,fastqc,gem3,samtools,no-calibrate,methyldackel,False
+PS3_D6_1,fastp,fastqc,gem3,samtools,no-calibrate,dnmtools,False
+PS3_D6_1,fastp,fastqc,bowtie2,samtools,no-calibrate,astair,False
+PS3_D6_1,fastp,fastqc,bowtie2,samtools,no-calibrate,rastair,False
+PS3_D6_1,fastp,fastqc,bowtie2,samtools,no-calibrate,biscuit,False
+PS3_D6_1,fastp,fastqc,bowtie2,samtools,no-calibrate,methyldackel,False
+PS3_D6_1,fastp,fastqc,bowtie2,samtools,no-calibrate,dnmtools,False
+PS3_D6_1,fastp,fastqc,biscuit,samtools,no-calibrate,astair,False
+PS3_D6_1,fastp,fastqc,biscuit,samtools,no-calibrate,rastair,False
+PS3_D6_1,fastp,fastqc,biscuit,samtools,no-calibrate,biscuit,False
+PS3_D6_1,fastp,fastqc,biscuit,samtools,no-calibrate,methyldackel,False
+PS3_D6_1,fastp,fastqc,biscuit,samtools,no-calibrate,dnmtools,False

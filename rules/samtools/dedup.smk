@@ -1,6 +1,9 @@
 configfile: "config/runtime_config.yaml"
 from textwrap import dedent
 
+# samtools=1.12 fixed the "no MC tag" bug,
+# See: https://github.com/samtools/samtools/issues/2200
+
 
 rule samtools_dedup:
     input:

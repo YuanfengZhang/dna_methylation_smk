@@ -13,14 +13,47 @@ rule gatk_dedup:
         "result/{BaseName}/{DedupParentDir}/gatk-dedup/{BaseName}.dedup.benchmark"
     params:
         max_mem      = config["gatk"]["max_mem"],
-        extra_params = config["gatk"]["dedup"]["extra_params"] or "",
-    threads: 8
+        extra_params = config["gatk"]["dedup"]["extra_params"] or ""
+    resources:
+        mem_mb       = 55296
     conda:
         "conda.yaml"
     shell:
         dedent("""
         gatk \\
-            --java-options "-Xmx-Xmx{params.max_mem}g -XX:ParallelGCThreads={threads}" \\
+            --java-options "-Xmx{params.max_mem}g -XX:ParallelGCThreads={threads}" \\
+            MarkDuplicates \\
+            -I {input} \\
+            -O {output.bam} \\
+            -M {output.metrics} \\
+            --ASSUME_SORT_ORDER coordinate \\
+            {params.extra_params}
+
+        samtools index -@ {threads} {output.bam} || echo "suppress non-zero exit"
+        """)
+
+
+rule gatk_optical_dedup:
+    input:
+        "result/{BaseName}/{DedupParentDir}/{BaseName}.bam"
+    output:
+        bam          = "result/{BaseName}/{DedupParentDir}/gatk-optical/{BaseName}.bam",
+        bai          = "result/{BaseName}/{DedupParentDir}/gatk-optical/{BaseName}.bam.bai",
+        metrics      = "result/{BaseName}/{DedupParentDir}/gatk-optical/{BaseName}.dedup.metrics"
+    benchmark:
+        "result/{BaseName}/{DedupParentDir}/gatk-optical/{BaseName}.dedup.benchmark"
+    params:
+        max_mem      = config["gatk"]["max_mem"],
+        extra_params = config["gatk"]["dedup"]["optical_params"] or ""
+    threads: 8
+    resources:
+        mem_mb       = 55296
+    conda:
+        "conda.yaml"
+    shell:
+        dedent("""
+        gatk \\
+            --java-options "-Xmx{params.max_mem}g -XX:ParallelGCThreads={threads}" \\
             MarkDuplicates \\
             -I {input} \\
             -O {output.bam} \\

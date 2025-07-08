@@ -21,8 +21,8 @@ rule ngs_reads_treatment:
         "conda.yaml"
     shell:
         dedent("""
-        export tmp_dir="result/{wildcards.BaseName}/{wildcards.DedupParentDir}"
-        mkdir -p ${{tmp_dir}}/ngs-reads-treatment
+        export tmp_dir="result/{wildcards.BaseName}/{wildcards.DedupParentDir}/ngs-reads-treatment"
+        mkdir -p ${{tmp_dir}}
         pigz -dc {input.r1} > {output.tmp_inr1}
         pigz -dc {input.r2} > {output.tmp_inr2}
         java \\
@@ -33,12 +33,12 @@ rule ngs_reads_treatment:
 
         mv \\
           ${{tmp_dir}}/{wildcards.BaseName}_1_trated.fastq \\
-          ${{tmp_dir}}/ngs-reads-treatment/{wildcards.BaseName}.R1.fq
+          ${{tmp_dir}}/{wildcards.BaseName}.R1.fq
         
         mv \\
           ${{tmp_dir}}/{wildcards.BaseName}_2_trated.fastq \\
-          ${{tmp_dir}}/ngs-reads-treatment/{wildcards.BaseName}.R2.fq
+          ${{tmp_dir}}/{wildcards.BaseName}.R2.fq
 
-        pigz --best -p {threads} ${{tmp_dir}}/ngs-reads-treatment/{wildcards.BaseName}.R1.fq
-        pigz --best -p {threads} ${{tmp_dir}}/ngs-reads-treatment/{wildcards.BaseName}.R2.fq
+        pigz --best -p {threads} ${{tmp_dir}}/{wildcards.BaseName}.R1.fq
+        pigz --best -p {threads} ${{tmp_dir}}/{wildcards.BaseName}.R2.fq
         """)

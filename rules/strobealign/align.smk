@@ -28,7 +28,7 @@ rule strobealign:
     params:
         ref          = lambda wildcards: config["ref"]["strobealign"][wildcards.BaseName.split('_')[1]],
         extra_params = config["strobealign"]["align"]["extra_params"] or ""
-    threads: 48
+    threads: 8
     conda:
         "conda.yaml"
     shell:

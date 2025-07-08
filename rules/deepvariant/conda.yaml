@@ -1,0 +1,7 @@
+channels:
+    - bioconda
+    - conda-forge
+dependencies:
+  - bioconda::bcftools>=1.22
+  - conda-forge::gawk
+  - conda-forge::zstd

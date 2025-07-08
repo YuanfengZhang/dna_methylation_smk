@@ -33,7 +33,7 @@ install.packages(
     "testthat",
     "BiocManager")
   )
-BiocManager::install(version='devel')
+BiocManager::install(version='devel', ask = FALSE)
 
 if (args$package == "") {
 
@@ -91,6 +91,16 @@ if (args$package == "") {
     }
     system("mkdir -p /opt")
     saveRDS(hg38_annotations, file = "/opt/hg38_annotations.rds")
+
+  } else if (package_lower == "epialleler") {
+
+    install.packages(c("RUnit", "knitr", "ggplot2", "rmarkdown"))
+    BiocManager::install(c(
+      "epialleleR",
+      "BiocParallel",
+      "GenomeInfoDb",
+      "SummarizedExperiment",
+      "VariantAnnotation"))
 
   } else {
     BiocManager::install(args$package)

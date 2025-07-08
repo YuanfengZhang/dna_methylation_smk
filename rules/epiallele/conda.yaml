@@ -1,0 +1,8 @@
+channels:
+    - bioconda
+    - conda-forge
+dependencies:
+  - conda-forge::gawk
+  - bioconda:samtools>=1.22
+  - conda-forge::zstd
+  - conda-forge::python=3.13*

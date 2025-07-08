@@ -10,7 +10,7 @@ rule rastair_count:
     benchmark:
         "result/{BaseName}/{CountParentDir}/rastair/{BaseName}.count.benchmark"
     params:
-        ref          = config["ref"]["samtools"][wildcards.BaseName.split('_')[1]],
+        ref          = lambda wildcards: config["ref"]["samtools"][wildcards.BaseName.split('_')[1]],
         mapq         = config["rastair"]["mapq"],
         base_qual    = config["rastair"]["base_quality"],
         error_model  = lambda wildcards: config["rastair"]["error_model"],
