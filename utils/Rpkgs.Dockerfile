@@ -33,11 +33,23 @@ ARG CORES=4
 
 RUN mkdir -p /opt/htslib
 RUN curl \
-    -L -o /opt/htslib/htslib-1.21.tar.bz2 \
-    https://github.com/samtools/htslib/releases/download/1.21/htslib-1.21.tar.bz2
+    -L -o /opt/htslib/htslib-1.22.tar.bz2 \
+    https://github.com/samtools/htslib/releases/download/1.22/htslib-1.22.tar.bz2
 RUN cd /opt/htslib/ && \
-    tar -xvf htslib-1.21.tar.bz2 && \
-    cd htslib-1.21 && \
+    tar -xvf htslib-1.22.tar.bz2 && \
+    cd htslib-1.22 && \
+    make -j "${CORES}" && \
+    make install
+
+RUN mkdir -p /opt/samtools
+RUN curl \
+    -L -o /opt/samtools/samtools-1.22.tar.bz2 \
+    https://github.com/samtools/samtools/releases/download/1.22/samtools-1.22.tar.bz2
+RUN cd /opt/samtools/ && \
+    tar -xvf samtools-1.22.tar.bz2 && \
+    cd samtools-1.22 && \
+    autoheader && autoconf -Wno-syntax && \
+    ./configure --with-htslib=/opt/htslib/htslib-1.22 && \
     make -j "${CORES}" && \
     make install
 
@@ -52,11 +64,11 @@ RUN cd /opt/htslib/ && \
 #     apt-get install -y --no-install-recommends r-base=4.4.3* r-base-dev r-base-html
 
 RUN curl \
-    -L -o /opt/R-alpha.tar.xz \
-    https://cran.r-project.org/src/base-prerelease/R-alpha_2025-03-18_r87998.tar.xz
+    -L -o /opt/R-4.5.0.tar.gz \
+    https://cran.r-project.org/src/base/R-4/R-4.5.0.tar.gz
 RUN cd /opt && \
-    tar -xvf R-alpha.tar.xz && \
-    cd R-alpha && \
+    tar -xvf R-4.5.0.tar.gz && \
+    cd R-4.5.0 && \
     ./configure && \
     make -j "${CORES}" && \
     make install
@@ -77,6 +89,8 @@ RUN apt-get clean -y && \
 
 RUN rm -rf \
     /opt/htslib \
-    /opt/htslib/htslib-1.21.tar.bz2 \
-    R-alpha \
-    /opt/R-alpha.tar.xz
+    /opt/htslib/htslib-1.22.tar.bz2 \
+    /opt/samtools \
+    /opt/samtools/samtools-1.22.tar.bz2 \
+    R-4.5.0 \
+    /opt/R-4.5.0.tar.xz

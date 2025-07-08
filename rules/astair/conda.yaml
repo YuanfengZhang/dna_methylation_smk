@@ -9,6 +9,6 @@ dependencies:
       - git+https://bitbucket.org/zyf1997/astair.git
     - bioconda::bwa>=0.7.18
     - bioconda::bwameth>=0.2.7
-    - bioconda::samtools>=1.21
+    - bioconda::samtools>=1.22
     - conda-forge::matplotlib
     - conda-forge::pigz

@@ -4,6 +4,6 @@ channels:
     - defaults
 
 dependencies:
-    - bioconda::samtools>=1.21
+    - bioconda::samtools>=1.22
     - bioconda::libis>=0.1.6
     - bioconda::mbuffer

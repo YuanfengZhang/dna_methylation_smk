@@ -6,6 +6,7 @@ from typing import Any, Literal, LiteralString
 import numpy as np
 import pandas as pd
 
+
 # ! To get rid of spelling issues,
 # ! only lower case names and hyphen-minus (-) are allowed.
 # ! Also, headers only contain upper case letters and underscore (_) to distinguish.
@@ -27,7 +28,7 @@ PIPELINE_CODING: dict[str, dict[str, str]] = {
         'no-dedup': '0', 'bismark-dedup': '1', 'gatk-dedup': '2',  # .../gatk/gatk/... will cause ambiguity.
         'samtools': '3', 'sambamba': '4', 'nubeam-dedup': '5',
         'bio-seq-zip': '6', 'trie-dedup': '7', 'ngs-reads-treatment': '8',
-        'dupsifter': '9', 'gencore': 'A', 'minirmd': 'B'
+        'dupsifter': '9', 'gencore': 'A', 'minirmd': 'B', 'gatk-optical': 'C'
     },
     'CALIBRATOR': {
         'no-pre-calibrate': '@', 'no-calibrate': '0', 'gatk-cali': '1', 'care': '2',
@@ -36,8 +37,10 @@ PIPELINE_CODING: dict[str, dict[str, str]] = {
     'COUNTER': {
         'bismark': '0', 'biscuit': '1', 'methyldackel': '2',
         'dnmtools': '3', 'astair': '4', 'rastair': '5',
-        'bsgenova': '6', 'fame': '7',
-    },
+        'bsgenova': '6', 'fame': '7', 'deepvariant': '8',
+        'haplotypecaller': '9', 'methylationtypecaller': 'A',
+        'epiallele': 'B'
+    },  # row for FAME: BASENAME,TRIMMER,FASTQCER,,,,fame,False
     'FASTQCER': {
         'fastqc': '0', 'falco': '1'  # actually FASTQCER and BAMSTATIST are not coded,
     },  # just put it here to make sure the right one included.
@@ -238,7 +241,8 @@ class DeDuper(PipelineModule):
         'ngs-reads-treatment': ['.R1.fq.gz', '.R2.fq.gz'],
         'dupsifter': ['.bam', '.bam.bai', '.dupsifter.stat'],
         'gencore': ['.bam', '.bam.bai', '.gencore.json', 'gencore.html'],
-        'minirmd': ['.R1.fq.gz', '.R2.fq.gz']
+        'minirmd': ['.R1.fq.gz', '.R2.fq.gz'],
+        'gatk-optical': ['.bam', '.bam.bai', '.dedup.metrics']
     }
 
     def __init__(self, deduper: str):
@@ -324,7 +328,12 @@ class Counter(PipelineModule):
         'methyldackel': ['.bedgraph.gz', '.merged.bedgraph.gz'],
         'biscuit': ['.epibed.gz'],
         'bsgenova': ['.ATCGmap.gz', '.CGmap.gz', '.bed.gz'],
-        'fame': ['.bedgraph.gz']
+        'fame': ['.bedgraph.zst'],
+        'deepvariant': ['.deepvariant.vcf.gz', '.deepvariant.gvcf.gz',
+                        '.deepvariant.bedgraph.zst'],
+        'haplotypecaller': ['.gvcf.gz', '.vcf.gz', '.bedgraph.zst'],
+        'methylationtypecaller': ['.vcf.gz', '.bedgraph.zst'],
+        'epiallele': ['.report.zst']
     }
 
     def __init__(self, counter: str):
@@ -486,8 +495,6 @@ class Fq2BedGraphRun:
         tool_chain: list[PipelineModule]
 
         if isinstance(self.Counter, PipelineModule) and self.Counter.tool == 'fame':
-            # fame only needs pre-dedup and pre-calibrate, so no-dedup and no-calibrate are illegal.
-            # Just ,, in csv if no pre-dedup or pre-calibrate.
             for _m, _l in [[self.DeDuper, DEDUPER_BEFORE_ALIGNMENT],
                            [self.Calibrator, CALIBRATOR_BEFORE_ALIGNMENT]]:
                 if isinstance(_m, EmptyModule):

@@ -36,7 +36,7 @@ if tool_dict["DEDUPER"]:
         match tool:
             case 'no-dedup':
                 pass
-            case 'gatk-dedup':
+            case 'gatk-dedup' | 'gatk-optical':
                 include: "rules/gatk/dedup.smk"
             case 'bismark-dedup':
                 include: "rules/bismark/dedup.smk"
@@ -45,7 +45,11 @@ if tool_dict["DEDUPER"]:
 
 if tool_dict["COUNTER"]:
     for tool in tool_dict["COUNTER"]:
-        include: f"rules/{tool}/count.smk"
+        if tool in ('haplotypecaller',
+                    'methylationtypecaller'):
+            include: f"rules/gatk/count.smk"
+        else:
+            include: f"rules/{tool}/count.smk"
 
 if tool_dict["CALIBRATOR"]:
     for tool in tool_dict["CALIBRATOR"]:

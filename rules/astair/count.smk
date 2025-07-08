@@ -27,7 +27,7 @@ rule astair_count:
     benchmark:
         "result/{BaseName}/{CountParentDir}/astair/{BaseName}.count.benchmark"
     params:
-        ref          = lambda wildcards: config["ref"]["astair"][wildcards.BaseName.split('_')[1]],
+        ref          = lambda wildcards: config["ref"]["bwa-mem"][wildcards.BaseName.split('_')[1]],
         method       = lambda wildcards: get_method_param(wildcards),
         method2      = lambda wildcards: get_method_param2(wildcards),
         extra_params = config["astair"]["count"]["extra_params"] or ""

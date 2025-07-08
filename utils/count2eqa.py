@@ -13,11 +13,10 @@ def main():
     parser.add_argument('-d', '--depth', dest='depth', type=int,
                         default=5, help='Minimum depth of every cytosine.')
     parser.add_argument('-c', '--counter', dest='counter', type=str,
-                        choices=['bismark_c2c', 'bismark_cov',
-                                 'biscuit', 'methyldackel',
-                                 'dnmtools', 'bs_seeker2', 'astair',
-                                 'bsgenova', 'fame',
-                                 'msuite2-bowtie2', 'msuite2-hisat2'],
+                        choices=['astair', 'biscuit', 'bismark_c2c', 'bismark_cov',
+                                 'bsgenova', 'dnmtools', 'deepvariant', 'fame',
+                                 'haplotypecaller', 'methylationtypecaller',
+                                 'methyldackel', 'rastair'],
                         help='Counter used to generate the input file.')
     parser.add_argument('-f', '--force', dest='force', action='store_true',
                         help='Force overwrite the output file if it exists.')
@@ -51,13 +50,36 @@ def main():
                .rename({'#CHROM': 'chrom', 'START': 'start', 'END': 'end',
                         'UNMOD': 'u', 'MOD': 'm'})
                .sink_parquet(output_f, compression='lz4', sync_on_close='all'))
-        case 'rastair':  # mod.gz
-            (pl.scan_csv(input_f, separator='\t', has_header=True)
-               .with_columns(pl.sum_horizontal('unmod', 'mod').alias('depth'))
-               .with_columns((100 * pl.col('mod') / pl.col('depth')).alias('beta'))
+        case 'bsgenova':  # ATCGmap.gz
+            (pl.scan_csv(input_f, separator='\t', has_header=False, skip_rows=1,
+                         schema={'chrom': pl.String, 'base': pl.String, 'pos': pl.Int64,
+                                 'type': pl.String, 'dinucleotide': pl.String,
+                                 'beta': pl.Float64, 'u': pl.Int64, 'depth': pl.Int64,
+                                 'A_watson': pl.Int64, 'A_crick': pl.Int64,
+                                 'T_watson': pl.Int64, 'T_crick': pl.Int64,
+                                 'C_watson': pl.Int64, 'C_crick': pl.Int64,
+                                 'G_watson': pl.Int64, 'G_crick': pl.Int64})
+               .rename({'pos': 'end'})
+               .drop('beta')
                .filter(pl.col('depth') >= depth)
-               .select('#chr', 'start', 'end', 'unmod', 'mod', 'strand', 'beta', 'depth')
-               .rename({'#chr': 'chrom', 'unmod': 'u', 'mod': 'm'})
+               .with_columns((pl.col('end') - 1).alias('start'),
+                             (pl.col('depth') - pl.col('u')).alias('m'),
+                             pl.when(pl.col('base') == 'C')
+                               .then(pl.lit('+'))
+                               .otherwise(pl.lit('-'))
+                               .alias('strand'))
+               .with_columns((100 * pl.col('m') / pl.col('depth')).alias('beta'))
+               .select('chrom', 'start', 'end', 'u', 'm', 'strand', 'beta', 'depth')
+               .sink_parquet(output_f, compression='lz4', sync_on_close='all'))
+        case 'biscuit':  # customized epibed.gz
+            (pl.scan_csv(input_f, separator='\t', has_header=False,
+                         schema={'chrom': pl.String, 'start': pl.Int64, 'end': pl.Int64,
+                                 'strand': pl.String, 'type': pl.String, 'dinucleotide': pl.String,
+                                 'pentanucleotide': pl.String, 'm': pl.Int64, 'u': pl.Int64})
+               .with_columns(pl.sum_horizontal('m', 'u').alias('depth'))
+               .filter(pl.col('depth') >= depth)
+               .with_columns((100 * pl.col('m') / pl.col('depth')).alias('beta'))
+               .select('chrom', 'start', 'end', 'u', 'm', 'strand', 'beta', 'depth')
                .sink_parquet(output_f, compression='lz4', sync_on_close='all'))
         case 'bismark_c2c':  # c2c.cov.gz
             (pl.scan_csv(input_f, separator='\t', has_header=False,
@@ -73,10 +95,16 @@ def main():
         case 'bismark_cov':  # bismark.zero.cov
             (pl.scan_csv(input_f, separator='\t', has_header=False,
                          schema={'chrom': pl.String, 'start': pl.Int64, 'end': pl.String,
-                                 'l': pl.Float64, 'u': pl.Int64, 'm': pl.Int64})
+                                 'l': pl.Float64, 'm': pl.Int64, 'u': pl.Int64})
                .with_columns([pl.sum_horizontal('m', 'u').alias('depth'),
                               pl.lit('+').alias('strand')])
                .filter(pl.sum_horizontal('depth') >= depth)
+               .with_columns((100 * pl.col('m') / pl.col('depth')).alias('beta'))
+               .select('chrom', 'start', 'end', 'u', 'm', 'strand', 'beta', 'depth')
+               .sink_parquet(output_f, compression='lz4', sync_on_close='all'))
+        case 'deepvariant':
+            (pl.scan_csv(input_f, separator='\t', has_header=True)
+               .filter(pl.col('depth') >= depth)
                .with_columns((100 * pl.col('m') / pl.col('depth')).alias('beta'))
                .select('chrom', 'start', 'end', 'u', 'm', 'strand', 'beta', 'depth')
                .sink_parquet(output_f, compression='lz4', sync_on_close='all'))
@@ -93,14 +121,36 @@ def main():
                               (pl.col('start') + 1).alias('end')])
                .select('chrom', 'start', 'end', 'u', 'm', 'strand', 'beta', 'depth')
                .sink_parquet(output_f, compression='lz4', sync_on_close='all'))
+        case 'fame':
+            (pl.scan_csv(input_f, separator='\t', has_header=True,
+                         schema={'chrom': pl.String, 'start': pl.Int64, 'end': pl.Int64,
+                                 'm': pl.Int64, 'u': pl.Int64, 'strand': pl.String, 'depth': pl.Int64})
+               .with_columns((100 * pl.col('m') / pl.col('depth')).alias('beta'))
+               .filter(pl.col('depth') >= depth)
+               .select('chrom', 'start', 'end', 'u', 'm', 'strand', 'beta', 'depth')
+               .sink_parquet(output_f, compression='lz4', sync_on_close='all'))
         case 'methyldackel':  # bedgraph.gz
             (pl.scan_csv(input_f, separator='\t', has_header=False,
                          schema={'chrom': pl.String, 'start': pl.Int64, 'end': pl.Int64,
-                                 'level': pl.Float64, 'm': pl.Int64, 'u': pl.Int64})
+                                 'm': pl.Int64, 'u': pl.Int64})
                .with_columns(pl.sum_horizontal('m', 'u').alias('depth'))
                .with_columns((100 * pl.col('m') / pl.col('depth')).alias('beta'))
                .filter(pl.col('depth') >= depth)
                .select('chrom', 'start', 'end', 'u', 'm', 'beta', 'depth')
+               .sink_parquet(output_f, compression='lz4', sync_on_close='all'))
+        case 'methylationtypecaller':  # bedgraph.zst
+            (pl.scan_csv(input_f, separator='\t', has_header=True)
+               .filter(pl.col('depth') >= depth)
+               .with_columns((100 * pl.col('m') / pl.col('depth')).alias('beta'))
+               .select('chrom', 'start', 'end', 'u', 'm', 'strand', 'beta', 'depth')
+               .sink_parquet(output_f, compression='lz4', sync_on_close='all'))
+        case 'rastair':  # mod.gz
+            (pl.scan_csv(input_f, separator='\t', has_header=True)
+               .with_columns(pl.sum_horizontal('unmod', 'mod').alias('depth'))
+               .with_columns((100 * pl.col('mod') / pl.col('depth')).alias('beta'))
+               .filter(pl.col('depth') >= depth)
+               .select('#chr', 'start', 'end', 'unmod', 'mod', 'strand', 'beta', 'depth')
+               .rename({'#chr': 'chrom', 'unmod': 'u', 'mod': 'm'})
                .sink_parquet(output_f, compression='lz4', sync_on_close='all'))
         case _:
             raise NotImplementedError(f'Counter {args.counter} is not implemented yet.')

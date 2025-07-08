@@ -4,7 +4,7 @@ channels:
   - defaults
 dependencies:
   - bioconda::bismark>=0.24.2
-  - bioconda::samtools>=1.21
+  - bioconda::samtools>=1.22
   - bioconda::hisat2
   - bioconda::bowtie2
   - bioconda::minimap2

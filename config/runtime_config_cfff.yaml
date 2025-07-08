@@ -1,56 +1,56 @@
-input_dir: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/eqa/fastq
-sample_sheet: config/sample_sheet.csv  # never use absolute path.
+input_dir: input
 
 #! this part is used to specify the reference genome file to be used
-ref:  # `astair align` has been deprecated because it's just calling bwa-mem and it introduces bugs.
-  bwa-mem:
-    D5: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/MEM/D5_IC.fa
-    D6: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/MEM/D5_IC.fa
-    F7: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/F7_IC/MEM/F7_IC.fa
-    M8: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/M8_IC/MEM/M8_IC.fa
-    BC: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BC_IC/MEM/BC_IC.fa
-    BL: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/MEM/BL_IC.fa
-    HF: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/MEM/BL_IC.fa
-    T1: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/MEM/D5_IC.fa
-    T2: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/MEM/D5_IC.fa
-    T3: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/MEM/D5_IC.fa
-    T4: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/MEM/D5_IC.fa
-  bwa-mem2:
-    D5: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/MEM2/D5_IC.fa
-    D6: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/MEM2/D5_IC.fa
-    F7: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/F7_IC/MEM2/F7_IC.fa
-    M8: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/M8_IC/MEM2/M8_IC.fa
-    BC: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BC_IC/MEM2/BC_IC.fa
-    BL: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/MEM2/BL_IC.fa
-    HF: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/MEM2/BL_IC.fa
-    T1: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/MEM2/D5_IC.fa
-    T2: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/MEM2/D5_IC.fa
-    T3: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/MEM2/D5_IC.fa
-    T4: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/MEM2/D5_IC.fa
-  bwa-meme:
-    D5: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/MEME/D5_IC.fa
-    D6: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/MEME/D5_IC.fa
-    F7: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/F7_IC/MEME/F7_IC.fa
-    M8: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/M8_IC/MEME/M8_IC.fa
-    BC: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BC_IC/MEME/BC_IC.fa
-    BL: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/MEME/BL_IC.fa
-    HF: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/MEME/BL_IC.fa
-    T1: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/MEME/D5_IC.fa
-    T2: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/MEME/D5_IC.fa
-    T3: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/MEME/D5_IC.fa
-    T4: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/MEME/D5_IC.fa
-  bwa-meth:
-    D5: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/BWA_METH/D5_IC.fa
-    D6: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/BWA_METH/D5_IC.fa
-    F7: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/F7_IC/BWA_METH/F7_IC.fa
-    M8: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/M8_IC/BWA_METH/M8_IC.fa
-    BC: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BC_IC/BWA_METH/BC_IC.fa
-    BL: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/BWA_METH/BL_IC.fa
-    HF: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/BWA_METH/BL_IC.fa
-    T1: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/BWA_METH/D5_IC.fa
-    T2: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/BWA_METH/D5_IC.fa
-    T3: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/BWA_METH/D5_IC.fa
-    T4: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/BWA_METH/D5_IC.fa
+ref:
+  abismal:
+    D5: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/abismal/D5.abismal_index
+    D6: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/abismal/D5.abismal_index
+    F7: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/F7_IC/abismal/F7.abismal_index
+    M8: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/M8_IC/abismal/M8.abismal_index
+    BC: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BC_IC/abismal/BC.abismal_index
+    BL: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/abismal/BL.abismal_index
+    HF: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/abismal/BL.abismal_index
+    T1: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/abismal/D5.abismal_index
+    T2: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/abismal/D5.abismal_index
+    T3: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/abismal/D5.abismal_index
+    T4: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/abismal/D5.abismal_index
+  aryana:
+      D5: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/aryana/D5.fa /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/aryana/aryana /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/aryana/D5.cgi.bed
+      D6: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/aryana/D5.fa /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/aryana/aryana /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/aryana/D5.cgi.bed
+      F7: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/F7_IC/aryana/F7.fa /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/F7_IC/aryana/aryana /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/F7_IC/aryana/F7.cgi.bed
+      M8: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/M8_IC/aryana/M8.fa /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/M8_IC/aryana/aryana /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/M8_IC/aryana/M8.cgi.bed
+      BC: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BC_IC/aryana/BC.fa /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BC_IC/aryana/aryana /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BC_IC/aryana/BC.cgi.bed
+      BL: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/aryana/BL.fa /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/aryana/aryana /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/aryana/BL.cgi.bed
+      HF: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/aryana/BL.fa /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/aryana/aryana /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/aryana/BL.cgi.bed
+      T1: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/aryana/D5.fa /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/aryana/aryana /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/aryana/D5.cgi.bed
+      T2: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/aryana/D5.fa /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/aryana/aryana /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/aryana/D5.cgi.bed
+      T3: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/aryana/D5.fa /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/aryana/aryana /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/aryana/D5.cgi.bed
+      T4: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/aryana/D5.fa /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/aryana/aryana /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/aryana/D5.cgi.bed
+  batmeth2:
+    default:
+      D5: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/BatMeth2/D5.fa
+      D6: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/BatMeth2/D5.fa
+      F7: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/F7_IC/BatMeth2/F7.fa
+      M8: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/M8_IC/BatMeth2/M8.fa
+      BC: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BC_IC/BatMeth2/BC.fa
+      BL: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/BatMeth2/BL.fa
+      HF: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/BatMeth2/BL.fa
+      T1: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/BatMeth2/D5.fa
+      T2: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/BatMeth2/D5.fa
+      T3: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/BatMeth2/D5.fa
+      T4: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/BatMeth2/D5.fa
+    RRBS:
+      D5: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/BatMeth2/RRBS/D5.fa
+      D6: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/BatMeth2/RRBS/D5.fa
+      F7: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/F7_IC/BatMeth2/RRBS/F7.fa
+      M8: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/M8_IC/BatMeth2/RRBS/M8.fa
+      BC: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BC_IC/BatMeth2/RRBS/BC.fa
+      BL: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/BatMeth2/RRBS/BL.fa
+      HF: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/BatMeth2/RRBS/BL.fa
+      T1: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/BatMeth2/RRBS/D5.fa
+      T2: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/BatMeth2/RRBS/D5.fa
+      T3: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/BatMeth2/RRBS/D5.fa
+      T4: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/BatMeth2/RRBS/D5.fa
   bismark-bowtie2:
     D5: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/BISMARK_BOWTIE2
     D6: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/BISMARK_BOWTIE2
@@ -75,13 +75,420 @@ ref:  # `astair align` has been deprecated because it's just calling bwa-mem and
     T2: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/BISMARK_HISAT2
     T3: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/BISMARK_HISAT2
     T4: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/BISMARK_HISAT2
+  biscuit:
+    D5: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/biscuit/D5.fa
+    D6: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/biscuit/D5.fa
+    F7: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/F7_IC/biscuit/F7.fa
+    M8: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/M8_IC/biscuit/M8.fa
+    BC: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BC_IC/biscuit/BC.fa
+    BL: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/biscuit/BL.fa
+    HF: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/biscuit/BL.fa
+    T1: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/biscuit/D5.fa
+    T2: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/biscuit/D5.fa
+    T3: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/biscuit/D5.fa
+    T4: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/biscuit/D5.fa
+  bitmapperbs:
+    D5: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/BitMapperBS/D5.fa
+    D6: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/BitMapperBS/D5.fa
+    F7: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/F7_IC/BitMapperBS/F7.fa
+    M8: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/M8_IC/BitMapperBS/M8.fa
+    BC: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BC_IC/BitMapperBS/BC.fa
+    BL: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/BitMapperBS/BL.fa
+    HF: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/BitMapperBS/BL.fa
+    T1: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/BitMapperBS/D5.fa
+    T2: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/BitMapperBS/D5.fa
+    T3: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/BitMapperBS/D5.fa
+    T4: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/BitMapperBS/D5.fa
+  bowtie2:
+    D5: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/bowtie2/D5
+    D6: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/bowtie2/D5
+    F7: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/F7_IC/bowtie2/F7
+    M8: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/M8_IC/bowtie2/M8
+    BC: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BC_IC/bowtie2/BC
+    BL: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/bowtie2/BL
+    HF: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/bowtie2/BL
+    T1: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/bowtie2/D5
+    T2: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/bowtie2/D5
+    T3: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/bowtie2/D5
+    T4: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/bowtie2/D5
+  bsgenova:
+    D5: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/samtools/D5.fa
+    D6: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/samtools/D5.fa
+    F7: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/F7_IC/samtools/F7.fa
+    M8: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/M8_IC/samtools/M8.fa
+    BC: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BC_IC/samtools/BC.fa
+    BL: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/samtools/BL.fa
+    HF: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/samtools/BL.fa
+    T1: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/samtools/D5.fa
+    T2: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/samtools/D5.fa
+    T3: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/samtools/D5.fa
+    T4: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/samtools/D5.fa
+  bsmapz:
+    D5: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/bsmapz/D5.fa
+    D6: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/bsmapz/D5.fa
+    F7: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/F7_IC/bsmapz/F7.fa
+    M8: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/M8_IC/bsmapz/M8.fa
+    BC: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BC_IC/bsmapz/BC.fa
+    BL: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/bsmapz/BL.fa
+    HF: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/bsmapz/BL.fa
+    T1: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/bsmapz/D5.fa
+    T2: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/bsmapz/D5.fa
+    T3: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/bsmapz/D5.fa
+    T4: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/bsmapz/D5.fa
+  bsbolt:
+    D5: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/bsbolt
+    D6: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/bsbolt
+    F7: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/F7_IC/bsbolt
+    M8: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/M8_IC/bsbolt
+    BC: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BC_IC/bsbolt
+    BL: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/bsbolt
+    HF: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/bsbolt
+    T1: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/bsbolt
+    T2: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/bsbolt
+    T3: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/bsbolt
+    T4: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/bsbolt
+  bwa-mem:
+    D5: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/bwa-mem/D5.fa
+    D6: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/bwa-mem/D5.fa
+    F7: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/F7_IC/bwa-mem/F7.fa
+    M8: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/M8_IC/bwa-mem/M8.fa
+    BC: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BC_IC/bwa-mem/BC.fa
+    BL: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/bwa-mem/BL.fa
+    HF: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/bwa-mem/BL.fa
+    T1: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/bwa-mem/D5.fa
+    T2: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/bwa-mem/D5.fa
+    T3: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/bwa-mem/D5.fa
+    T4: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/bwa-mem/D5.fa
+  bwa-meme:
+    D5: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/bwa-meme/D5.fa
+    D6: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/bwa-meme/D5.fa
+    F7: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/F7_IC/bwa-meme/F7.fa
+    M8: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/M8_IC/bwa-meme/M8.fa
+    BC: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BC_IC/bwa-meme/BC.fa
+    BL: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/bwa-meme/BL.fa
+    HF: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/bwa-meme/BL.fa
+    T1: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/bwa-meme/D5.fa
+    T2: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/bwa-meme/D5.fa
+    T3: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/bwa-meme/D5.fa
+    T4: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/bwa-meme/D5.fa
+  dupsifter:
+    D5: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/dupsifter/D5.fa
+    D6: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/dupsifter/D5.fa
+    F7: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/F7_IC/dupsifter/F7.fa
+    M8: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/M8_IC/dupsifter/M8.fa
+    BC: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BC_IC/dupsifter/BC.fa
+    BL: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/dupsifter/BL.fa
+    HF: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/dupsifter/BL.fa
+    T1: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/dupsifter/D5.fa
+    T2: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/dupsifter/D5.fa
+    T3: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/dupsifter/D5.fa
+    T4: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/dupsifter/D5.fa
+  bwa-meth:
+    D5: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/BWA_METH/D5.fa
+    D6: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/BWA_METH/D5.fa
+    F7: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/F7_IC/BWA_METH/F7.fa
+    M8: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/M8_IC/BWA_METH/M8.fa
+    BC: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BC_IC/BWA_METH/BC.fa
+    BL: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/BWA_METH/BL.fa
+    HF: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/BWA_METH/BL.fa
+    T1: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/BWA_METH/D5.fa
+    T2: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/BWA_METH/D5.fa
+    T3: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/BWA_METH/D5.fa
+    T4: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/BWA_METH/D5.fa
+  deepvariant:
+    ref_dir:
+      D5: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/deepvariant
+      D6: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/deepvariant
+      F7: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/F7_IC/deepvariant
+      M8: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/M8_IC/deepvariant
+      BC: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BC_IC/deepvariant
+      BL: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/deepvariant
+      HF: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/deepvariant
+      T1: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/deepvariant
+      T2: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/deepvariant
+      T3: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/deepvariant
+      T4: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/deepvariant
+    ref_name:
+      D5: D5.fa
+      D6: D5.fa
+      F7: F7.fa
+      M8: M8.fa
+      BC: BC.fa
+      BL: BL.fa
+      HF: BL.fa
+      T1: D5.fa
+      T2: D5.fa
+      T3: D5.fa
+      T4: D5.fa
+  fame:
+    D5: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/FAME/D5.fa
+    D6: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/FAME/D5.fa
+    F7: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/F7_IC/FAME/F7.fa
+    M8: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/M8_IC/FAME/M8.fa
+    BC: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BC_IC/FAME/BC.fa
+    BL: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/FAME/BL.fa
+    HF: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/FAME/BL.fa
+    T1: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/FAME/D5.fa
+    T2: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/FAME/D5.fa
+    T3: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/FAME/D5.fa
+    T4: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/FAME/D5.fa
+  gatk:
+    fasta:
+      D5: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/gatk/D5.fa
+      D6: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/gatk/D5.fa
+      F7: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/F7_IC/gatk/F7.fa
+      M8: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/M8_IC/gatk/M8.fa
+      BC: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BC_IC/gatk/BC.fa
+      BL: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/gatk/BL.fa
+      HF: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/gatk/BL.fa
+      T1: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/gatk/D5.fa
+      T2: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/gatk/D5.fa
+      T3: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/gatk/D5.fa
+      T4: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/gatk/D5.fa
+    dict:
+      D5: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/gatk/D5.dict
+      D6: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/gatk/D5.dict
+      F7: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/F7_IC/gatk/F7.dict
+      M8: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/M8_IC/gatk/M8.dict
+      BC: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BC_IC/gatk/BC.dict
+      BL: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/gatk/BL.dict
+      HF: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/gatk/BL.dict
+      T1: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/gatk/D5.dict
+      T2: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/gatk/D5.dict
+      T3: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/gatk/D5.dict
+      T4: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/gatk/D5.dict
+  gem3:
+    original:
+      D5: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/gem3/D5.gem
+      D6: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/gem3/D5.gem
+      F7: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/F7_IC/gem3/F7.gem
+      M8: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/M8_IC/gem3/M8.gem
+      BC: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BC_IC/gem3/BC.gem
+      BL: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/gem3/BL.gem
+      HF: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/gem3/BL.gem
+      T1: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/gem3/D5.gem
+      T2: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/gem3/D5.gem
+      T3: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/gem3/D5.gem
+      T4: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/gem3/D5.gem
+    bisulfite:
+      D5: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/gem3/bs/D5.gem
+      D6: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/gem3/bs/D5.gem
+      F7: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/F7_IC/gem3/bs/F7.gem
+      M8: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/M8_IC/gem3/bs/M8.gem
+      BC: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BC_IC/gem3/bs/BC.gem
+      BL: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/gem3/bs/BL.gem
+      HF: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/gem3/bs/BL.gem
+      T1: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/gem3/bs/D5.gem
+      T2: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/gem3/bs/D5.gem
+      T3: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/gem3/bs/D5.gem
+      T4: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/gem3/bs/D5.gem
+  gencore:
+    D5: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/gencore/D5.fa
+    D6: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/gencore/D5.fa
+    F7: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/F7_IC/gencore/F7.fa
+    M8: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/M8_IC/gencore/M8.fa
+    BC: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BC_IC/gencore/BC.fa
+    BL: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/gencore/BL.fa
+    HF: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/gencore/BL.fa
+    T1: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/gencore/D5.fa
+    T2: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/gencore/D5.fa
+    T3: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/gencore/D5.fa
+    T4: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/gencore/D5.fa
+  hisat-3n:
+    D5:
+     c2t: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/hisat-3n/D5_c2t
+     t2c: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/hisat-3n/D5_t2c
+    D6:
+     c2t: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/hisat-3n/D5_c2t
+     t2c: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/hisat-3n/D5_t2c
+    F7:
+     c2t: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/hisat-3n/D5_c2t
+     t2c: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/hisat-3n/D5_t2c
+    M8:
+     c2t: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/hisat-3n/D5_c2t
+     t2c: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/hisat-3n/D5_t2c
+    BC:
+     c2t: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/hisat-3n/D5_c2t
+     t2c: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/hisat-3n/D5_t2c
+    BL:
+     c2t: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/hisat-3n/D5_c2t
+     t2c: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/hisat-3n/D5_t2c
+    HF:
+     c2t: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/hisat-3n/D5_c2t
+     t2c: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/hisat-3n/D5_t2c
+    T1:
+     c2t: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/hisat-3n/D5_c2t
+     t2c: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/hisat-3n/D5_t2c
+    T2:
+     c2t: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/hisat-3n/D5_c2t
+     t2c: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/hisat-3n/D5_t2c
+    T3:
+     c2t: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/hisat-3n/D5_c2t
+     t2c: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/hisat-3n/D5_t2c
+    T4:
+     c2t: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/hisat-3n/D5_c2t
+     t2c: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/hisat-3n/D5_t2c
+  hisat2:
+    D5: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/hisat2/D5
+    D6: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/hisat2/D5
+    F7: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/F7_IC/hisat2/F7
+    M8: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/M8_IC/hisat2/M8
+    BC: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BC_IC/hisat2/BC
+    BL: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/hisat2/BL
+    HF: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/hisat2/BL
+    T1: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/hisat2/D5
+    T2: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/hisat2/D5
+    T3: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/hisat2/D5
+    T4: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/hisat2/D5
+  last:
+    D5:
+      fasta: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/last/D5.fa
+      BISF: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/last/D5_BISF
+      BISR: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/last/D5_BISR
+      NEAR: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/last/D5_NEAR
+    D6:
+      fasta: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/last/D5.fa
+      BISF: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/last/D5_BISF
+      BISR: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/last/D5_BISR
+      NEAR: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/last/D5_NEAR
+    F7:
+      fasta: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/last/D5.fa
+      BISF: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/last/D5_BISF
+      BISR: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/last/D5_BISR
+      NEAR: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/last/D5_NEAR
+    M8:
+      fasta: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/last/D5.fa
+      BISF: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/last/D5_BISF
+      BISR: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/last/D5_BISR
+      NEAR: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/last/D5_NEAR
+    BC:
+      fasta: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/last/D5.fa
+      BISF: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/last/D5_BISF
+      BISR: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/last/D5_BISR
+      NEAR: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/last/D5_NEAR
+    BL:
+      fasta: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/last/D5.fa
+      BISF: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/last/D5_BISF
+      BISR: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/last/D5_BISR
+      NEAR: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/last/D5_NEAR
+    HF:
+      fasta: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/last/D5.fa
+      BISF: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/last/D5_BISF
+      BISR: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/last/D5_BISR
+      NEAR: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/last/D5_NEAR
+    T1:
+      fasta: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/last/D5.fa
+      BISF: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/last/D5_BISF
+      BISR: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/last/D5_BISR
+      NEAR: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/last/D5_NEAR
+    T2:
+      fasta: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/last/D5.fa
+      BISF: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/last/D5_BISF
+      BISR: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/last/D5_BISR
+      NEAR: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/last/D5_NEAR
+    T3:
+      fasta: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/last/D5.fa
+      BISF: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/last/D5_BISF
+      BISR: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/last/D5_BISR
+      NEAR: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/last/D5_NEAR
+    T4:
+      fasta: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/last/D5.fa
+      BISF: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/last/D5_BISF
+      BISR: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/last/D5_BISR
+      NEAR: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/last/D5_NEAR
+  
+  msuite2:
+    D5: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/eqa/dna_methylation_smk/resources/Msuite2/index/D5
+    D6: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/eqa/dna_methylation_smk/resources/Msuite2/index/D5
+    F7: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/eqa/dna_methylation_smk/resources/Msuite2/index/F7
+    M8: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/eqa/dna_methylation_smk/resources/Msuite2/index/M8
+    BC: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/eqa/dna_methylation_smk/resources/Msuite2/index/BC
+    BL: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/eqa/dna_methylation_smk/resources/Msuite2/index/BL
+    HF: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/eqa/dna_methylation_smk/resources/Msuite2/index/BL
+    T1: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/eqa/dna_methylation_smk/resources/Msuite2/index/D5
+    T2: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/eqa/dna_methylation_smk/resources/Msuite2/index/D5
+    T3: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/eqa/dna_methylation_smk/resources/Msuite2/index/D5
+    T4: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/eqa/dna_methylation_smk/resources/Msuite2/index/D5
+  pufferfish:
+    D5: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/pufferfish
+    D6: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/pufferfish
+    F7: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/F7_IC/pufferfish
+    M8: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/M8_IC/pufferfish
+    BC: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BC_IC/pufferfish
+    BL: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/pufferfish
+    HF: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/pufferfish
+    T1: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/pufferfish
+    T2: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/pufferfish
+    T3: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/pufferfish
+    T4: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/pufferfish
+  sambamba:
+    D5: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/sambamba/D5.fa
+    D6: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/sambamba/D5.fa
+    F7: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/F7_IC/sambamba/F7.fa
+    M8: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/M8_IC/sambamba/M8.fa
+    BC: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BC_IC/sambamba/BC.fa
+    BL: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/sambamba/BL.fa
+    HF: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/sambamba/BL.fa
+    T1: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/sambamba/D5.fa
+    T2: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/sambamba/D5.fa
+    T3: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/sambamba/D5.fa
+    T4: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/sambamba/D5.fa
+  samtools:
+    D5: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/samtools/D5.fa
+    D6: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/samtools/D5.fa
+    F7: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/F7_IC/samtools/F7.fa
+    M8: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/M8_IC/samtools/M8.fa
+    BC: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BC_IC/samtools/BC.fa
+    BL: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/samtools/BL.fa
+    HF: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/samtools/BL.fa
+    T1: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/samtools/D5.fa
+    T2: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/samtools/D5.fa
+    T3: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/samtools/D5.fa
+    T4: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/samtools/D5.fa
+  segemehl:
+    D5: -i /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/segemehl/D5.idx -d /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/segemehl/D5.fa
+    D6: -i /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/segemehl/D5.idx -d /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/segemehl/D5.fa
+    F7: -i /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/F7_IC/segemehl/F7.idx -d /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/F7_IC/segemehl/F7.fa
+    M8: -i /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/M8_IC/segemehl/M8.idx -d /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/M8_IC/segemehl/M8.fa
+    BC: -i /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BC_IC/segemehl/BC.idx -d /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BC_IC/segemehl/BC.fa
+    BL: -i /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/segemehl/BL.idx -d /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/segemehl/BL.fa
+    HF: -i /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/segemehl/BL.idx -d /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/segemehl/BL.fa
+    T1: -i /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/segemehl/D5.idx -d /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/segemehl/D5.fa
+    T2: -i /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/segemehl/D5.idx -d /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/segemehl/D5.fa
+    T3: -i /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/segemehl/D5.idx -d /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/segemehl/D5.fa
+    T4: -i /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/segemehl/D5.idx -d /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/segemehl/D5.fa
+  strobealign:
+    D5: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/strobealign/D5.fa
+    D6: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/strobealign/D5.fa
+    F7: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/F7_IC/strobealign/F7.fa
+    M8: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/M8_IC/strobealign/M8.fa
+    BC: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BC_IC/strobealign/BC.fa
+    BL: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/strobealign/BL.fa
+    HF: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/strobealign/BL.fa
+    T1: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/strobealign/D5.fa
+    T2: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/strobealign/D5.fa
+    T3: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/strobealign/D5.fa
+    T4: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/strobealign/D5.fa
+  whisper:
+    D5: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/Whisper/D5
+    D6: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/Whisper/D5
+    F7: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/F7_IC/Whisper/F7
+    M8: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/M8_IC/Whisper/M8
+    BC: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BC_IC/Whisper/BC
+    BL: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/Whisper/BL
+    HF: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/BL_IC/Whisper/BL
+    T1: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/Whisper/D5
+    T2: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/Whisper/D5
+    T3: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/Whisper/D5
+    T4: /cpfs01/projects-HDD/cfff-e44ef5cf7aa5_HDD/gxr_22210700111/custom_genomes/D5_IC/Whisper/D5
+
+abismal:
+  align:
+    extra_params:
 
 astair:
-  method:
-    BS: CtoT
-    EM: CtoT
-    RR: CtoT
-    PS: mCtoT
+  align:
+    extra_params:
   count:
     extra_params:
   idbias:
@@ -89,19 +496,37 @@ astair:
   mbias:
     extra_params:
 
+aryana:
+  align:
+    extra_params:
+
+batmeth2:
+  align:
+    extra_params:
+
+bio-seq-zip:
+  dedup:
+    extra_params:
+
 biscuit:
   align:
     extra_params:
-  count:
+  pileup:
     extra_params:
-  stats:
+  vcf2bed:
+    extra_params: -t c -k 5 -e -c
+  qc:
+    extra_params:
+  bsstrand:
+    extra_params:
+  cinread:
     extra_params:
 
 bismark:
   align_bowtie2:
-    extra_params:
+    extra_params: --strandID
   align_hisat2:
-    extra_params:
+    extra_params: --strandID
   exactor:
     extra_params:
   coverage2cytosine:
@@ -111,14 +536,58 @@ bismark:
   bam2nuc:
     extra_params:
 
+bitmapperbs:
+  align:
+    extra_params: --sensitive
+
+bowtie2:
+  align:
+    extra_params: -t -q --sensitive
+bsbolt:
+  align:
+    extra_params:
+
+bsgenova:
+  count:
+    extra_params:
+bsmapz:
+  align:
+    extra_params: -w 100
+
 bwa-meme:
   extra_params:
 
 bwa-meth:
   extra_params:
 
+care:
+  calibrate:
+    device: cpu
+    max_mem: 48
+    avg_cov: 30
+    extra_params:
+
+deepvariant:
+  gpu_enabled:
+  container: google/deepvariant:latest
+  docker_sig: docker
+  extra_params:
+
+dnmtools:
+  count:
+    extra_params:
+  levels:
+    extra_params:
+
+dupsifter:
+  dedup:
+    extra_params:
+
 falco:
   extra_params:
+
+fame:
+  extra_params: --gzip_reads
 
 fastp:
   extra_params:
@@ -127,6 +596,7 @@ fastqc:
   extra_params:
 
 gatk:
+  max_mem: 48
   cal_bqsr:
     snp_vcf: resources/dbsnp/common.dbsnp.vcf.gz
     extra_params:
@@ -136,6 +606,36 @@ gatk:
     extra_params:
   dedup:
     extra_params:
+  genotypegvcfs:
+    extra_params:
+  haplotypecaller:
+    dbsnp_file: resources/dbsnp/common.dbsnp.vcf.gz
+    emit_ref_confidence: GVCF
+    genotype_assignment_method: USE_PLS_TO_ASSIGN
+    extra_params:
+gem3:
+  align:
+    extra_params:
+gencore:
+  dedup:
+    supporting_reads: 1
+    score_threshold: 6
+    ratio_threshold: 0.8
+    extra_params:
+hisat-3n:
+  align:
+    extra_params: --sensitive -t -q
+hisat2:
+  align:
+    extra_params: --sensitive -t -q
+
+last:
+  align:
+    extra_params:
+
+lighter:
+  calibrate:
+    extra_params:
 
 methyldackel:
   count:
@@ -143,8 +643,47 @@ methyldackel:
   mbias:
     extra_params:
 
-qualimap:
+minirmd:
+  dedup:
+    mismatch_num: 0
+    extra_params:
+
+msuite2:
   extra_params:
+
+ngs-reads-treatment:
+  dedup:
+    max_mem: 48
+    extra_params:
+
+nubeam-dedup:
+  dedup:
+    extra_params: -r 1
+
+pufferfish:
+  align:
+    extra_params: --allowSoftclip --allowOverhangSoftclip --genomicReads
+
+qualimap:
+  extra_params: --java-mem-size=80G
+
+rastair:
+  mapq: 1
+  base_quality: 10
+  error_model: novaseq6000
+  count:
+    extra_params:
+
+recokoner:
+  calibrate:
+    extra_params:
+
+sambamba:
+  dedup:
+    hash_table_size: 262144
+    overflow_list_size: 200000
+    sort_buffer_size: 128
+    extra_params: 
 
 samtools:
   fixmate:
@@ -156,5 +695,22 @@ samtools:
   flagstat:
     extra_params:
 
+segemehl:
+  align:
+    extra_params:
+
+strobealign:
+  align:
+    extra_params: --mcs
+
+trie-dedup:
+  dedup:
+    method: trie
+    extra_params:
+
 trim-galore:
   extra_params:
+
+whisper:
+  align:
+    extra_params: -store-BAM -gzipped-SAM 9

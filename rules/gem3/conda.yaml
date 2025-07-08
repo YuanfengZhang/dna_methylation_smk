@@ -3,7 +3,7 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - bioconda::samtools>=1.21
+  - bioconda::samtools>=1.22
   - bioconda::bwa
   - bioconda::seqtk
   - bioconda::seqkit

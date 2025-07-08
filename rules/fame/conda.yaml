@@ -1,0 +1,8 @@
+channels:
+    - bioconda
+    - conda-forge
+dependencies:
+  - bioconda::bedtools>=2.31.1
+  - conda-forge::gawk
+  - conda-forge::parallel
+  - conda-forge::zstd

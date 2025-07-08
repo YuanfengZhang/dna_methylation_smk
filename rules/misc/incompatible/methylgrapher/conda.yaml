@@ -4,7 +4,7 @@ channels:
     - defaults
 
 dependencies:
-    - bioconda::samtools>=1.21
+    - bioconda::samtools>=1.22
     - bioconda::vg=1.63.1  
     - bioconda::mbuffer
     - conda-forge::pip

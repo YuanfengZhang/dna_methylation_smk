@@ -2,42 +2,62 @@ configfile: "config/runtime_config.yaml"
 from textwrap import dedent
 
 
+"""
+methyldackel output:
+track type="bedGraph" description="methyldackel/PS3_D6_1 CpG methylation levels"
+chr1    26932   26933   0       0       1
+chr1    26957   26958   0       0       1
+
+with header.
+chrom, start, end, beta, m, u.
+
+For TAPS, we need to flip the m and u columns.
+"""
+
 rule methyldackel_count:
     input:
         "result/{BaseName}/{CountParentDir}/{BaseName}.bam"
     output:
-        "result/{BaseName}/{CountParentDir}/methyldackel/{BaseName}.bedgraph.gz",
-        "result/{BaseName}/{CountParentDir}/methyldackel/{BaseName}.merged.bedgraph.gz"
+        tmp_c        = temp("result/{BaseName}/{CountParentDir}/methyldackel/{BaseName}_CpG.bedGraph"),
+        c_bedgraph   = "result/{BaseName}/{CountParentDir}/methyldackel/{BaseName}.bedgraph.gz",
+        tmp_cpg      = temp("result/{BaseName}/{CountParentDir}/methyldackel/{BaseName}.bedGraph"),
+        cpg_bedgraph = "result/{BaseName}/{CountParentDir}/methyldackel/{BaseName}.merged.bedgraph.gz",
     benchmark:
         "result/{BaseName}/{CountParentDir}/methyldackel/{BaseName}.count.benchmark"
     params:
         ref          = lambda wildcards: config["ref"]["bwa-mem"][wildcards.BaseName.split('_')[1]],
-        mode         = lambda wildcards: "-mCtoT" if wildcards.BaseName.split('_')[0][: 2] == "PS" else "",
+        method       = lambda wildcards: wildcards.BaseName.split('_')[0][: 2],
         extra_params = config["methyldackel"]["count"]["extra_params"] or ""
     threads: 8
     conda:
         "conda.yaml"
     shell:
         dedent("""
-        cd result/{wildcards.BaseName}/{wildcards.CountParentDir}
-        mkdir -p methyldackel
+        export tmp_dir="result/{wildcards.BaseName}/{wildcards.CountParentDir}"
+        mkdir -p ${{tmp_dir}}/methyldackel
         MethylDackel extract \\
-            {params.ref} {wildcards.BaseName}.bam \\
-            -o methyldackel/{wildcards.BaseName} \\
-            -@ {threads} {params.mode} {params.extra_params}
+            {params.ref} {input} \\
+            -o ${{tmp_dir}}/methyldackel/{wildcards.BaseName} \\
+            -@ {threads} {params.extra_params}
 
-        cd methyldackel
-
-        mv \\
-            {wildcards.BaseName}_CpG.bedGraph \\
-            {wildcards.BaseName}.bedgraph
-        
         MethylDackel mergeContext \\
-            {params.ref} {wildcards.BaseName}.bedgraph \\
-            -o {wildcards.BaseName}.merged.bedgraph {params.extra_params}
-        
-        sed -i '1d' *.bedgraph
+            {params.ref} {output.tmp_c} \\
+            -o {output.tmp_cpg} {params.extra_params}
 
-        pigz --best -p 8 {wildcards.BaseName}.bedgraph
-        pigz --best -p 8 {wildcards.BaseName}.merged.bedgraph
+        if [ {params.method} = "PS" ]; then
+          awk 'BEGIN{{FS=OFS="\\t"}} NR > 1 && ($5 + $6) >= 5 {{
+            print $1, $2, $3, $6, $5}}' {output.tmp_c} |\
+          pigz -p {threads} --best > {output.c_bedgraph}
+          awk 'BEGIN{{FS=OFS="\\t"}} NR > 1 && ($5 + $6) >= 5 {{
+            print $1, $2, $3, $6, $5}}' {output.tmp_cpg} |\
+          pigz -p {threads} --best > {output.cpg_bedgraph}
+        else
+          awk 'BEGIN{{FS=OFS="\\t"}} NR > 1 && ($5 + $6) >= 5 {{
+            print $1, $2, $3, $5, $6}}' {output.tmp_c} |\
+          pigz -p {threads} --best > {output.c_bedgraph}
+
+          awk 'BEGIN{{FS=OFS="\\t"}} NR > 1 && ($5 + $6) >= 5 {{
+            print $1, $2, $3, $5, $6}}' {output.tmp_cpg} |\
+          pigz -p {threads} --best > {output.cpg_bedgraph}
+        fi
         """)

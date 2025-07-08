@@ -12,18 +12,22 @@ rule bsgenova_count:
     benchmark:
         "result/{BaseName}/{CountParentDir}/bsgenova/{BaseName}.count.benchmark"
     params:
-        ref          = lambda wildcards: config["ref"]["bsgenova"][wildcards.BaseName.split('_')[1]],
+        ref          = lambda wildcards: config["ref"]["bwa-mem"][wildcards.BaseName.split('_')[1]],
         extra_params = config["bsgenova"]["count"]["extra_params"] or ""
     threads: 8
     conda:
         "conda.yaml"
     shell:
         dedent("""
+        tmp_dir="result/{wildcards.BaseName}/{wildcards.CountParentDir}/bsgenova/tmp"
+        mkdir -p ${{tmp_dir}}
         python resources/bsgenova/bsextractor.py \\
             -b {input} \\
             -g {params.ref} \\
             --output-atcgmap {output.atcgmap} \\
             --output-cgmap {output.cgmap} \\
             --output-bed {output.bedgz} \\
+            --tmp-dir ${{tmp_dir}} \\
             --threads {threads} {params.extra_params} 
+        rm -rf ${{tmp_dir}}
         """)
