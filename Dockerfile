@@ -53,21 +53,11 @@ COPY ./rules rules
 COPY ./utils/sample_sheet_parser.py utils/sample_sheet_parser.py
 
 RUN mkdir -p input && \
-    touch input/BS_M8_1_MGI.R1.fq.gz input/BS_M8_1_MGI.R2.fq.gz \
-        input/EM_BL_2_FDU.R1.fq.gz input/EM_BL_2_FDU.R2.fq.gz \
-        input/PS_HF_1_Geneplus.R1.fq.gz input/PS_HF_1_Geneplus.R2.fq.gz
+    touch input/BS1_HF_1.R1.fq.gz input/BS1_HF_1.R2.fq.gz \
+        input/EM1_HF_1.R1.fq.gz input/EM1_HF_1.R2.fq.gz \
+        input/PS1_HF_1.R1.fq.gz input/PS1_HF_1.R2.fq.gz
 
-COPY ./test/bismark.csv test/bismark.csv
+COPY ./test.csv test.csv
 RUN snakemake --snakefile fq2bedgraph.smk \
-        --config sample_sheet=test/bismark.csv \
-        --cores 1 --use-conda --conda-create-envs-only
-
-COPY ./test/bwa_meth.csv test/bwa_meth.csv
-RUN snakemake --snakefile fq2bedgraph.smk \
-        --config sample_sheet=test/bwa_meth.csv \
-        --cores 1 --use-conda --conda-create-envs-only
-
-COPY ./test/astair.csv test/astair.csv
-RUN snakemake --snakefile fq2bedgraph.smk \
-        --config sample_sheet=test/astair.csv \
+        --config sample_sheet=test.csv \
         --cores 1 --use-conda --conda-create-envs-only
