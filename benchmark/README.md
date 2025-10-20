@@ -2,6 +2,13 @@
 
 This directory contains scripts for benchmarking DNA methylation analysis methods. The scripts evaluate conversion rates, prepare data for differential methylation calling (DMC), evaluate DMC results, and calculate quality metrics.
 
+The scripts heavily rely on `polars` for efficient data processing and support various input/output formats including parquet, CSV, and BED files. To be able to run the scripts, please create a conda env:
+```bash
+mamba create -n data -c conda-forge pandas numpy scipy statsmodel matplotlib seaborn xlsxwriter openpyxl ipykernel jupyter autopep8 python=3.13
+mamba activate data
+pip install 'polars[numpy,pandas,pyarrow,openpyxl,xlsxwriter,xlsx2csv]'
+```
+
 ## Overview
 
 The benchmark workflow consists of several stages:
@@ -560,4 +567,3 @@ python script.py ... -v debug
 
 - methylKit: https://bioconductor.org/packages/methylKit/
 - methylSig: https://bioconductor.org/packages/methylSig/
-- cpgtools: https://github.com/weizhongli/cpgtools
