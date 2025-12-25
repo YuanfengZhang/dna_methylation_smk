@@ -1,6 +1,14 @@
 # dna_methylation_smk
 Snakemake pipelines to run NGS-based methylation analysis and benchmark.
-The python script and .ipynb files to reproduce the benchmarking results, including evaluation and statistical analysis, are in the `benchmark_record` folder. Please read the `benchmark/README.md` for more details.
+The python script and .ipynb files to reproduce the benchmarking results, including evaluation and statistical analysis, are in the `benchmark_record` folder.
+Following is a simplified schematic diagram involving the dna_methylation_smk and MethCali:
+![Schematic diagram](MISC/overview.png)
+
+Here is the way to calculate the RMSE and SpearmanR:
+![RMSE](MISC/RMSE.png)
+![SpearmanR](MISC/SpearmanR.png)
+
+Please read the `benchmark/README.md` for more details.
 
 ## Requirements
 While the snakemake and python scripts are compatible with most operating systems, there are many bioinformatic tools evaluated here only work on x64 Linux. Please use a x64 Linux server / container with at least 128GB RAM and 8 CPU cores to run the pipelines.
