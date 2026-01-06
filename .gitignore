@@ -210,3 +210,6 @@ cspell.json
 .qodo
 rules/bitmapperbs/micromamba-linux-64
 rules/@eaDir/runtime_config_benchmark.yaml@SynoEAStream
+
+@eaDir
+@eaDir/

@@ -1,6 +1,9 @@
 # dna_methylation_smk
 Snakemake pipelines to run NGS-based methylation analysis and benchmark.
-The python script and .ipynb files to reproduce the benchmarking results, including evaluation and statistical analysis, are in the `benchmark_record` folder.
+The python script and .ipynb files to reproduce the benchmarking results, including evaluation and statistical analysis, are in the `benchmark` folder.
+
+The scripts for data visualization are listed in `benchmark/figures` folder.
+
 Following is a simplified schematic diagram involving the dna_methylation_smk and MethCali:
 ![Schematic diagram](MISC/overview.png)
 
